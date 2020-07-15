@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1257</width>
+    <height>811</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>32</width>
+    <height>32</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QFrame" name="SmallFrame">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>0</y>
+      <width>1050</width>
+      <height>811</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QScrollArea" name="bigPicScrollArea">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1041</width>
+       <height>731</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     </property>
+     <property name="widgetResizable">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1017</width>
+        <height>729</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="bigPicLabel">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1041</width>
+         <height>611</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);</string>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QTableView" name="DownloadPageScroll">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1041</width>
+       <height>731</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1041</width>
+       <height>731</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     </property>
+    </widget>
+    <zorder>DownloadPageScroll</zorder>
+    <zorder>bigPicScrollArea</zorder>
+    <zorder>tabWidget</zorder>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>120</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="login_user_pic_label">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>2</y>
+       <width>50</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="usernameLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>50</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="function_frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>611</y>
+      <width>120</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QCommandLinkButton" name="logoutButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>121</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+     </property>
+     <property name="text">
+      <string>注销</string>
+     </property>
+    </widget>
+    <widget class="QCommandLinkButton" name="showDownloadButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>80</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+     </property>
+     <property name="text">
+      <string>下载</string>
+     </property>
+    </widget>
+    <widget class="QCommandLinkButton" name="settingsButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>39</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+     </property>
+     <property name="text">
+      <string>设置</string>
+     </property>
+    </widget>
+    <widget class="QCommandLinkButton" name="searchButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>-2</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+     </property>
+     <property name="text">
+      <string>搜索</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="downloadTipsLabel">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>90</y>
+       <width>20</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QCommandLinkButton" name="aboutButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>160</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+     </property>
+     <property name="text">
+      <string>关于</string>
+     </property>
+    </widget>
+    <zorder>aboutButton</zorder>
+    <zorder>showDownloadButton</zorder>
+    <zorder>logoutButton</zorder>
+    <zorder>settingsButton</zorder>
+    <zorder>searchButton</zorder>
+    <zorder>downloadTipsLabel</zorder>
+   </widget>
+   <widget class="QScrollArea" name="cate_scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>90</y>
+      <width>121</width>
+      <height>522</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(122, 122, 122, 50);</string>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="widgetResizable">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="cate_widget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>119</width>
+       <height>519</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <widget class="QCommandLinkButton" name="weekOriginalButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>287</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>原创</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="recommendButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>推荐</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="dayMangaButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>164</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>漫画</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="dayFemaleButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>123</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>女性</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="dayRookieButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>246</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>新人</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="monthButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>328</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>每月</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="R18Button">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>369</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>R18</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="dayMaleButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>82</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>男性</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="RankButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>41</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>每日</string>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="weekButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>205</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      </property>
+      <property name="text">
+       <string>每周</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <zorder>frame</zorder>
+   <zorder>SmallFrame</zorder>
+   <zorder>function_frame</zorder>
+   <zorder>cate_scrollArea</zorder>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

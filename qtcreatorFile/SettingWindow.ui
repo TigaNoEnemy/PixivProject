@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QScrollArea" name="scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 212);</string>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>798</width>
+       <height>549</height>
+      </rect>
+     </property>
+     <widget class="QFrame" name="pic_frame">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>200</y>
+        <width>801</width>
+        <height>191</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 132, 84);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="pic_title_label">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>801</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(146, 255, 255);
+font: 20pt &quot;Noto Sans CJK SC&quot;;</string>
+       </property>
+       <property name="text">
+        <string>    图片</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="r18_checkBox">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>160</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>R18</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="big_pic_group">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>40</y>
+         <width>471</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>大图尺寸</string>
+       </property>
+       <widget class="QRadioButton" name="big_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>89</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>大</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="small_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>40</y>
+          <width>89</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>小</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="middle_radioButton">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>40</y>
+          <width>89</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>中</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QComboBox" name="everyRowPicNumComboBox">
+       <property name="geometry">
+        <rect>
+         <x>98</x>
+         <y>155</y>
+         <width>72</width>
+         <height>26</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="everyRowPicNumLabel">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>155</y>
+         <width>61</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>每行图片：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="every_time_show_pic_num_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>116</x>
+         <y>120</y>
+         <width>113</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置每次点击显示多少张图，最大30， 最小1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="every_time_show_pic_num_label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>120</y>
+         <width>85</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>每次加载图片：</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="file_frame">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>801</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(44, 210, 255);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="file_title_label">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>801</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 75, 216);
+font: 20pt &quot;Noto Sans CJK SC&quot;;</string>
+       </property>
+       <property name="text">
+        <string>    文件</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="cache_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>52</y>
+         <width>551</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="cache_label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>40</y>
+         <width>91</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 12pt &quot;Agency FB&quot;;</string>
+       </property>
+       <property name="text">
+        <string>缓存文件夹：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="save_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>122</y>
+         <width>551</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="save_label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 12pt &quot;Agency FB&quot;;</string>
+       </property>
+       <property name="text">
+        <string>保存文件夹：</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="setCacheButton">
+       <property name="geometry">
+        <rect>
+         <x>690</x>
+         <y>50</y>
+         <width>80</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>浏览</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="setSaveButton">
+       <property name="geometry">
+        <rect>
+         <x>690</x>
+         <y>120</y>
+         <width>80</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>浏览</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>420</y>
+        <width>120</width>
+        <height>1000</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(142, 255, 90);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="setDefaultButton">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>560</y>
+      <width>80</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>重置</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
