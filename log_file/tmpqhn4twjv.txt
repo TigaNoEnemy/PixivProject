@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/minming/Desktop/.PIXIV/Pixiv_Widget/Original_Pic.py", line 125, in load_original_pic
-    temp_file_size = os.path.getsize(temp_file)
-  File "/usr/lib/python3.6/genericpath.py", line 50, in getsize
-    return os.stat(filename).st_size
-FileNotFoundError: [Errno 2] 没有那个文件或目录: '/home/minming/Desktop/.PIXIV/pixivTmp/11588906_1_original'
