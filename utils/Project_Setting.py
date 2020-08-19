@@ -7,7 +7,16 @@ import sys
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
+
 class setting(ConfigParser):
+    _instance = None
+
+    # 单例模式
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
+
     def __init__(self):
         super(setting, self).__init__()
         if sys.platform == 'linux':
@@ -58,6 +67,7 @@ class setting(ConfigParser):
         self.timeout = float(self.get('RES', 'timeout')) # 网络请求的超时时间
         self.no_h = self.get('RES', 'no_h') # 禁止显示r18图片时，代替r18图片的图片
 
+    # 设置配置信息
     def set_user_setting(self, _setting):
         self.read(self.setting_file, encoding='utf-8')
         for k, v in _setting.items():
@@ -65,6 +75,7 @@ class setting(ConfigParser):
             self.set('RES', k, str(v))
         self.write(open(self.setting_file, 'w', encoding='utf-8'))
 
+    #重置配置信息
     def set_settings_default(self):
         import os
 
@@ -78,6 +89,7 @@ class setting(ConfigParser):
         f.write(default)
         f.close()
 
+    # 验证文件是否存在并是否创建
     def check_file(self):
         import os
         if not os.path.exists(self.temp_path):
@@ -99,5 +111,6 @@ if __name__ == '__main__':
     cfg = setting()
     cfg.set_settings_default()
     print_setting(cfg)
-    cfg.set_uesr_setting(_setting={'temp_path': '/home/k', 'save_path': '/home/j'})
+    cfg.set_user_setting(_setting={'temp_path': '/home/k', 'save_path': '/home/j'})
     print_setting(cfg)
+    print(dir(cfg))

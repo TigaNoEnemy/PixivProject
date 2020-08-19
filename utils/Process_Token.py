@@ -14,7 +14,16 @@ import sys
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
+
 class login_info_parser:
+    _instance = None
+
+    # 单例模式
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self):
         dir_md5 = hashlib.md5('Pixiv'.encode())
         dir_hex = dir_md5.hexdigest()
@@ -94,6 +103,6 @@ class login_info_parser:
             os.mkdir(self.loging_token_dir)
 
 if __name__ == '__main__':
-    login = login_info()
+    login = login_info_parser()
     login.update_token(123, 'test', 'test', 1)
     print(login.get_token())
