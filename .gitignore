@@ -121,3 +121,5 @@ utils/log_file/
 log_file/
 
 *.cfg
+
+pixivTmp/

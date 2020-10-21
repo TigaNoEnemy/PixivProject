@@ -100,7 +100,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         while _time <= 6:
             if not has_host:
                 try:
-                    self.api.hosts = self.api.require_appapi_hosts()
+                    self.api.hosts = self.api.require_appapi_hosts("public-api.secure.pixiv.net")
                 except:
                     _time += 1
                 else:
