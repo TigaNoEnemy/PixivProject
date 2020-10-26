@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QScrollArea
 from PyQt5.QtGui import QIcon, QPixmap, QBrush
 from PyQt5.QtCore import QRect, Qt
 from PyQt5.Qt import QPropertyAnimation
@@ -297,6 +297,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def rebuild(self, title):
         from Pixiv_Widget.My_Widget import my_widget
 
+        h = self.tabWidget.height()
+        w = self.tabWidget.width()
+        self.scrollAreas[title] = QScrollArea(self.tab[title])
+        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
+        self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+        self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scrollAreas[title].setWidgetResizable(False)
+        self.scrollAreas[title].setObjectName("scrollArea")
+
         smallFrame_w = self.SmallFrame.width()
         self.scrollAreaWidgetContents[title] = my_widget()
         self.scrollAreaWidgetContents[title].setGeometry(QRect(0, 0, smallFrame_w - 20, 200))
@@ -304,7 +313,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.scrollAreas[title].setWidget(self.scrollAreaWidgetContents[title])
 
     def show_pic(self, method='', _mode={}, title=None, isMoreButton=True, flag=''):
-        from PyQt5.QtWidgets import QScrollArea
         from Pixiv_Widget.My_Widget import my_widget
 
         if _mode == None:
@@ -335,17 +343,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if title not in self.tab:
             self.tabWidget.setVisible(True)
             print(self.tabWidget.isVisible())
-            h = self.tabWidget.height()
-            w = self.tabWidget.width()
             self.tab[title] = my_widget(flag=flag)
             self.tab[title].set_loading(False)
             self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             self.tab[title].setObjectName("tab[title]")
-            self.scrollAreas[title] = QScrollArea(self.tab[title])
-            self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
-            self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
-            self.scrollAreas[title].setWidgetResizable(False)
-            self.scrollAreas[title].setObjectName("scrollArea")
+
+            # h = self.tabWidget.height()
+            # w = self.tabWidget.width()
+            # self.scrollAreas[title] = QScrollArea(self.tab[title])
+            # self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
+            # self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            # self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            # self.scrollAreas[title].setWidgetResizable(False)
+            # self.scrollAreas[title].setObjectName("scrollArea")
             self.rebuild(title)
             self.tabWidget.addTab(self.tab[title], title)
             self.infoFrame.moreButton.disconnect()
@@ -641,22 +651,23 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         return info
 
     def search_user(self, _mode, title, isSearch=True):
-        from PyQt5.QtWidgets import QScrollArea
         from PyQt5.QtCore import QRect
         from Pixiv_Widget.My_Widget import my_widget
 
         if title not in self.tab:
-            h = self.tabWidget.height()
-            w = self.tabWidget.width()
             self.tab[title] = my_widget(flag='用户')
             self.tab[title].set_loading(False)
             self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             self.tab[title].setObjectName("tab[title]")
-            self.scrollAreas[title] = QScrollArea(self.tab[title])
-            self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
-            self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
-            self.scrollAreas[title].setWidgetResizable(False)
-            self.scrollAreas[title].setObjectName("scrollArea")
+            
+            # h = self.tabWidget.height()
+            # w = self.tabWidget.width()
+            # self.scrollAreas[title] = QScrollArea(self.tab[title])
+            # self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
+            # self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            # self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            # self.scrollAreas[title].setWidgetResizable(False)
+            # self.scrollAreas[title].setObjectName("scrollArea")
             self.rebuild(title)
             self.tabWidget.addTab(self.tab[title], title)
             self.infoFrame.moreButton.disconnect()
