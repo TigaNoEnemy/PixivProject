@@ -7,14 +7,21 @@ from PyQt5 import sip
 import os
 from memory_profiler import profile
 
-from Pixiv_Thread.My_Thread import base_thread
-from .Clickable_Label import clickable_label
+try:
+    from Pixiv_Thread.My_Thread import base_thread
+    from qtcreatorFile.small_pic_frame import Ui_small_pic_frame
+except :
+    import sys
+    sys.path.append('.')
+    from Pixiv_Thread.My_Thread import base_thread
+    from qtcreatorFile.small_pic_frame import Ui_small_pic_frame
 
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class small_pic_frame(QFrame):
+class small_pic_frame(QFrame, Ui_small_pic_frame):
     # 预览图片
+    # 小图的框架
     download = pyqtSignal(dict)     # 用于通知app该作品需要创建多少个download_progress
     progress = pyqtSignal(dict)     # 用于通知app创建download_progress
     pic_click = pyqtSignal(dict)
@@ -28,7 +35,9 @@ class small_pic_frame(QFrame):
         self.timer = QTimer()
         self.timer.timeout.connect(self.change_rotate)
         self.check_info()
-        self.setupUi()
+        self.setupUi(self)
+
+        self.picLabel.click.connect(self.pic_is_clicked)
         if not test:
             self.my_set()
         else:
@@ -47,40 +56,41 @@ class small_pic_frame(QFrame):
         for i in key:
             if i not in self.info:
                 need_key.append(i)
-        if need_key or need_not_key:
+        if (need_key or need_not_key) and 'test' not in self.info:
+            print(self.info)
             raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
 
-    def setupUi(self):
-        self.setStyleSheet('background-color: rgb(255, 255, 255)')
-        self.picLabel = clickable_label(self, info=self.info, double_click_time=1)
-        self.picLabel.click.connect(self.pic_is_clicked)
-        self.picLabel.setGeometry(QRect(0, 0, 0, 0))
-        self.picLabel.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.picLabel.setAlignment(Qt.AlignCenter)
-        self.picLabel.setObjectName("picLabel")
-        self.textLabel = QLabel(self)
-        self.textLabel.setGeometry(QRect(5, 234, 234, 51))
-        self.textLabel.setObjectName("textLabel")
-        self.textLabel.setWordWrap(True)
-        self.s_saveButton = QPushButton(self)
-        self.s_saveButton.setGeometry(QRect(0, 370, 121, 41))
-        self.s_saveButton.setObjectName("s_saveButton")
-        self.likeButton = QPushButton(self)
-        self.likeButton.setGeometry(QRect(120, 370, 121, 41))
-        self.likeButton.setObjectName("likeButton")
-        self.authLabel = QLabel(self)
-        self.authLabel.setGeometry(QRect(5, 285, 234, 41))
-        self.authLabel.setObjectName("authLabel")
-        self.picnNumLabel = QLabel(self)
-        self.picnNumLabel.setGeometry(QRect(204, 0, 30, 30))
-        self.picnNumLabel.setStyleSheet(
-            "background-color: rgba(122, 122, 122, 150);\n"
-            "font: 16pt \"Noto Sans CJK SC\";"
-            )
-        self.picnNumLabel.setAlignment(Qt.AlignCenter)
-        self.picnNumLabel.setObjectName("picnNumLabel")
-        self.setStyleSheet("background-color: rgb(189, 189, 189);")
-        self.setFrameShape(QFrame.StyledPanel)
+    # def setupUi1(self):
+    #     self.setStyleSheet('background-color: rgb(255, 255, 255)')
+    #     self.picLabel = clickable_label(self, info=self.info, double_click_time=1)
+    #     self.picLabel.click.connect(self.pic_is_clicked)
+    #     self.picLabel.setGeometry(QRect(0, 0, 0, 0))
+    #     self.picLabel.setStyleSheet("background-color: rgb(255, 255, 255);")
+    #     self.picLabel.setAlignment(Qt.AlignCenter)
+    #     self.picLabel.setObjectName("picLabel")
+    #     self.textLabel = QLabel(self)
+    #     self.textLabel.setGeometry(QRect(5, 234, 234, 51))
+    #     self.textLabel.setObjectName("textLabel")
+    #     self.textLabel.setWordWrap(True)
+    #     self.s_saveButton = QPushButton(self)
+    #     self.s_saveButton.setGeometry(QRect(0, 370, 121, 41))
+    #     self.s_saveButton.setObjectName("s_saveButton")
+    #     self.likeButton = QPushButton(self)
+    #     self.likeButton.setGeometry(QRect(120, 370, 121, 41))
+    #     self.likeButton.setObjectName("likeButton")
+    #     self.authLabel = QLabel(self)
+    #     self.authLabel.setGeometry(QRect(5, 285, 234, 41))
+    #     self.authLabel.setObjectName("authLabel")
+    #     self.picnNumLabel = QLabel(self)
+    #     self.picnNumLabel.setGeometry(QRect(204, 0, 30, 30))
+    #     self.picnNumLabel.setStyleSheet(
+    #         "background-color: rgba(122, 122, 122, 150);\n"
+    #         "font: 16pt \"Noto Sans CJK SC\";"
+    #         )
+    #     self.picnNumLabel.setAlignment(Qt.AlignCenter)
+    #     self.picnNumLabel.setObjectName("picnNumLabel")
+    #     self.setStyleSheet("background-color: rgb(189, 189, 189);")
+    #     self.setFrameShape(QFrame.StyledPanel)
 
     def my_set(self):
         # 加载图片，文本
@@ -330,7 +340,7 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     import sys
 
-    f =['illust', 'api', 'loading_gif', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h']
+    f =['test']
     f = {j: i for i, j in enumerate(f)}
     app = QApplication(sys.argv)
     a = small_pic_frame(parent=None, info=f, test=True)
