@@ -95,30 +95,17 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         import time
 
         _time = 0
-        has_host = False
-        has_public_api = False
         while _time <= 6:
-            if not has_host:
-                try:
-                    self.api.hosts = self.api.require_appapi_hosts("public-api.secure.pixiv.net")
-                except:
-                    _time += 1
-                else:
-                    has_host = True
-
-            if not has_public_api:
-                try:
-                    self.api.public_api = self.api.require_appapi_hosts('public-api.secure.pixiv.net')
-                except:
-                    _time += 1
-                else:
-                    has_public_api = True
-
-            time.sleep(1)
-            if has_host and has_public_api:
+            try:
+                self.api.public_api = self.api.hosts = self.api.require_appapi_hosts("public-api.secure.pixiv.net")
+            except:
+                _time += 1
+            else:
                 print('Complete: require_appapi_hosts')
                 return {'is_success': True}
 
+            time.sleep(1)
+        
         return {'is_success': False}
 
     def pre_initUi(self, result):

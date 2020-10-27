@@ -300,7 +300,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         h = self.tabWidget.height()
         w = self.tabWidget.width()
         self.scrollAreas[title] = QScrollArea(self.tab[title])
-        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
+        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 45))
         self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scrollAreas[title].setWidgetResizable(False)
@@ -315,7 +315,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def slideDown(self, x, title):
         m = self.scrollAreas[title].verticalScrollBar().maximum()
-        if m - x <= 411:
+        if m - x <= 411*1.5:
             self.infoFrame.moreButton.click()
 
     def show_pic(self, method='', _mode={}, title=None, isMoreButton=True, flag=''):
@@ -649,7 +649,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             pass
 
     def add_key_to_result(self, ranking, info={}):
-        print(ranking)
         illusts = [ranking['illust']]
         info['illusts'] = illusts
         info['next_url'] = None
@@ -1230,7 +1229,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         for i in self.tab:
             self.tab[i].resize(smallFrame_w, height - 112)
-            self.scrollAreas[i].resize(smallFrame_w - 3, height - 112)
+            self.scrollAreas[i].resize(smallFrame_w - 3, height - 122)
 
         per_row_should_pic_num = (smallFrame_w - 18) // 240  # 计算每行最多可显示多少张图(一张图占宽240)
 
