@@ -305,12 +305,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scrollAreas[title].setWidgetResizable(False)
         self.scrollAreas[title].setObjectName("scrollArea")
+        self.scrollAreas[title].verticalScrollBar().valueChanged.connect(lambda x: self.slideDown(x, title))
 
         smallFrame_w = self.SmallFrame.width()
         self.scrollAreaWidgetContents[title] = my_widget()
         self.scrollAreaWidgetContents[title].setGeometry(QRect(0, 0, smallFrame_w - 20, 200))
         self.scrollAreaWidgetContents[title].setObjectName("scrollAreaWidgetContent")
         self.scrollAreas[title].setWidget(self.scrollAreaWidgetContents[title])
+
+    def slideDown(self, x, title):
+        m = self.scrollAreas[title].verticalScrollBar().maximum()
+        if m - x <= 411:
+            self.infoFrame.moreButton.click()
 
     def show_pic(self, method='', _mode={}, title=None, isMoreButton=True, flag=''):
         from Pixiv_Widget.My_Widget import my_widget

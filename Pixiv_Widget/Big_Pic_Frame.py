@@ -6,8 +6,14 @@ from PyQt5.QtCore import pyqtSignal, Qt, QRect, QTimer
 from memory_profiler import profile
 
 # 导入自定义模块
-from .Clickable_Label import clickable_label
-from Pixiv_Thread.My_Thread import base_thread
+try:
+    from Pixiv_Widget.Clickable_Label import clickable_label
+    from Pixiv_Thread.My_Thread import base_thread
+except:
+    import sys
+    sys.path.append('.')
+    from Pixiv_Widget.Clickable_Label import clickable_label
+    from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 
@@ -231,13 +237,13 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     import sys
 
-    key = ['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags']
+    key = ['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
     _info = {}
     cfg = login_info_parser()
     info = cfg.get_token()
     api = my_api()
     print('翻墙')
-    api.hosts = api.require_appapi_hosts()
+    api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
     print('翻墙成功')
     print('登录')
     api.auth(refresh_token=info['token'])
@@ -250,6 +256,7 @@ if __name__ == '__main__':
     _info['timeout_pic'] = 'RES/TIMEOUT.png'
     _info['original_pic_url'] = ''
     _info['tags'] = ''
+    _info['illust_id'] = '63639917'
     app = QApplication(sys.argv)
     a = big_pic_frame(parent=None, info=_info)
     a.show()
