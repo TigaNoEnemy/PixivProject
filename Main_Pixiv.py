@@ -930,6 +930,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     #@profile
     def load_user_head(self, info):
+        # 加载用户头像
         label = self.login_user_pic_label
         url = info['url']
         file_name = info['file_name']

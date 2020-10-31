@@ -164,19 +164,18 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.text_scroll.clear()
         self.text_scroll.setText(illust['caption'])
 
-        info.pop('api')
         if os.path.exists(f'{temp_path}/{file_name}'):
             print('user_head is exists.')
             self.load_user_head(
                 info={"file_name": file_name, 'isSuccess': True, 'url': illust['user']['profile_image_urls']['medium'],
-                      })
+                      'api': api})
         else:
             self.baseThread = base_thread(self, api.cache_pic,
                                                      url=illust['user']['profile_image_urls']['medium'],
                                                      path=temp_path, file_name=file_name,
                                                      info={'file_name': file_name,
                                                            'url': illust['user']['profile_image_urls']['medium'],
-                                                            'row': 1022})
+                                                            'row': 1022, 'api': api})
             self.baseThread.finish.connect(self.load_user_head)
             self.baseThread.wait()
             self.baseThread.start()
@@ -187,11 +186,13 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         import os
 
         temp_path = self.info['temp_path']
-
+        timeout_pic = self.info['timeout_pic']
+        
         label = self.user_pic_label
         url = info['url']
         file_name = info['file_name']
-        timeout_pic = info['timeout_pic']
+        api = info['api']
+
 
         if info['isSuccess']:
             file = f"{temp_path}/{file_name}"
@@ -205,9 +206,9 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
                     os.remove(file)
                 except:
                     pass
-                self.baseThread = base_thread(self, self.api.cache_pic, url=url, path=temp_path,
+                self.baseThread = base_thread(self, api.cache_pic, url=url, path=temp_path,
                                                          file_name=file_name,
-                                                         info={'file_name': file_name, 'url': url, 'row': 1062})
+                                                         info={'file_name': file_name, 'url': url, 'row': 1062, 'api': api})
                 self.baseThread.finish.connect(self.load_user_head)
                 self.baseThread.wait()
                 self.baseThread.start()

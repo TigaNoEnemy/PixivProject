@@ -38,6 +38,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.setupUi(self)
 
         self.picLabel.click.connect(self.pic_is_clicked)
+        self.picLabel.info = self.info
+        self.picLabel.double_click_time = 1
         if not test:
             self.my_set()
         else:
@@ -188,7 +190,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             self.s_saveButton.setText('保存原图')
             self.s_saveButton.clicked.connect(self.save_original_pic)
 
-        #self.picLabel.resize(234, 234)
+        self.picLabel.resize(234, 234)
         picture = picture.scaled(234, 234, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.picLabel.setPixmap(picture)
 
