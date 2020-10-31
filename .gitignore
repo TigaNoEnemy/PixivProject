@@ -123,3 +123,5 @@ log_file/
 *.cfg
 
 pixivTmp/
+
+*.ini
