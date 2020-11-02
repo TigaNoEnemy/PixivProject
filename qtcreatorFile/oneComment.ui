@@ -23,7 +23,8 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(48, 51, 41);</string>
+    <string notr="true">background-color: rgb(48, 51, 41);
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -44,7 +45,7 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="user_name_label">
@@ -61,25 +62,28 @@
 color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="comment_text">
+   <widget class="QTextBrowser" name="comment_text">
     <property name="geometry">
      <rect>
-      <x>5</x>
+      <x>0</x>
       <y>70</y>
-      <width>331</width>
-      <height>121</height>
+      <width>338</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(255, 255, 255);
 background-color: rgb(48, 51, 41);
-border: none</string>
+border: none;</string>
     </property>
-    <property name="readOnly">
-     <bool>true</bool>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
     </property>
    </widget>
    <widget class="QLabel" name="time_label">
@@ -92,10 +96,27 @@ border: none</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(209, 209, 209);
+color: rgb(147, 147, 147);</string>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>190</y>
+      <width>343</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;hr&gt;</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::RichText</enum>
     </property>
    </widget>
   </widget>

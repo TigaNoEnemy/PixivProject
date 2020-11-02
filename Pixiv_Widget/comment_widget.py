@@ -27,6 +27,7 @@ class Comment_Widget(QFrame, Ui_commentWidget):
         if not next_url_args:
             get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust)
         else:
+            next_url_args.pop('illust_id', None)
             get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust, **next_url_args)
 
         get_comment_thread.finish.connect(self.load_comments_widget)
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
     api.auth(refresh_token=info['token'])
 
-    _info = {'illust': 85256262, 'api': api, 'temp_path': l_cfg.temp_path}
+    _info = {'illust': 18423302, 'api': api, 'temp_path': l_cfg.temp_path}
 
     app = QApplication(sys.argv)
     m = QMainWindow()
@@ -101,4 +102,5 @@ if __name__ == '__main__':
     c.move(0, 0)
     m.resize(c.width(), c.height())
     m.show()
+    print('done')
     sys.exit(app.exec_())

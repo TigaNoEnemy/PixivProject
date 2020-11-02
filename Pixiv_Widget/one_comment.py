@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 sys.path.append('.')
+import os
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
@@ -36,6 +37,12 @@ class One_Comment(QFrame, Ui_oneComment):
         self.time_label.setText(comment_time)
         self.time_label.adjustSize()
         self.comment_text.insertPlainText(comment)
+        #self.comment_text.resize(self.comment_text.width(), 23)
+        print(self.comment_text.verticalScrollBar().isVisible(), '='*90)
+        # while self.comment_text.verticalScrollBar().isVisible():
+        #     self.comment_text.resize(self.comment_text.width(), self.comment_text.height()+2)
+        #     if self.self.comment_text.height() >= 300:
+        #         break
 
     def download_user_pic(self):
         user_head_url = self.info['user']['profile_image_urls']['medium']
@@ -57,8 +64,14 @@ class One_Comment(QFrame, Ui_oneComment):
         file_name = info['file_name']
         temp_path = info['temp_path']
 
-        user_head = QPixmap(f"{temp_path}/{file_name}")
+        file = f"{temp_path}/{file_name}"
+
+        user_head = QPixmap(file)
         if user_head.isNull():
+            try:
+                os.remove(file)
+            except:
+                pass
             load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
                                            path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
             load_user_head_thread.finish.connect(self.load_user_head)
@@ -92,7 +105,8 @@ if __name__ == '__main__':
 
     temp_path = l_cfg.temp_path
 
-    info = data['comments'][0] 
+    info = data['comments'][0]
+    info['comment'] = '\n'.join(info['comment'])
     info.update({'temp_path': temp_path, 'api': api})
 
     app = QApplication(sys.argv)
@@ -101,8 +115,8 @@ if __name__ == '__main__':
     o.move(0, 0)
     m.resize(o.width(), o.height())
     m.show()
-    from prettyprinter import cpprint
-    cpprint(data)
+    # from prettyprinter import cpprint
+    # cpprint(data)
     sys.exit(app.exec_())
 
     
