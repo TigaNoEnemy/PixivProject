@@ -152,6 +152,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         illust_id = self.info['illust']['id']
         api = self.info['api']
 
+        self.likeButton.setText('いやです')
+        self.likeButton.setEnabled(False)
         self.baseThread = base_thread(self, api.illust_bookmark_add, illust_id=illust_id, info={'mode': 'add'})
         self.baseThread.finish.connect(self.change_like_button)
         self.baseThread.wait()
@@ -160,16 +162,18 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     def change_like_button(self, info):
         self.likeButton.disconnect()
         if info['mode'] == 'add':
-            self.likeButton.setText('いやです')
             self.likeButton.clicked.connect(self.del_favor)
         elif info['mode'] == 'delete':
-            self.likeButton.setText('好き')
             self.likeButton.clicked.connect(self.add_favor)
+
+        self.likeButton.setEnabled(True)
 
     def del_favor(self):
         illust_id = self.info['illust']['id']
         api = self.info['api']
 
+        self.likeButton.setText('好き')
+        self.likeButton.setEnabled(False)
         self.baseThread = base_thread(self, api.illust_bookmark_delete, illust_id=illust_id, info={'mode': 'delete'})
         self.baseThread.finish.connect(self.change_like_button)
         self.baseThread.wait()
@@ -346,5 +350,7 @@ if __name__ == '__main__':
     f = {j: i for i, j in enumerate(f)}
     app = QApplication(sys.argv)
     a = small_pic_frame(parent=None, info=f, test=True)
+    a.textLabel.setText('Test')
+    a.authLabel.setText('Test')
     a.show()
     sys.exit(app.exec_())

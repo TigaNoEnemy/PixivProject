@@ -68,7 +68,7 @@ class big_pic_frame(QFrame):
         timeout_pic = self.info['timeout_pic']
 
         self.bigPicLabel = clickable_label(self, self.info)
-        self.bigPicLabel.setGeometry(QRect(0, 0, 959, 611))
+        self.bigPicLabel.setGeometry(QRect(0, 0, 620, 611))
         self.bigPicLabel.setObjectName("bigPicLabel")
         self.bigPicLabel.setObjectName("picLabel")
      
@@ -167,7 +167,7 @@ class big_pic_frame(QFrame):
         self.picture = self.picture.scaled(self.bigPicLabel.width(), self.bigPicLabel.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         picture_h = self.picture.height()
         picture_w = self.picture.width()
-        picture_x = int((960-picture_w)/2)
+        picture_x = int((620-picture_w)/2)
 
         self.bigPicLabel.setPixmap(self.picture)
         self.bigPicLabel.setGeometry(QRect(picture_x, 0, picture_w, picture_h))

@@ -27,6 +27,7 @@ from Pixiv_Widget.Small_Pic_Frame import small_pic_frame
 from utils.Project_Setting import setting
 from Pixiv_Widget.Pixiv_Login import app_login
 from Pixiv_Widget.Search_Frame import search_frame
+from Pixiv_Widget.comment_widget import Comment_Widget
 
 cgitb.enable(format='text', logdir='log_file')
 
@@ -86,6 +87,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.authText.setVisible(False)
         self.infoFrame.text_scroll.setVisible(False)
         self.bigPicScrollArea.setVisible(False)
+        if hasattr(self, 'comment_widget'):
+            self.comment_widget.setVisible(False)
         ###
 
         self.rank_pic_s = {}  # title标签下的第n张小图片
@@ -348,7 +351,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         if title not in self.tab:
             self.tabWidget.setVisible(True)
-            print(self.tabWidget.isVisible())
             self.tab[title] = my_widget(flag=flag)
             self.tab[title].set_loading(False)
             self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
@@ -790,6 +792,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.tabWidget.setVisible(True)
         elif now_page == 'show_big_pic':
             self.bigPicScrollArea.setVisible(True)
+            self.comment_widget.setVisible(True)
             # self.bigReloadButton.setVisible(True)
             self.infoFrame.saveButton.setVisible(True)
             self.infoFrame.authText.setVisible(True)
@@ -876,6 +879,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.titleText.setVisible(True)
         self.infoFrame.text_scroll.setVisible(True)
         self.bigPicScrollArea.setVisible(True)
+        if hasattr(self, 'comment_widget'):
+            self.comment_widget.setVisible(True)
         self.tabWidget.setVisible(False)
 
         ### 销毁QWidget
@@ -927,6 +932,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         h = self.scrollAreaWidgetContents_3.height()
         self.scrollAreaWidgetContents_3.resize(w, h + 10)
         ###
+
+        # 重建并加载评论区
+        try:
+            self.comment_widget.deleteLater()
+            sip.delete(self.comment_widget)
+        except:
+            pass
+        self.comment_widget = Comment_Widget(self.SmallFrame, info={'api': self.api, 'illust': illust_id, 'temp_path': self.temp_path})
+        self.comment_widget.move(self.bigPicScrollArea.x() + self.bigPicScrollArea.width(), self.bigPicScrollArea.y())
+        self.comment_widget.resize(self.comment_widget.width(), self.bigPicScrollArea.height())
+        self.comment_widget.show()
+        self.infoFrame.raise_()
 
     #@profile
     def load_user_head(self, info):
@@ -988,9 +1005,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.bigFrames[file_name].show()
         smallFrame_w = self.SmallFrame.width()
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 20, (self.big_pic + 1) * 611 + 10)
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, (self.big_pic + 1) * 611 + 10)
         self.bigFrames[file_name].setGeometry(
-            QRect((self.scrollAreaWidgetContents_3.width() - 960) // 2, self.big_pic * 611, 960, 611))
+            QRect((self.scrollAreaWidgetContents_3.width() - 620) // 2, self.big_pic * 611, 620, 611))
         self.big_pic += 1
 
     def show_original_pic(self, info):
@@ -1114,6 +1131,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.text_scroll.setVisible(False)
         self.bigPicScrollArea.setVisible(False)
         self.infoFrame.user_pic_label.setVisible(False)
+        self.comment_widget.setVisible(False)
         # self.bigReloadButton.setVisible(False)
         # self.table.setVisible(False)
         # self.infoFrame.escapeDownloadPageButton.setVisible(False)
@@ -1164,6 +1182,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.titleText.setVisible(False)
         self.infoFrame.text_scroll.setVisible(False)
         self.bigPicScrollArea.setVisible(False)
+        if hasattr(self, 'comment_widget'):
+            self.comment_widget.setVisible(False)
         self.infoFrame.user_pic_label.setVisible(False)
         # self.bigReloadButton.setVisible(False)
         self.table.setVisible(False)
@@ -1217,12 +1237,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.table.resize(smallFrame_w, height - 80)
 
-        self.bigPicScrollArea.resize(smallFrame_w, height - 80)
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 20, self.big_pic * 611)
+        self.bigPicScrollArea.resize(smallFrame_w-340, height - 80)
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.big_pic * 611)
         for i in self.bigFrames:
             bigFrame_x = (self.scrollAreaWidgetContents_3.width() - self.bigFrames[i].width()) // 2
             y = self.bigFrames[i].y()
             self.bigFrames[i].move(bigFrame_x, y)
+
+        # 调整评论区
+        if hasattr(self, 'comment_widget'):
+            self.comment_widget.move(self.bigPicScrollArea.x() + self.bigPicScrollArea.width(), self.bigPicScrollArea.y())
+            self.comment_widget.resize(self.comment_widget.width(), self.bigPicScrollArea.height())
 
         # self.scrollAreaWidgetContents_3.setStyleSheet("background-color: black")
 

@@ -44,7 +44,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string/>
@@ -63,7 +64,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>PushButton</string>
@@ -79,7 +80,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string/>
@@ -97,7 +99,7 @@
     <property name="styleSheet">
      <string notr="true">background-color: rgba(122, 122, 122, 150);
 font: 16pt &quot;Noto Sans CJK SC&quot;;
-</string>
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string/>
@@ -116,7 +118,7 @@ font: 16pt &quot;Noto Sans CJK SC&quot;;
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>PushButton</string>
