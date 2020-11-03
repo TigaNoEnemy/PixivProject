@@ -101,7 +101,7 @@ class big_pic_frame(QFrame):
             self.load_big_pic_complete(info)
 
         else:
-            self.thread = base_thread(self, method=api.get_image_size, url=url, info=info)
+            self.thread = base_thread(None, method=api.get_image_size, url=url, info=info)
             self.thread.finish.connect(self.create_download_thread)
             self.thread.wait()
             self.thread.start()
@@ -122,7 +122,7 @@ class big_pic_frame(QFrame):
         if 'image_size' in info:
             self.pic_size = info['image_size']
 
-        self.thread = base_thread(self, method=api.cache_pic, url=url, file_name=temp_file_name, path=temp_path, info=info)
+        self.thread = base_thread(None, method=api.cache_pic, url=url, file_name=temp_file_name, path=temp_path, info=info)
         self.thread.finish.connect(self.load_big_pic_complete)
         self.thread.wait()
         self.thread.start()
@@ -140,26 +140,23 @@ class big_pic_frame(QFrame):
         temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
         timeout_pic = self.info['timeout_pic']
-        isSuccess = info['isSuccess']
+        #isSuccess = info['isSuccess']
 
         self.is_loading = False
         try:
             self.thread.disconnect()
         except:
             pass
-
-        if isSuccess:
-            temp_file = f"{temp_path}/{temp_file_name}"
-        else:
-            temp_file = timeout_pic
+        
+        temp_file = f"{temp_path}/{temp_file_name}"
+        self.picture = QPixmap(temp_file)
+        if self.picture.isNull():
             try:
                 os.remove(f"{temp_path}/{temp_file_name}")
             except:
                 pass
+            self.picture = QPixmap(f"{temp_path}/{timeout_pic}")
 
-
-
-        self.picture = QPixmap(temp_file)
         pic_width = self.picture.width()
         if pic_width > 620:
             pic_height = int(self.picture.height() / (pic_width / 620))
@@ -267,7 +264,7 @@ if __name__ == '__main__':
     _info['timeout_pic'] = 'RES/TIMEOUT.png'
     _info['original_pic_url'] = ''
     _info['tags'] = ''
-    _info['illust_id'] = '63639917'
+    _info['illust_id'] = '85213770'
     app = QApplication(sys.argv)
     a = big_pic_frame(parent=None, info=_info)
     a.show()

@@ -37,6 +37,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.check_info()
         self.setupUi(self)
 
+        self.load_pic_success = False   #当图片加载不成功时，为False，不响应点击图片的动作
         self.picLabel.click.connect(self.pic_is_clicked)
         self.picLabel.info = self.info
         self.picLabel.double_click_time = 1
@@ -193,6 +194,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         else:
             self.s_saveButton.setText('保存原图')
             self.s_saveButton.clicked.connect(self.save_original_pic)
+            self.load_pic_success = True
 
         self.picLabel.resize(234, 234)
         picture = picture.scaled(234, 234, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -302,7 +304,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             self.downloadThreads[f"{illust_id}_{n}"].start()
 
     def pic_is_clicked(self, info):
-        self.pic_click.emit(info)
+        if self.load_pic_success:
+            self.pic_click.emit(info)
 
     def remove_imperfect_image(self, file, image_size):
         # 删除不完整的图片

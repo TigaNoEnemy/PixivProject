@@ -8,7 +8,8 @@ from qtcreatorFile.commentWidget import Ui_commentWidget
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.one_comment import One_Comment
 
-
+import cgitb
+cgitb.enable(format='text', logdir='log_file')
 class Comment_Widget(QFrame, Ui_commentWidget):
     """info需要api, temp_path, illust"""
     edit_comment_frame_h_diff = 210    # 编辑评论的frame动画高度差
@@ -25,14 +26,14 @@ class Comment_Widget(QFrame, Ui_commentWidget):
         illust = self.info['illust']
 
         if not next_url_args:
-            get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust)
+            self.get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust)
         else:
             next_url_args.pop('illust_id', None)
-            get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust, **next_url_args)
+            self.get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust, **next_url_args)
 
-        get_comment_thread.finish.connect(self.load_comments_widget)
-        get_comment_thread.wait()
-        get_comment_thread.start()
+        self.get_comment_thread.finish.connect(self.load_comments_widget)
+        self.get_comment_thread.wait()
+        self.get_comment_thread.start()
         self.next_url = None
 
     def load_comments_widget(self, info):

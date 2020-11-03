@@ -10,6 +10,8 @@ from qtcreatorFile.illust_relate import Ui_illust_relate
 from Pixiv_Widget.Clickable_Label import clickable_label
 from Pixiv_Thread.My_Thread import base_thread
 
+import cgitb
+cgitb.enable(format='text', logdir='log_file')
 class Illust_Relate(QFrame, Ui_illust_relate):
     one_label_is_clicked =  pyqtSignal(dict)
 
@@ -28,10 +30,10 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         temp_path = self.info['temp_path']
         illust_id = self.info['illust']['id']    # 获取相关性的作品id
 
-        illust_thread = base_thread(self, api.illust_related, illust_id=illust_id)
-        illust_thread.finish.connect(self.load_related_illust)
-        illust_thread.wait()
-        illust_thread.start()
+        self.illust_thread = base_thread(self, api.illust_related, illust_id=illust_id)
+        self.illust_thread.finish.connect(self.load_related_illust)
+        self.illust_thread.wait()
+        self.illust_thread.start()
 
     def load_related_illust(self, info):
         illusts = info['illusts']
@@ -39,16 +41,18 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         temp_path = self.info['temp_path']
         api = self.info['api']
 
+        self.get_pic_threads = {}
+
         for i in illusts:
             url = i['image_urls']['square_medium']
             title = i['title']
             file_name = str(i['id'])
-            p = base_thread(self, api.cache_pic, url=url, path=temp_path,
+            self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'title': title, 'illust': i, 'self': 'small'})
-            p.finish.connect(self.load_related_pic)
-            p.wait()
-            p.start()
+            self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
+            self.get_pic_threads[file_name].wait()
+            self.get_pic_threads[file_name].start()
 
     def load_related_pic(self, info):
         self.pic_num += 1
@@ -57,7 +61,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         api = self.info['api']
 
         url = info['url']
-        title = info['title']
+        title = info.get('title', '无题')
         file_name = info['file_name']
         tags = info['illust']['tags']
         illust_id = info['illust']['id']
@@ -69,12 +73,12 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         if pic.isNull():
             pic_num = info.get('pic_num', self.pic_num)
             url = info['url']
-            p = base_thread(self, api.cache_pic, url=url, path=temp_path,
+            self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'pic_num': pic_num, 'self': 'big'})
-            p.finish.connect(self.load_related_pic)
-            p.wait()
-            p.start()
+            self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
+            self.get_pic_threads[file_name].wait()
+            self.get_pic_threads[file_name].start()
         else:
             pic = pic.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             #['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
