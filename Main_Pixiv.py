@@ -1148,7 +1148,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.text_scroll.setVisible(False)
         self.bigPicScrollArea.setVisible(False)
         self.infoFrame.user_pic_label.setVisible(False)
-        self.comment_widget.setVisible(False)
+        if hasattr(self, 'comment_widget'):
+            self.comment_widget.setVisible(False)
         # self.bigReloadButton.setVisible(False)
         # self.table.setVisible(False)
         # self.infoFrame.escapeDownloadPageButton.setVisible(False)
