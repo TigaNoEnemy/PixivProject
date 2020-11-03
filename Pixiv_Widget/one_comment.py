@@ -10,7 +10,8 @@ from datetime import datetime
 from Pixiv_Thread.My_Thread import base_thread
 from qtcreatorFile.oneComment import Ui_oneComment
 
-
+import cgitb
+cgitb.enable(format='text', logdir='log_file')
 class One_Comment(QFrame, Ui_oneComment):
     """info包含整个comment（dict）、api、temp_path"""
     def __init__(self, parent, info, *args, **kwargs):
@@ -51,11 +52,11 @@ class One_Comment(QFrame, Ui_oneComment):
         temp_path = self.info['temp_path']
 
         file_name = f"user_{uid}_pic"
-        load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
+        self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
                                            path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-        load_user_head_thread.finish.connect(self.load_user_head)
-        load_user_head_thread.wait()
-        load_user_head_thread.start()
+        self.load_user_head_thread.finish.connect(self.load_user_head)
+        self.load_user_head_thread.wait()
+        self.load_user_head_thread.start()
 
     def load_user_head(self, info):
         api = self.info['api']
@@ -72,11 +73,11 @@ class One_Comment(QFrame, Ui_oneComment):
                 os.remove(file)
             except:
                 pass
-            load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
+            self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
                                            path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-            load_user_head_thread.finish.connect(self.load_user_head)
-            load_user_head_thread.wait()
-            load_user_head_thread.start()
+            self.load_user_head_thread.finish.connect(self.load_user_head)
+            self.load_user_head_thread.wait()
+            self.load_user_head_thread.start()
 
         else:
             user_head = user_head.scaled(self.user_pic_label.width(), self.user_pic_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
