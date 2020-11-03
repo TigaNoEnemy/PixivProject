@@ -22,7 +22,7 @@ class base_thread(QThread):
     """docstring for DownloadThread"""
     finish = pyqtSignal(dict)
     none_finish = pyqtSignal()
-    thread_pool = 5     # 特定线程限制在thread_pool个
+    thread_pool = 1     # 特定线程限制在thread_pool个
 
     def __init__(self, parent, method, info={}, **argv):
         super(base_thread, self).__init__(parent)

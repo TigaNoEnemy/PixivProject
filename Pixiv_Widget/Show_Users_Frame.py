@@ -144,10 +144,8 @@ class show_users_frame(QFrame):
         illusts = user['illusts']
         temp_file_name = f"user_{user_id}"
 
-        username_lenth = len(username)
-        usernameLabel_h = self.usernameLabel.height()
-        self.usernameLabel.resize(username_lenth*12, usernameLabel_h)
         self.usernameLabel.setText(username)
+        self.usernameLabel.adjustSize()
 
         file = f"{temp_path}/{temp_file_name}"
         info = {

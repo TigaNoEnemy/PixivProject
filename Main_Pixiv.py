@@ -28,6 +28,8 @@ from utils.Project_Setting import setting
 from Pixiv_Widget.Pixiv_Login import app_login
 from Pixiv_Widget.Search_Frame import search_frame
 from Pixiv_Widget.comment_widget import Comment_Widget
+from Pixiv_Widget.illust_relate import Illust_Relate
+from Pixiv_Widget.My_Widget import Scroll_Widget
 
 cgitb.enable(format='text', logdir='log_file')
 
@@ -898,7 +900,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             sip.delete(self.scrollAreaWidgetContents_3)
             ###
             ### 重建scrollArea里的QWidget
-            self.scrollAreaWidgetContents_3 = QWidget()
+            self.scrollAreaWidgetContents_3 = Scroll_Widget()
             self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
             self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
 
@@ -944,6 +946,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.comment_widget.resize(self.comment_widget.width(), self.bigPicScrollArea.height())
         self.comment_widget.show()
         self.infoFrame.raise_()
+
+        # 创建作品相关区
+        info = {'api': self.api, 'illust': illust, 'temp_path': self.temp_path}
+        self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
+        smallFrame_w = self.SmallFrame.width()
+        self.illust_related_frame.move(
+            (smallFrame_w - 360 - 620) // 2, self.scrollAreaWidgetContents_3.height())
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744)
+        self.illust_related_frame.one_label_is_clicked.connect(self.show_big_pic)
+        #self.illust_related_frame.setStyleSheet('background-color: rgb(231, 195, 188)')
+        self.illust_related_frame.show()
+        ###
+
 
     #@profile
     def load_user_head(self, info):
@@ -1000,14 +1015,16 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         }
 
         self.bigFrames[file_name] = big_pic_frame(self.scrollAreaWidgetContents_3, info=info)
+        self.bigFrames[file_name].image_load_completly.connect(self.scrollAreaWidgetContents_3.adjust_size)
 
         self.bigFrames[file_name].double_click.connect(self.show_original_pic)
 
         self.bigFrames[file_name].show()
         smallFrame_w = self.SmallFrame.width()
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, (self.big_pic + 1) * 611 + 10)
-        self.bigFrames[file_name].setGeometry(
-            QRect((self.scrollAreaWidgetContents_3.width() - 620) // 2, self.big_pic * 611, 620, 611))
+        self.bigFrames[file_name].move(
+            (smallFrame_w - 360 - 620) // 2, self.scrollAreaWidgetContents_3.height())
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.bigFrames[file_name].height() + self.scrollAreaWidgetContents_3.height() + 5)
+    
         self.big_pic += 1
 
     def show_original_pic(self, info):
@@ -1238,11 +1255,12 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.table.resize(smallFrame_w, height - 80)
 
         self.bigPicScrollArea.resize(smallFrame_w-340, height - 80)
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.big_pic * 611)
-        for i in self.bigFrames:
-            bigFrame_x = (self.scrollAreaWidgetContents_3.width() - self.bigFrames[i].width()) // 2
-            y = self.bigFrames[i].y()
-            self.bigFrames[i].move(bigFrame_x, y)
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height())
+        for i in self.scrollAreaWidgetContents_3.children():
+            bigFrame_x = (self.scrollAreaWidgetContents_3.width() - i.width()) // 2
+            y = i.y()
+            i.move(bigFrame_x, y)
+
 
         # 调整评论区
         if hasattr(self, 'comment_widget'):

@@ -46,6 +46,17 @@ class my_widget(QWidget):
 
         self.update()
 
+class Scroll_Widget(QWidget):
+    """docstring for Scroll_Widget"""
+    def adjust_size(self):
+        height = 0
+        for i in self.children():
+            i.move(i.x(), height)
+            height += i.height()
+            height += 5
+        self.resize(self.width(), height)
+        
+
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication

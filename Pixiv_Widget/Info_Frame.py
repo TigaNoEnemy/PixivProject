@@ -158,8 +158,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         except:
             pass
         self.authText.clicked.connect(self.main.simulateSearch)
-        auth_text_h = self.authText.height()
-        self.authText.resize(len(f'作者：{illust["user"]["name"]}') * 12, auth_text_h)
+        self.authText.adjustSize()
 
         self.text_scroll.clear()
         self.text_scroll.setText(illust['caption'])

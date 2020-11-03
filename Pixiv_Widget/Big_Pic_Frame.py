@@ -24,6 +24,7 @@ class big_pic_frame(QFrame):
     double_click = pyqtSignal(dict)   # 双击显示原图
     # click = pyqtSignal()          # 单击重载图片
     # timer = QTimer()
+    image_load_completly = pyqtSignal()
 
     def __init__(self, parent, info):
         super(big_pic_frame, self).__init__(parent)
@@ -159,20 +160,30 @@ class big_pic_frame(QFrame):
 
 
         self.picture = QPixmap(temp_file)
+        pic_width = self.picture.width()
+        if pic_width > 620:
+            pic_height = int(self.picture.height() / (pic_width / 620))
+            pic_width = 620
+        else:
+            pic_height = self.picture.height()
+        self.bigPicLabel.resize(pic_width, pic_height)
+        self.resize(pic_width, pic_height)
 
         if self.picture.isNull() or temp_file == timeout_pic:
             self.picture = QPixmap(timeout_pic)
             self.bigPicLabel.click.connect(lambda x: self.create_get_pic_size_thread(x, is_reload=True))
 
         self.picture = self.picture.scaled(self.bigPicLabel.width(), self.bigPicLabel.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        picture_h = self.picture.height()
-        picture_w = self.picture.width()
-        picture_x = int((620-picture_w)/2)
+        # picture_h = self.picture.height()
+        # picture_w = self.picture.width()
+        # picture_x = int((620-picture_w)/2)
 
         self.bigPicLabel.setPixmap(self.picture)
-        self.bigPicLabel.setGeometry(QRect(picture_x, 0, picture_w, picture_h))
+        #self.bigPicLabel.setGeometry(QRect(picture_x, 0, picture_w, picture_h))
         self.bigPicLabel.double_click.connect(self.pic_label_is_double_clicked)
         self.bigPicLabel.show()
+
+        self.image_load_completly.emit()
 
     def pic_label_is_double_clicked(self):
         temp_file_name = f"{self.info['temp_file_name']}_original"
