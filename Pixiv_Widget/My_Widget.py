@@ -50,14 +50,17 @@ class Scroll_Widget(QWidget):
     """docstring for Scroll_Widget"""
     def adjust_size(self):
         height = 0
+        width = self.width()
         for i in self.children():
-            i.move(i.x(), height)
+            children_x = (width - i.width()) // 2
+            i.move(children_x, height)
             if i.height() <= 10:
                 child_h = 611
             else:
                 child_h = i.height()
             height += child_h
             height += 5
+
         self.resize(self.width(), height)
         
 

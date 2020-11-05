@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 sys.path.append('.')
+import os
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSignal, QRect
@@ -36,23 +37,32 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         self.illust_thread.start()
 
     def load_related_illust(self, info):
-        illusts = info['illusts']
+        if info.get('ERROR', False):
+            self.get_relate()
 
-        temp_path = self.info['temp_path']
-        api = self.info['api']
+        else:
+            illusts = info['illusts']
 
-        self.get_pic_threads = {}
+            temp_path = self.info['temp_path']
+            api = self.info['api']
 
-        for i in illusts:
-            url = i['image_urls']['square_medium']
-            title = i['title']
-            file_name = str(i['id'])
-            self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
+            self.get_pic_threads = {}
+
+            for i in illusts:
+                url = i['image_urls']['square_medium']
+                title = i['title']
+                file_name = str(i['id'])
+
+                if os.path.exists(f"{temp_path}/{file_name}"):
+                    self.load_related_pic(info={'file_name': file_name, 'url': url, 'title': title, 'illust': i})
+
+                else:
+                    self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'title': title, 'illust': i, 'self': 'small'})
-            self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
-            self.get_pic_threads[file_name].wait()
-            self.get_pic_threads[file_name].start()
+                    self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
+                    self.get_pic_threads[file_name].wait()
+                    self.get_pic_threads[file_name].start()
 
     def load_related_pic(self, info):
         self.pic_num += 1
@@ -66,6 +76,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         tags = info['illust']['tags']
         illust_id = info['illust']['id']
 
+
         file = f"{temp_path}/{file_name}"
 
         pic = QPixmap(file)
@@ -75,7 +86,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
             url = info['url']
             self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
                                                          file_name=file_name,
-                                                         info={'file_name': file_name, 'url': url, 'pic_num': pic_num, 'self': 'big'})
+                                                         info={'file_name': file_name, 'url': url, 'title': title, 'illust': info['illust'], 'self': 'small'})
             self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
             self.get_pic_threads[file_name].wait()
             self.get_pic_threads[file_name].start()

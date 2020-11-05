@@ -138,6 +138,10 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.detail_labels['total_bookmarks'].setText(f"total_bookmarks: {illust['total_bookmarks']}")
         self.detail_labels['total_bookmarks'].setGeometry(QRect(right_label_x, 100 + 3 * 30, right_label_w, label_h))
 
+        self.detail_labels['illust_id'] = QLabel(self)
+        self.detail_labels['illust_id'].setText(f"illust_id: {illust['id']}")
+        self.detail_labels['illust_id'].setGeometry(QRect(right_label_x, 100 + 4 * 30, right_label_w, label_h))
+
         for k in self.detail_labels:
             self.detail_labels[k].setStyleSheet('background-color: rgba(255, 255, 255, 0);color: white')
             self.detail_labels[k].setWordWrap(True)
