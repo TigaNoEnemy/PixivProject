@@ -155,7 +155,7 @@ class big_pic_frame(QFrame):
                 os.remove(f"{temp_path}/{temp_file_name}")
             except:
                 pass
-            self.picture = QPixmap(f"{temp_path}/{timeout_pic}")
+            self.picture = QPixmap(timeout_pic)
 
         pic_width = self.picture.width()
         if pic_width > 620:
