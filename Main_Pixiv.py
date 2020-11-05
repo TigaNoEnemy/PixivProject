@@ -904,7 +904,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.scrollAreaWidgetContents_3 = Scroll_Widget()
             self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
             self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
-        print('5'*90)
 
         # del self.threads
         # self.threads = {}
@@ -917,7 +916,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.create_illust_detail_panel(info=info)
 
         n = 1
-        print('6'*90)
         if illust['meta_single_page']:
             file_name = f"{illust_id}_{n}"
 
@@ -936,28 +934,24 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         w = self.scrollAreaWidgetContents_3.width()
         h = self.scrollAreaWidgetContents_3.height()
         self.scrollAreaWidgetContents_3.resize(w, h + 10)
-        print('7'*90)
         ###
 
         # 重建并加载评论区
-        # try:
-        #     self.comment_widget.deleteLater()
-        #     sip.delete(self.comment_widget)
+        try:
+            self.comment_widget.deleteLater()
+            sip.delete(self.comment_widget)
 
-        # except:
-        #     pass
+        except:
+            pass
         self.comment_widget = Comment_Widget(self.SmallFrame, info={'api': self.api, 'illust': illust_id, 'temp_path': self.temp_path})
-        print('8'*90)
         self.comment_widget.move(self.bigPicScrollArea.x() + self.bigPicScrollArea.width(), self.bigPicScrollArea.y())
         self.comment_widget.resize(self.comment_widget.width(), self.bigPicScrollArea.height())
         self.comment_widget.show()
         self.infoFrame.raise_()
-        print('9'*90)
 
         # 创建作品相关区
         info = {'api': self.api, 'illust': illust, 'temp_path': self.temp_path}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
-        print('10'*90)
         smallFrame_w = self.SmallFrame.width()
         self.illust_related_frame.move(
             (smallFrame_w - 360 - 620) // 2, self.scrollAreaWidgetContents_3.height())

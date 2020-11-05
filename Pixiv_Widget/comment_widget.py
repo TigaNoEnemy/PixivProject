@@ -38,33 +38,37 @@ class Comment_Widget(QFrame, Ui_commentWidget):
 
     def load_comments_widget(self, info):
         # 加载评论框架
-        comments = info['comments']
-        api = self.info['api']
-        temp_path = self.info['temp_path']
-
-        if comments:
-            for i in comments:
-                i['api'] = api
-                i['temp_path'] = temp_path
-                p = One_Comment(self.comments_scroll, info=i)
-                p.move(0, self.comment_num * p.height())
-                self.comments_scroll.resize(self.comments_scroll.width(), (self.comment_num+1) * p.height())
-                p.show()
-                self.comment_num += 1
+        if info.get('ERROR', False):
+            self.get_comment()
 
         else:
-            self.comments_scroll.resize(338, 200)
-            label = QLabel(self.comments_scroll)
-            label.setText('暂无评论')
-            label.adjustSize()
-            x = (self.comments_scroll.width() - label.width()) // 2
-            y = (self.comments_scroll.height() - label.height()) // 2
-            label.move(int(x), int(y))
-            label.setStyleSheet('color: rgb(255, 255, 255)')
-            label.show()
+            comments = info['comments']
+            api = self.info['api']
+            temp_path = self.info['temp_path']
 
-        self.comment_scrollArea.verticalScrollBar().valueChanged.connect(self.slide_down)
-        self.next_url = info['next_url']
+            if comments:
+                for i in comments:
+                    i['api'] = api
+                    i['temp_path'] = temp_path
+                    p = One_Comment(self.comments_scroll, info=i)
+                    p.move(0, self.comment_num * p.height())
+                    self.comments_scroll.resize(self.comments_scroll.width(), (self.comment_num+1) * p.height())
+                    p.show()
+                    self.comment_num += 1
+
+            else:
+                self.comments_scroll.resize(338, 200)
+                label = QLabel(self.comments_scroll)
+                label.setText('暂无评论')
+                label.adjustSize()
+                x = (self.comments_scroll.width() - label.width()) // 2
+                y = (self.comments_scroll.height() - label.height()) // 2
+                label.move(int(x), int(y))
+                label.setStyleSheet('color: rgb(255, 255, 255)')
+                label.show()
+
+            self.comment_scrollArea.verticalScrollBar().valueChanged.connect(self.slide_down)
+            self.next_url = info['next_url']
 
     def slide_down(self, new_value):
         m = self.comment_scrollArea.verticalScrollBar().maximum()

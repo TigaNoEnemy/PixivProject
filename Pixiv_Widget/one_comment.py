@@ -52,11 +52,15 @@ class One_Comment(QFrame, Ui_oneComment):
         temp_path = self.info['temp_path']
 
         file_name = f"user_{uid}_pic"
-        self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
-                                           path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-        self.load_user_head_thread.finish.connect(self.load_user_head)
-        self.load_user_head_thread.wait()
-        self.load_user_head_thread.start()
+        if os.path.exists(f"{temp_path}/{file_name}"):
+            self.load_user_head(info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
+
+        else:
+            self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
+                                               path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
+            self.load_user_head_thread.finish.connect(self.load_user_head)
+            self.load_user_head_thread.wait()
+            self.load_user_head_thread.start()
 
     def load_user_head(self, info):
         api = self.info['api']

@@ -27,7 +27,6 @@ class base_thread(QThread):
     def __init__(self, parent, method, info={}, **argv):
         super(base_thread, self).__init__()
         self.method = method
-        print(self.method, '**********************')
         self.argv = argv
         self.info = info
         self.parent = parent
