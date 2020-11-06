@@ -82,6 +82,10 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         pic = QPixmap(file)
 
         if pic.isNull():
+            try:
+                os.remove(file)
+            except:
+                pass
             pic_num = info.get('pic_num', self.pic_num)
             url = info['url']
             self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
