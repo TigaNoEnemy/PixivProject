@@ -18,7 +18,7 @@ class Ui_small_pic_frame(object):
         small_pic_frame.setStyleSheet("")
         self.frame = QtWidgets.QFrame(small_pic_frame)
         self.frame.setGeometry(QtCore.QRect(0, 0, 240, 411))
-        self.frame.setStyleSheet("background-color: rgba(122, 122, 122, 150);")
+        self.frame.setStyleSheet("background-color: rgba(122, 122, 122, 0);")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")

@@ -911,8 +911,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         # del self.bigFrames
         # self.bigFrames = {}
 
-        file_name = f'user_{illust["user"]["id"]}_pic'
-        info = {"illust": illust, "api": self.api, "file_name": file_name}
+        info = {"illust": illust, "api": self.api}
         self.infoFrame.create_illust_detail_panel(info=info)
 
         n = 1

@@ -136,3 +136,5 @@ pixivTmp/
 *.jpg
 
 *.json
+
+*.autosave

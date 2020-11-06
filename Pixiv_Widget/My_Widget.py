@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget, QLabel
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPixmap
+
+import sys
+sys.path.append('.')
+from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -62,6 +67,93 @@ class Scroll_Widget(QWidget):
             height += 5
 
         self.resize(self.width(), height)
+
+class Show_Head_Label(QLabel):
+    def __init__(self, parent=None, info={}, *args, **kwargs):
+        super(Show_Head_Label, self).__init__(parent)
+        self.info = info
+        #self.check_info()
+        self.is_loading = True
+        self.is_loading = True
+        self.rotate = 90
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.change_rotate)
+        self.timer.start(5)
+
+    def check_info(self):
+        key = ['url', 'temp_path', 'user_id', 'api']
+        need_key = []
+        need_not_key = []
+        for i in self.info:
+            if i not in key:
+                need_not_key.append(i)
+        for i in key:
+            if i not in self.info:
+                need_key.append(i)
+        if (need_key or need_not_key) and 'test' not in self.info:
+            print(self.info)
+            raise KeyError(f"{str(self)} doesn't need {need_not_key} and need {need_key}")
+
+    def change_rotate(self):
+        self.rotate += 1
+
+    def get_head(self):
+        url = self.info['url']
+        temp_path = self.info['temp_path']
+        api = self.info['api']
+        file_name = f"user_{self.info['user_id']}_pic"
+
+        self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file_name': file_name})
+        self.get_head_thread.finish.connect(self.load_head)
+        self.get_head_thread.wait()
+        self.get_head_thread.start()
+
+    def load_head(self, info):
+        if info.get('ERROR', False):
+            self.get_head()
+            return
+        url = self.info['url']
+        temp_path = self.info['temp_path']
+        api = self.info['api']
+
+        file_name = info['file_name']
+
+        file = f"{temp_path}/{file_name}"
+        print(file)
+        picture = QPixmap(file)
+        if picture.isNull():
+            self.get_head()
+        else:
+            picture = picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.setPixmap(picture)
+            print('show')
+            self.is_loading = False
+
+    def paintEvent(self,qevent):
+        from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
+        from PyQt5.QtCore import QRectF, Qt
+
+        if self.is_loading:
+            width = self.width()
+            height = self.height()
+            load_x = width/2//2
+            load_y = height/2//2
+
+            painter = QPainter(self)
+            painter.setPen(Qt.NoPen)
+            painter.setRenderHints(QPainter.Antialiasing)
+            painter.setBrush(QBrush(QColor(255, 255, 255)))
+            painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
+
+            pen = QPen()
+            pen.setColor(QColor("#5481FF"))
+            pen.setWidth(3)
+            painter.setPen(pen)
+            painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
+        else:
+            self.timer.stop()
+
+        self.update()
         
 
 if __name__ == '__main__':
@@ -69,7 +161,8 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
-    a = my_widget()
-    a.set_loading(True)
+    key = ['url', 'temp_path', 'user_id', 'api']
+    a = Show_Head_Label(info=key)
+    a.resize(100, 100)
     a.show()
     sys.exit(app.exec_())
