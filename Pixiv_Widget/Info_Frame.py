@@ -66,7 +66,15 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.showDetail = True
         return
 
+    def rebuild_all_children(self):
+        for i in self.children():
+            i.deleteLater()
+            sip.delete(i)
+        self.setupUi(self)
+
     def create_illust_detail_panel(self, info):
+        self.rebuild_all_children()
+
         import os
 
         temp_path = self.info['temp_path']
