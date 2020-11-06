@@ -3,17 +3,20 @@
 from PyQt5 import sip
 from PyQt5.QtCore import QRect, QPropertyAnimation
 
-from qtcreatorFile import info_frame_1
 from PyQt5.QtWidgets import QFrame, QLabel
 
-from .My_Label import my_label
-from .Text_Scroll import text_scroll
+import sys
+sys.path.append('.')
+from qtcreatorFile import info_frame_1
+from Pixiv_Widget.My_Label import my_label
+from Pixiv_Widget.Text_Scroll import text_scroll
+from Pixiv_Widget.My_Widget import Show_Head_Label
 from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class info_frame(QFrame, info_frame_1.Ui_Frame):
-    def __init__(self, parent, main, info={}):
+    def __init__(self, parent=None, main=None, info={}):
         super(info_frame, self).__init__(parent)
         self.showDetail = False
         self.main = main
@@ -70,7 +73,6 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
 
         api = info['api']
         illust = info['illust']
-        file_name = info['file_name']
 
         right_label_w = 481  # 右边的作品详情，关于时间之类的
         label_h = 24
@@ -167,58 +169,8 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.text_scroll.clear()
         self.text_scroll.setText(illust['caption'])
 
-        if os.path.exists(f'{temp_path}/{file_name}'):
-            print('user_head is exists.')
-            self.load_user_head(
-                info={"file_name": file_name, 'isSuccess': True, 'url': illust['user']['profile_image_urls']['medium'],
-                      'api': api})
-        else:
-            self.baseThread = base_thread(self, api.cache_pic,
-                                                     url=illust['user']['profile_image_urls']['medium'],
-                                                     path=temp_path, file_name=file_name,
-                                                     info={'file_name': file_name,
-                                                           'url': illust['user']['profile_image_urls']['medium'],
-                                                            'row': 1022, 'api': api})
-            self.baseThread.finish.connect(self.load_user_head)
-            self.baseThread.wait()
-            self.baseThread.start()
-
-    def load_user_head(self, info):
-        from PyQt5.QtGui import QPixmap
-        from PyQt5.QtCore import Qt
-        import os
-
-        temp_path = self.info['temp_path']
-        timeout_pic = self.info['timeout_pic']
-        
-        label = self.user_pic_label
-        url = info['url']
-        file_name = info['file_name']
-        api = info['api']
-
-
-        if info['isSuccess']:
-            file = f"{temp_path}/{file_name}"
-        else:
-            file = timeout_pic
-        print(file)
-        try:
-            picture = QPixmap(file).scaled(label.width(), label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            if picture.isNull():
-                try:
-                    os.remove(file)
-                except:
-                    pass
-                self.baseThread = base_thread(self, api.cache_pic, url=url, path=temp_path,
-                                                         file_name=file_name,
-                                                         info={'file_name': file_name, 'url': url, 'row': 1062, 'api': api})
-                self.baseThread.finish.connect(self.load_user_head)
-                self.baseThread.wait()
-                self.baseThread.start()
-                return
-            label.setPixmap(picture)
-        except (RuntimeError, KeyError, PermissionError) as e:
-            pass
+        self.user_pic_label.info = {'user_id': illust['user']['id'],'url': illust['user']['profile_image_urls']['medium'], 'api': api, 'temp_path': temp_path}
+        self.user_pic_label.get_head()
 
     def hide_illust_detail(self):
         infoFrame_h_differ = 200
@@ -274,10 +226,34 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
-    import sys
+    from utils.Process_Token import login_info_parser
+    from Pixiv_Api.My_Api import my_api
 
+    class temp_class:
+        def search_illust(self, x, search_target='exact_match_for_tags'):
+            pass
+        def saveOriginalPic(self, x):
+            pass
+        def returnSmallPic(self):
+            pass
+        def simulateSearch(self):
+            pass
+
+    cfg = login_info_parser()
+    info = cfg.get_token()
+
+    l = my_api()
+    l.require_appapi_hosts('public-api.secure.pixiv.net')
+    print(0)
+    l.auth(refresh_token=info['token'])
+    illust = {'id': 56232434, 'title': 'リィネ', 'type': 'illust', 'image_urls': {'square_medium': 'https://i.pximg.net/c/540x540_10_webp/img-master/img/2016/04/07/07/36/15/56232434_p0_square1200.jpg', 'medium': 'https://i.pximg.net/c/540x540_70/img-master/img/2016/04/07/07/36/15/56232434_p0_master1200.jpg', 'large': 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2016/04/07/07/36/15/56232434_p0_master1200.jpg'}, 'caption': 'ちょっとだけお世話になったマギアブレイクというアプリが閉じたそうです。<br />４月、、、新しい何かが始まるかと思えば終わるものもあるんですね。<br />とりあえずリィネちゃんお疲れ様でした＾＾', 'restrict': 0, 'user': {'id': 1652353, 'name': 'まとけち', 'account': 'aria155-aqua', 'profile_image_urls': {'medium': 'https://i.pximg.net/user-profile/img/2019/03/11/22/48/45/15510276_e3b1036f8dc5a8c3364f7716991893db_170.jpg'}, 'is_followed': False}, 'tags': [{'name': 'マギアブレイク', 'translated_name': None}, {'name': 'リィネ', 'translated_name': None}, {'name': '超破壊!!バルバロッサ', 'translated_name': None}], 'tools': ['Photoshop'], 'create_date': '2016-04-07T07:36:15+09:00', 'page_count': 1, 'width': 800, 'height': 1107, 'sanity_level': 2, 'x_restrict': 0, 'series': None, 'meta_single_page': {'original_image_url': 'https://i.pximg.net/img-original/img/2016/04/07/07/36/15/56232434_p0.png'}, 'meta_pages': [], 'total_view': 11377, 'total_bookmarks': 624, 'is_bookmarked': False, 'visible': True, 'is_muted': False}
+
+    #info = {"illust": illust, "api": l}
+    info = {'temp_path': '.'}
+    m = temp_class()
     app = QApplication(sys.argv)
-    a = info_frame(None)
-    a.text_scroll.setText(f'{"f"*1000}')
+    a = info_frame(info=info, main=m)
+    a.create_illust_detail_panel(info={"illust": illust, "api": l})
+    #a.text_scroll.setText(f'{"f"*1000}')
     a.show()
     sys.exit(app.exec_())
