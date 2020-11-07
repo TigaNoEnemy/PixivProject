@@ -22,7 +22,7 @@ class Ui_oneComment(object):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.user_pic_label = QtWidgets.QLabel(self.frame)
+        self.user_pic_label = Show_Head_Label(self.frame)
         self.user_pic_label.setGeometry(QtCore.QRect(10, 10, 50, 50))
         self.user_pic_label.setStyleSheet("color: rgb(255, 255, 255);")
         self.user_pic_label.setText("")
@@ -59,3 +59,4 @@ class Ui_oneComment(object):
         _translate = QtCore.QCoreApplication.translate
         oneComment.setWindowTitle(_translate("oneComment", "Form"))
         self.label.setText(_translate("oneComment", "<hr>"))
+from Pixiv_Widget.My_Widget import Show_Head_Label

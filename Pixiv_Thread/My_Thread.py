@@ -23,13 +23,13 @@ class base_thread(QThread):
     finish = pyqtSignal(dict)
     none_finish = pyqtSignal()
     thread_pool = 5     # 特定线程限制在thread_pool个
+    root = None
 
     def __init__(self, parent, method, info={}, **argv):
-        super(base_thread, self).__init__()
+        super(base_thread, self).__init__(self.root)
         self.method = method
         self.argv = argv
         self.info = info
-        self.parent = parent
 
     #@profile
     def run(self):

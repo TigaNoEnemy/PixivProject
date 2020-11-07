@@ -12,20 +12,20 @@ class my_label(QLabel):
     def __init__(self, parent, info={}):
         super(my_label, self).__init__(parent)
         self.info = info # tag、text，text用于显示，tag用于app逻辑处理
-        self.check_info()
+    #     self.check_info()
 
-    def check_info(self):
-        key = ['text', 'tag']
-        need_key = []
-        need_not_key = []
-        for i in self.info:
-            if i not in key:
-                need_not_key.append(i)
-        for i in key:
-            if i not in self.info:
-                need_key.append(i)
-        if need_key or need_not_key:
-            raise KeyError(f"my_label doesn't need {need_not_key} and lack {need_key}")
+    # def check_info(self):
+    #     key = ['text', 'tag']
+    #     need_key = []
+    #     need_not_key = []
+    #     for i in self.info:
+    #         if i not in key:
+    #             need_not_key.append(i)
+    #     for i in key:
+    #         if i not in self.info:
+    #             need_key.append(i)
+    #     if need_key or need_not_key:
+    #         raise KeyError(f"my_label doesn't need {need_not_key} and lack {need_key}")
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1:

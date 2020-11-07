@@ -37,6 +37,7 @@ class text_scroll(QTextEdit):
     def mouseReleaseEvent(self, qevent):
         self.timer.stop()
         if not self.dont_send:
+            print('send')
             self.click.emit(qevent)
         self.dont_send = False
 

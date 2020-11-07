@@ -9,6 +9,7 @@ import math
 
 from qtcreatorFile.illust_relate import Ui_illust_relate
 from Pixiv_Widget.Clickable_Label import clickable_label
+from Pixiv_Widget.My_Widget import Illust_Relate_Pic_Label
 from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
@@ -46,72 +47,82 @@ class Illust_Relate(QFrame, Ui_illust_relate):
             temp_path = self.info['temp_path']
             api = self.info['api']
 
-            self.get_pic_threads = {}
+            self.relate_labels = {}
 
             for i in illusts:
                 url = i['image_urls']['square_medium']
                 title = i['title']
                 file_name = str(i['id'])
 
-                if os.path.exists(f"{temp_path}/{file_name}"):
-                    self.load_related_pic(info={'file_name': file_name, 'url': url, 'title': title, 'illust': i})
+                #['url', 'temp_path', 'user_id', 'api']
+                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path}
 
-                else:
-                    self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
-                                                         file_name=file_name,
-                                                         info={'file_name': file_name, 'url': url, 'title': title, 'illust': i, 'self': 'small'})
-                    self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
-                    self.get_pic_threads[file_name].wait()
-                    self.get_pic_threads[file_name].start()
-
-    def load_related_pic(self, info):
-        self.pic_num += 1
-
-        temp_path = self.info['temp_path']
-        api = self.info['api']
-
-        url = info['url']
-        title = info.get('title', '无题')
-        file_name = info['file_name']
-        tags = info['illust']['tags']
-        illust_id = info['illust']['id']
+                self.relate_labels[file_name] = Illust_Relate_Pic_Label()
+                self.relate_labels[file_name].info = info
+                self.relate_labels[file_name].set_is_loading(True)
+                self.relate_labels[file_name].get_relate_pic()
 
 
-        file = f"{temp_path}/{file_name}"
 
-        pic = QPixmap(file)
+    #             if os.path.exists(f"{temp_path}/{file_name}"):
+    #                 self.load_related_pic(info={'file_name': file_name, 'url': url, 'title': title, 'illust': i})
 
-        if pic.isNull():
-            try:
-                os.remove(file)
-            except:
-                pass
-            pic_num = info.get('pic_num', self.pic_num)
-            url = info['url']
-            self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
-                                                         file_name=file_name,
-                                                         info={'file_name': file_name, 'url': url, 'title': title, 'illust': info['illust'], 'self': 'small'})
-            self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
-            self.get_pic_threads[file_name].wait()
-            self.get_pic_threads[file_name].start()
-        else:
-            pic = pic.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            #['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
-            label = clickable_label(self, info={'url': url,
-                                                      'temp_file_name': file_name,
-                                                      'title': title,
-                                                      'tags': tags,
-                                                      'illust': info['illust']})
-            label.click.connect(self.label_is_clicked)
-            pic_num = info.get('pic_num', self.pic_num)
-            label_y = (math.ceil(self.pic_num / 5) - 1) * 124 # (0/1/.../5) * 124
-            label_x = self.pic_num % 5 - 1 
-            if label_x == -1:
-                label_x = 4
-            label_x *= 124
-            label.setGeometry(QRect(label_x, label_y, 124, 124))
-            label.setPixmap(pic)
-            label.show()
+    #             else:
+    #                 self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
+    #                                                      file_name=file_name,
+    #                                                      info={'file_name': file_name, 'url': url, 'title': title, 'illust': i, 'self': 'small'})
+    #                 self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
+    #                 self.get_pic_threads[file_name].wait()
+    #                 self.get_pic_threads[file_name].start()
+
+    # def load_related_pic(self, info):
+    #     self.pic_num += 1
+
+    #     temp_path = self.info['temp_path']
+    #     api = self.info['api']
+
+    #     url = info['url']
+    #     title = info.get('title', '无题')
+    #     file_name = info['file_name']
+    #     tags = info['illust']['tags']
+    #     illust_id = info['illust']['id']
+
+
+    #     file = f"{temp_path}/{file_name}"
+
+    #     pic = QPixmap(file)
+
+    #     if pic.isNull():
+    #         try:
+    #             os.remove(file)
+    #         except:
+    #             pass
+    #         pic_num = info.get('pic_num', self.pic_num)
+    #         url = info['url']
+    #         self.get_pic_threads[file_name] = base_thread(self, api.cache_pic, url=url, path=temp_path,
+    #                                                      file_name=file_name,
+    #                                                      info={'file_name': file_name, 'url': url, 'title': title, 'illust': info['illust'], 'self': 'small'})
+    #         self.get_pic_threads[file_name].finish.connect(self.load_related_pic)
+    #         self.get_pic_threads[file_name].wait()
+    #         self.get_pic_threads[file_name].start()
+    #     else:
+    #         pic = pic.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    #         #['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
+    #         label = clickable_label(self, info={'url': url,
+    #                                                   'temp_file_name': file_name,
+    #                                                   'title': title,
+    #                                                   'tags': tags,
+    #                                                   'illust': info['illust']})
+    #         label.click.connect(self.label_is_clicked)
+    #         pic_num = info.get('pic_num', self.pic_num)
+    #         label_y = (math.ceil(self.pic_num / 5) - 1) * 124 # (0/1/.../5) * 124
+    #         label_x = self.pic_num % 5 - 1 
+    #         if label_x == -1:
+    #             label_x = 4
+    #         label_x *= 124
+    #         label.setGeometry(QRect(label_x, label_y, 124, 124))
+    #         label.setPixmap(pic)
+    #         label.show()
 
     def label_is_clicked(self, info={}):
         self.one_label_is_clicked.emit(info)

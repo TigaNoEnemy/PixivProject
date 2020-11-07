@@ -225,7 +225,7 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
     def __init__(self, parent, main, isLogout=True):
         super(app_logout, self).__init__(parent)
         self.setupUi(self)
-        self.parent = parent
+        self._parent = parent
         self.action_to_command()
         self.isLogout = isLogout
         self.main = main
@@ -239,10 +239,10 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
         self.move_self_to_center()
 
     def move_self_to_center(self):
-        parent_x = self.parent.x()
-        parent_y = self.parent.y()
-        parent_w = self.parent.width()
-        parent_h = self.parent.height()
+        parent_x = self._parent.x()
+        parent_y = self._parent.y()
+        parent_w = self._parent.width()
+        parent_h = self._parent.height()
         width = self.width()
         height = self.height()
 
@@ -256,7 +256,7 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
 
     def agree(self):
         self.close()
-        self.parent.close()
+        self._parent.close()
         self._logout()
 
     def _logout(self):
@@ -268,7 +268,7 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
             self.main()
         else:
             self.close()
-            self.parent.close()
+            self._parent.close()
 
     def disagree(self):
         self.close()
