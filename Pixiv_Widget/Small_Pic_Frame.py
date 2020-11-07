@@ -28,7 +28,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     timeout = 3
     def __init__(self, parent, info={}, test=False):
         super(small_pic_frame, self).__init__(parent)
-        self.parent = parent
         self.info = info    # info共有七个键illust、api、loading_gif(加载时的动画)、timeout_pic(加载失败时显示的图片)、temp_path(图片缓存文件夹)、start_row(创建进度条需要)、save_path(下载文件夹)
         self.rotate = 90
         self.is_loding = True

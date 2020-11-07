@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from datetime import datetime
 
 from Pixiv_Thread.My_Thread import base_thread
+from Pixiv_Widget.My_Widget import Show_Head_Label
 from qtcreatorFile.oneComment import Ui_oneComment
 
 import cgitb
@@ -39,7 +40,7 @@ class One_Comment(QFrame, Ui_oneComment):
         self.time_label.adjustSize()
         self.comment_text.insertPlainText(comment)
         #self.comment_text.resize(self.comment_text.width(), 23)
-        print(self.comment_text.verticalScrollBar().isVisible(), '='*90)
+        # print(self.comment_text.verticalScrollBar().isVisible(), '='*90)
         # while self.comment_text.verticalScrollBar().isVisible():
         #     self.comment_text.resize(self.comment_text.width(), self.comment_text.height()+2)
         #     if self.self.comment_text.height() >= 300:
@@ -51,42 +52,51 @@ class One_Comment(QFrame, Ui_oneComment):
         api = self.info['api']
         temp_path = self.info['temp_path']
 
-        file_name = f"user_{uid}_pic"
-        if os.path.exists(f"{temp_path}/{file_name}"):
-            self.load_user_head(info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
+        self.user_pic_label.info = {'url': user_head_url, 'temp_path': temp_path, 'user_id': uid, 'api': api}
+        self.user_pic_label.set_is_loading(True)
+        self.user_pic_label.get_head()
 
-        else:
-            self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
-                                               path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-            self.load_user_head_thread.finish.connect(self.load_user_head)
-            self.load_user_head_thread.wait()
-            self.load_user_head_thread.start()
+    #     user_head_url = self.info['user']['profile_image_urls']['medium']
+    #     uid = self.info['user']['id']
+    #     api = self.info['api']
+    #     temp_path = self.info['temp_path']
 
-    def load_user_head(self, info):
-        api = self.info['api']
+    #     file_name = f"user_{uid}_pic"
+    #     if os.path.exists(f"{temp_path}/{file_name}"):
+    #         self.load_user_head(info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
 
-        user_head_url = info['url']
-        file_name = info['file_name']
-        temp_path = info['temp_path']
+    #     else:
+    #         self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
+    #                                            path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
+    #         self.load_user_head_thread.finish.connect(self.load_user_head)
+    #         self.load_user_head_thread.wait()
+    #         self.load_user_head_thread.start()
 
-        file = f"{temp_path}/{file_name}"
+    # def load_user_head(self, info):
+    #     api = self.info['api']
 
-        user_head = QPixmap(file)
-        if user_head.isNull():
-            try:
-                os.remove(file)
-            except:
-                pass
-            self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
-                                           path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-            self.load_user_head_thread.finish.connect(self.load_user_head)
-            self.load_user_head_thread.wait()
-            self.load_user_head_thread.start()
+    #     user_head_url = info['url']
+    #     file_name = info['file_name']
+    #     temp_path = info['temp_path']
 
-        else:
-            user_head = user_head.scaled(self.user_pic_label.width(), self.user_pic_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    #     file = f"{temp_path}/{file_name}"
 
-            self.user_pic_label.setPixmap(user_head)
+    #     user_head = QPixmap(file)
+    #     if user_head.isNull():
+    #         try:
+    #             os.remove(file)
+    #         except:
+    #             pass
+    #         self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
+    #                                        path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
+    #         self.load_user_head_thread.finish.connect(self.load_user_head)
+    #         self.load_user_head_thread.wait()
+    #         self.load_user_head_thread.start()
+
+    #     else:
+    #         user_head = user_head.scaled(self.user_pic_label.width(), self.user_pic_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+    #         self.user_pic_label.setPixmap(user_head)
 
 
         

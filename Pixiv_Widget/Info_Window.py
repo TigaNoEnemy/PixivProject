@@ -11,7 +11,7 @@ class _info_window(QMainWindow, info_window_1.Ui_MainWindow):
     closed = pyqtSignal()
     def __init__(self, parent):
         super(_info_window, self).__init__()
-        self.parent = parent
+        self._parent = parent
         self.setupUi(self)
         self.setFixedSize(self.width(), self.height())
         self.command_to_action()
@@ -32,10 +32,10 @@ class _info_window(QMainWindow, info_window_1.Ui_MainWindow):
                 i.move(child_new_x, child_y)
 
     def move_self_to_center(self):
-        parent_x = self.parent.x()
-        parent_y = self.parent.y()
-        parent_w = self.parent.width()
-        parent_h = self.parent.height()
+        parent_x = self._parent.x()
+        parent_y = self._parent.y()
+        parent_w = self._parent.width()
+        parent_h = self._parent.height()
         width = self.width()
         height = self.height()
 

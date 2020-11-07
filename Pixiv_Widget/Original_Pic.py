@@ -18,9 +18,8 @@ class original_pic(QMainWindow):
 
     def __init__(self, parent=None, info={}):
         super(original_pic, self).__init__()
-        #self.parent = parent
         self.info = info
-        self.parent = parent
+        self._parent = parent
         self.is_loading = True
         self.original_pic_size = 1
         self.check_info()
@@ -29,10 +28,10 @@ class original_pic(QMainWindow):
         self.move_self_to_center()
 
     def move_self_to_center(self):
-        parent_x = self.parent.x()
-        parent_y = self.parent.y()
-        parent_w = self.parent.width()
-        parent_h = self.parent.height()
+        parent_x = self._parent.x()
+        parent_y = self._parent.y()
+        parent_w = self._parent.width()
+        parent_h = self._parent.height()
         width = self.width()
         height = self.height()
 

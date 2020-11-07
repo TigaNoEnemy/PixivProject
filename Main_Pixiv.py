@@ -37,6 +37,7 @@ cgitb.enable(format='text', logdir='log_file')
 class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def __init__(self, api, user_id, username, user_pic_link):
         super(main_pixiv, self).__init__()
+        base_thread.root = self
         self.api = api
         self.get_setting()
         self.setMinimumSize(917, 660 - 52)

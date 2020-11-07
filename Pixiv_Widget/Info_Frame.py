@@ -2,14 +2,13 @@
 # -*- coding:utf-8 -*-
 from PyQt5 import sip
 from PyQt5.QtCore import QRect, QPropertyAnimation
-
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFrame, QLabel
 
 import sys
 sys.path.append('.')
 from qtcreatorFile import info_frame_1
 from Pixiv_Widget.My_Label import my_label
-from Pixiv_Widget.Text_Scroll import text_scroll
 from Pixiv_Widget.My_Widget import Show_Head_Label
 from Pixiv_Thread.My_Thread import base_thread
 
@@ -22,16 +21,17 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.main = main
         self.info = info
         self.setupUi(self)
-        authText_geometry = self.authText.geometry()
-        self.authText.deleteLater()
-        sip.delete(self.authText)
-        self.authText = my_label(self, info={'tag': '', 'text':''})
-        self.authText.setGeometry(authText_geometry)
-        self.authText.setStyleSheet('color: rgb(255, 255, 255)')
-        self.titleText.setStyleSheet('color: rgb(255, 255, 255)')
-        self.text_scroll = text_scroll(self)
+        # authText_geometry = self.authText.geometry()
+        # self.authText.deleteLater()
+        # sip.delete(self.authText)
+        self.authText.info={'tag': '', 'text':''}
+        # self.authText.setGeometry(authText_geometry)
+        # self.authText.setStyleSheet('color: rgb(255, 255, 255)')
+        # self.titleText.setStyleSheet('color: rgb(255, 255, 255)')
+        # self.text_scroll = text_scroll(self)
+        # print(self.text_scroll.pos(), self.text_scroll.size())
         self.text_scroll.click.connect(self.mouseReleaseEvent)
-        self.setStyleSheet('background-color: rgb(32,32, 34)')
+        # self.setStyleSheet('background-color: rgb(32,32, 34)')
 
     def show_illust_detail(self):
         from PyQt5.Qt import QPropertyAnimation
@@ -66,14 +66,8 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.showDetail = True
         return
 
-    def rebuild_all_children(self):
-        for i in self.children():
-            i.deleteLater()
-            sip.delete(i)
-        self.setupUi(self)
-
     def create_illust_detail_panel(self, info):
-        self.rebuild_all_children()
+        self.user_pic_label.set_is_loading(True)
 
         import os
 
@@ -264,4 +258,5 @@ if __name__ == '__main__':
     a.create_illust_detail_panel(info={"illust": illust, "api": l})
     #a.text_scroll.setText(f'{"f"*1000}')
     a.show()
+    print(a.parent())
     sys.exit(app.exec_())

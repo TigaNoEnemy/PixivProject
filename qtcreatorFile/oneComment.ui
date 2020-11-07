@@ -32,7 +32,7 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QLabel" name="user_pic_label">
+   <widget class="Show_Head_Label" name="user_pic_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -121,6 +121,13 @@ color: rgb(147, 147, 147);</string>
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Show_Head_Label</class>
+   <extends>QLabel</extends>
+   <header>Pixiv_Widget.My_Widget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Frame</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(29, 23, 31);</string>
+  </property>
   <widget class="Show_Head_Label" name="user_pic_label">
    <property name="geometry">
     <rect>
@@ -29,7 +32,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="authText">
+  <widget class="my_label" name="authText">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -39,7 +42,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 255);
+    <string notr="true">background-color: rgba(255, 255, 255, 0);
 color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
@@ -107,7 +110,7 @@ color: rgb(255, 255, 255);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 255);
+    <string notr="true">background-color: rgba(255, 255, 255, 0);
 color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
@@ -117,12 +120,36 @@ color: rgb(255, 255, 255);</string>
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="text_scroll" name="text_scroll">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>0</y>
+     <width>521</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);</string>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>Show_Head_Label</class>
    <extends>QLabel</extends>
    <header>Pixiv_Widget.My_Widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>my_label</class>
+   <extends>QLabel</extends>
+   <header>Pixiv_Widget.My_Label.h</header>
+  </customwidget>
+  <customwidget>
+   <class>text_scroll</class>
+   <extends>QTextEdit</extends>
+   <header>Pixiv_Widget.Text_Scroll.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

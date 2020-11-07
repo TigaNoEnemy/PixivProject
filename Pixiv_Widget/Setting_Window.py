@@ -14,7 +14,7 @@ class setting_window(QMainWindow, settings_window.Ui_MainWindow):
     _closed = pyqtSignal(dict)
     def __init__(self, parent, info):
         super(setting_window, self).__init__(parent)
-        self.parent = parent
+        self._parent = parent
         self.setupUi(self)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.scrollAreaWidgetContents.resize(798, 1000)
@@ -129,8 +129,8 @@ class setting_window(QMainWindow, settings_window.Ui_MainWindow):
     def closeEvent(self, qevent):
         self.set_user_settings()
         per_row_pic_num = self._setting['per_row_pic_num']
-        h = self.parent.height()
-        self.parent.resize(240*per_row_pic_num+200, h)
+        h = self._parent.height()
+        self._parent.resize(240*per_row_pic_num+200, h)
         setting = self._setting
         self._closed.emit(setting)
 

@@ -94,6 +94,12 @@ class Show_Head_Label(QLabel):
     #         print(self.info)
     #         raise KeyError(f"{str(self)} doesn't need {need_not_key} and need {need_key}")
 
+    def set_is_loading(self, value):
+        self.setPixmap(QPixmap(""))
+        self.is_loading = value
+        if value and not self.timer.isActive():
+            self.timer.start(5)
+
     def change_rotate(self):
         self.rotate += 1
 
@@ -163,6 +169,50 @@ class Show_Head_Label(QLabel):
                 self.timer.stop()
 
         self.update()
+
+class Illust_Relate_Pic_Label(Show_Head_Label):
+    def get_relate_pic(self):
+        url = self.info['url']
+        temp_path = self.info['temp_path']
+        api = self.info['api']
+        file_name = self.info['illust_id']
+
+        file = f"{temp_path}/{file_name}"
+        if os.path.exists(file):
+            self.load_head({'file_name': file_name})
+
+        else:
+            self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file_name': file_name})
+            self.get_head_thread.finish.connect(self.load_head)
+            self.get_head_thread.wait()
+            self.get_head_thread.start()
+
+    def load_relate_pic(self, info):
+        temp_path = self.info['temp_path']
+        file_name = self.info['illust_id']
+        file = file = f"{temp_path}/{file_name}"
+        if info.get('ERROR', False):
+            try:
+                os.remove(file)
+            except:
+                pass
+            self.get_relate_pic()
+            return
+        url = self.info['url']
+        api = self.info['api']
+
+        file = f"{temp_path}/{file_name}"
+        self.picture = QPixmap(file)
+        if self.picture.isNull():
+            try:
+                os.remove(file)
+            except:
+                pass
+            self.get_relate_pic()
+        else:
+            self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.setPixmap(self.picture)
+            self.is_loading = False
         
 
 if __name__ == '__main__':
