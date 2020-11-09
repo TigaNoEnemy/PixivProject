@@ -950,7 +950,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.raise_()
 
         # 创建作品相关区
-        info = {'api': self.api, 'illust': illust, 'temp_path': self.temp_path}
+        info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
         self.illust_related_frame.move(

@@ -9,6 +9,7 @@ import math
 
 from qtcreatorFile.illust_relate import Ui_illust_relate
 from Pixiv_Widget.Clickable_Label import clickable_label
+from Pixiv_Widget.My_Label import Largable_Label
 from Pixiv_Widget.My_Widget import Illust_Relate_Pic_Label
 from Pixiv_Thread.My_Thread import base_thread
 
@@ -25,12 +26,12 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         self.resize(620, 744)
         self.info = info
         self.get_relate()
-        self.pic_num = 0    # 记录已加载多少张图
+        self.pic_num = 1    # 记录已加载多少张图
 
     def get_relate(self):
         api = self.info['api']
         temp_path = self.info['temp_path']
-        illust_id = self.info['illust']['id']    # 获取相关性的作品id
+        illust_id = self.info['illust_id']#['id']    # 获取相关性的作品id
 
         self.illust_thread = base_thread(self, api.illust_related, illust_id=illust_id)
         self.illust_thread.finish.connect(self.load_related_illust)
@@ -55,12 +56,14 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                 file_name = str(i['id'])
 
                 #['url', 'temp_path', 'user_id', 'api']
-                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path}
+                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api}
 
-                self.relate_labels[file_name] = Illust_Relate_Pic_Label()
-                self.relate_labels[file_name].info = info
+                self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
+                label_y = (math.ceil(self.pic_num / 5) - 1) * 124 # (0/1/.../5) * 124
+                label_x = self.pic_num % 5 - 1
                 self.relate_labels[file_name].set_is_loading(True)
                 self.relate_labels[file_name].get_relate_pic()
+                self.pic_num += 1
 
 
 
@@ -153,5 +156,6 @@ if __name__ == '__main__':
     i.setGeometry(QRect(0, 0, 620, 744))
     i.setStyleSheet('background-color: rgb(154, 240, 155)')
     i.show()
+    m.resize(i.width(), i.height())
     m.show()
     sys.exit(app.exec_())
