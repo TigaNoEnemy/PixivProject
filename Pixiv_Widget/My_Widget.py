@@ -7,6 +7,7 @@ import os
 import sys
 sys.path.append('.')
 from Pixiv_Thread.My_Thread import base_thread
+from Pixiv_Widget.My_Label import Largable_Label
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -136,6 +137,7 @@ class Show_Head_Label(QLabel):
                 os.remove(file)
             except:
                 pass
+            print(self.info)
             self.get_head()
         else:
             self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -170,7 +172,7 @@ class Show_Head_Label(QLabel):
 
         self.update()
 
-class Illust_Relate_Pic_Label(Show_Head_Label):
+class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
     def get_relate_pic(self):
         url = self.info['url']
         temp_path = self.info['temp_path']
@@ -179,11 +181,11 @@ class Illust_Relate_Pic_Label(Show_Head_Label):
 
         file = f"{temp_path}/{file_name}"
         if os.path.exists(file):
-            self.load_head({'file_name': file_name})
+            self.load_relate_pic({'file_name': file_name})
 
         else:
             self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file_name': file_name})
-            self.get_head_thread.finish.connect(self.load_head)
+            self.get_head_thread.finish.connect(self.load_relate_pic)
             self.get_head_thread.wait()
             self.get_head_thread.start()
 
@@ -210,7 +212,7 @@ class Illust_Relate_Pic_Label(Show_Head_Label):
                 pass
             self.get_relate_pic()
         else:
-            self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.picture = self.picture.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.setPixmap(self.picture)
             self.is_loading = False
         
