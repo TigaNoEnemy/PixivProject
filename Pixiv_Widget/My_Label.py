@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
 sys.path.append('.')
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel, QGraphicsDropShadowEffect
+from PyQt5.QtGui import QPixmap, QColor
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QPropertyAnimation
 
 
@@ -49,17 +49,32 @@ class Largable_Label(QLabel):
         super(Largable_Label, self).__init__(parent)
         self.animation_is_start = False
         self.info = info
+
+    def add_shadow(self):
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setOffset(0, 0) # 偏移
+        self.shadow.setBlurRadius(20)   # 阴影半径
+        self.shadow.setColor(QColor("#000000"))
+        self.setGraphicsEffect(self.shadow)
+
+    def drop_shadow(self):
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setOffset(0, 0) # 偏移
+        self.shadow.setBlurRadius(0)   # 阴影半径
+        self.shadow.setColor(QColor("#000000"))
+        self.setGraphicsEffect(self.shadow)
     
     def set_original_geometry(self, x, y, width, height):
         self.o_width = width
         self.o_height = height
         self.o_x = x
         self.o_y = y
-        self.o_center_x = x + width / 2
-        self.o_center_y = y + height / 2
 
     def enterEvent(self, qevent):
         super(Largable_Label, self).enterEvent(qevent)
+        if not hasattr(self, 'o_x'):
+            return None
+        self.raise_()
         if hasattr(self, 'animation'):
             self.animation.stop()
         old_rect = self.geometry()
@@ -73,8 +88,8 @@ class Largable_Label(QLabel):
             n_width,
             n_height
             )
-        print(f"{old_rect}>{new_rect}")
         if not self.animation_is_start:
+            self.add_shadow()
             self.resizeAnimation(old_rect, new_rect, 'larging_complete')
 
     def resizeAnimation(self, old_rect, new_rect, state):
@@ -92,6 +107,8 @@ class Largable_Label(QLabel):
 
     def leaveEvent(self, qevent):
         super(Largable_Label, self).leaveEvent(qevent)
+        if not hasattr(self, 'o_x'):
+            return None
         if hasattr(self, 'animation'):
             self.animation.stop()
         old_rect = self.geometry()
@@ -102,13 +119,16 @@ class Largable_Label(QLabel):
             self.o_height
             )
         if not self.animation_is_start:
+            self.drop_shadow()
             self.resizeAnimation(old_rect, new_rect, 'shorting_complete')
 
     def resizeEvent(self, qevent):
         super(Largable_Label, self).resizeEvent(qevent)
         width = self.width()
         height = self.height()
-        file = self.info['file']
+        temp_path = self.info['temp_path']
+        illust_id = self.info['illust_id']
+        file = f"{temp_path}/{illust_id}"
         pic = QPixmap(file)
         try:
             pic = pic.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -122,13 +142,13 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     m = QMainWindow()
     m.resize(150, 150)
-    file = '/home/minming/Desktop/人像/7.png'
+    info = {'temp_path': '/home/minming/Desktop/人像', 'illust_id': '7.png'}
     
-    a = Largable_Label(m, info={'file': file})
+    a = Largable_Label(m, info=info)
     a.resize(100, 100)
     a.move((m.width()-a.width())/2, (m.height()-a.height())/2)
     a.set_original_geometry(a.x(), a.y(), a.width(), a.height())
     #pic = pic.scaled(a.width(), a.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-
+    m.move(2000, 1000)
     m.show()
     sys.exit(app.exec_())

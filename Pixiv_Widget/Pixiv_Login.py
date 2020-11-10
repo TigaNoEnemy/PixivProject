@@ -17,6 +17,7 @@ from Pixiv_Thread.My_Thread import base_thread
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
+    login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
     def __init__(self, login_success):
         super(app_login, self).__init__()
         self.login_success = login_success
@@ -29,6 +30,9 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.widget.setStyleSheet("QWidget:{border-radius:3px}")
         self.exit_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
         self.exit_button.clicked.connect(self.close)
+        self.interrupt_login_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
+        self.interrupt_login_button.clicked.connect(self.relogin)
+        self.interrupt_login_button.setVisible(False)
         self.setFixedSize(520, 431)
         self.setWindowIcon(QIcon(self.app_icon))
         self.setWindowTitle('Pixiv')
@@ -57,6 +61,18 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.loginText.setText('程序初始化中...')
 
         self.move_self_to_center()
+        self.login_time_counter = QTimer()
+        self.login_time_counter.timeout.connect(self.provide_escape_button)
+        self.not_to_login = False   # 当为True时中断登录
+
+    def provide_escape_button(self):
+        self.login_time_counter.stop()
+        self.interrupt_login_button.setVisible(True)
+
+    def relogin(self):
+        self.not_to_login = True
+        self.interrupt_login_button.setVisible(False)
+        self.autoLogin_2.setVisible(False)
 
     def move_self_to_center(self):
         from PyQt5.QtWidgets import QDesktopWidget
@@ -113,11 +129,13 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         if 'token' in result:
             self.loginToken = result['token']
             self.auto = result['auto']
+            username = result['login_account']
+            print(username,'8888888'*8)
+            self.lineEdit.setText(username)
         elif 'is_success' in result and not result['is_success']:
             self.EXIT = app_logout(self, main=lambda: print(0), isLogout=False)
             self.EXIT.show()
             return
-        print(self.prepared_num)
         if self.prepared_num >= 3:
             self.initUi()
 
@@ -145,6 +163,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.pushButton.clicked.connect(self.startGIF)
 
     def auto_login(self):
+        self.login_time_counter.start(self.login_timeout)
         self.loginText.setText('自动登录...')
         self.autoThread = base_thread(self, self.sub_auto_login)
         self.autoThread.finish.connect(self.isLoginSuccess)
@@ -162,6 +181,9 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
             return response
 
     def isLoginSuccess(self, response):
+        if self.not_to_login:
+            self.not_to_login = False
+            return 
         if response['login']:
             if self.autoLogin.isChecked():
                 self.auto = 1
@@ -170,7 +192,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
 
             ID = int(response['response']['user']['id'])
             USER = response['response']['user']['name']
-            self.login_info_parser.update_token(pixiv_id=ID, user=USER,
+            print(self.username)
+            self.login_info_parser.update_token(pixiv_id=ID, user=USER, login_account=self.username,
                                                 access_token=response['response']['refresh_token'],
                                                 next_time_auto_login=self.auto)
             self.loginText.setText('登录成功')
@@ -178,8 +201,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
             self.timer.timeout.connect(lambda: print('=' * 90))
             self.timer.timeout.connect(self.timer.stop)
             self.timer.timeout.connect(lambda: self.login_success(self, str(ID), USER,
-                                                                  response['response']['user']['profile_image_urls'][
-                                                                      'px_50x50']))
+                                                                  response['response']['user']['profile_image_urls']['px_50x50']))
             self.timer.start(1000)
         else:
             self.loginText.setText(response['failed_text'])
@@ -189,6 +211,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
             self.timer.start(1000)
 
     def sub_login(self):
+        self.login_time_counter.start(self.login_timeout)
         self.loginText.setText('登录中...')
         self.login = base_thread(self, self._login)
         self.login.finish.connect(self.isLoginSuccess)
@@ -200,12 +223,11 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.GIF.start()
 
     def _login(self):
-        username = self.lineEdit.text()
+        self.username = self.lineEdit.text()
         password = self.lineEdit_2.text()
         try:
-            response = self.api.login(username=username, password=password)
+            response = self.api.login(username=self.username, password=password)
         except pixivpy3.utils.PixivError as e:
-            print(e)
             return {'failed_text': '账号或密码错误！', 'login': False}
         else:
             response['login'] = True

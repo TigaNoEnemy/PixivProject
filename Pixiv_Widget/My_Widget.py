@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
 import os 
@@ -173,6 +173,7 @@ class Show_Head_Label(QLabel):
         self.update()
 
 class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
+    click = pyqtSignal(dict)
     def get_relate_pic(self):
         url = self.info['url']
         temp_path = self.info['temp_path']
@@ -215,8 +216,13 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
             self.picture = self.picture.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.setPixmap(self.picture)
             self.is_loading = False
-        
 
+            self.set_original_geometry(self.x(), self.y(), self.width(), self.height())
+
+    def mouseReleaseEvent(self, qevent):
+        if qevent.button() == 1:
+            self.click.emit(self.info)
+        
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication

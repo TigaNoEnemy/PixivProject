@@ -23,7 +23,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         # info 需要 temp_path, illust_id, api
         super(Illust_Relate, self).__init__(parent, *args, **kwargs)
         self.setupUi(self)
-        self.resize(620, 744)
+        self.resize(620+24, 744+24)
         self.info = info
         self.get_relate()
         self.pic_num = 1    # 记录已加载多少张图
@@ -56,14 +56,19 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                 file_name = str(i['id'])
 
                 #['url', 'temp_path', 'user_id', 'api']
-                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api}
+                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api, 'illust': i}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
 
                 self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
-                label_y = (math.ceil(self.pic_num / 5) - 1) * 124 # (0/1/.../5) * 124
-                label_x = self.pic_num % 5 - 1
+                self.relate_labels[file_name].resize(124, 124)
+                label_y = (math.ceil(self.pic_num / 5) - 1) * 124  + 12# (0/1/.../5) * 124, 加上12是为了让放大后的图可以显示完全
+                label_x = (self.pic_num % 5) * 124 + 12 # 加上12是为了让放大后的图可以显示完全
+                self.relate_labels[file_name].move(label_x, label_y)
                 self.relate_labels[file_name].set_is_loading(True)
                 self.relate_labels[file_name].get_relate_pic()
+                self.relate_labels[file_name].click.connect(self.label_is_clicked)
+                self.relate_labels[file_name].show()
                 self.pic_num += 1
+                
 
 
 
@@ -153,9 +158,10 @@ if __name__ == '__main__':
     i = Illust_Relate(parent=m, info=_info)
     from prettyprinter import cpprint
     i.one_label_is_clicked.connect(lambda x: cpprint(x))
-    i.setGeometry(QRect(0, 0, 620, 744))
+    i.setGeometry(QRect(0, 0, 620 + 24, 744 + 24))
     i.setStyleSheet('background-color: rgb(154, 240, 155)')
     i.show()
     m.resize(i.width(), i.height())
+    m.move(2000, 1000)
     m.show()
     sys.exit(app.exec_())

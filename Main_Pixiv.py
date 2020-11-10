@@ -41,6 +41,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.api = api
         self.get_setting()
         self.setMinimumSize(917, 660 - 52)
+        #self.setMinimumSize(1257, 811)
         self.setupUi(self)
         self.infoFrame = info_frame(self.SmallFrame, main=self, info={'temp_path': self.temp_path, 'timeout_pic': self.timeout_pic})
         self.infoFrame.setGeometry(QRect(0, 730, 1041, 82))
@@ -953,9 +954,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
+        illust_related_frame_w = self.illust_related_frame.width()
         self.illust_related_frame.move(
-            (smallFrame_w - 360 - 620) // 2, self.scrollAreaWidgetContents_3.height())
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744)
+            (smallFrame_w - 360 - 644) // 2, self.scrollAreaWidgetContents_3.height())  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
+        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744 + 24) # 为相关图放大后可以完全显示而加上24（计算好的结果）
         self.illust_related_frame.one_label_is_clicked.connect(self.show_big_pic)
         #self.illust_related_frame.setStyleSheet('background-color: rgb(231, 195, 188)')
         self.illust_related_frame.show()
@@ -1362,6 +1364,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 def login_success(login, user_id, username, user_pic_link):
     global AppUi
     AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
+    AppUi.showMinimized()
     login.close()
     del (login)
 
@@ -1373,6 +1376,7 @@ def main():
     except:
         pass
     login = app_login(login_success)
+    login.move(2000, 1000)
     login.show()
 
 
