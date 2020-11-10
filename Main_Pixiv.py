@@ -1364,7 +1364,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 def login_success(login, user_id, username, user_pic_link):
     global AppUi
     AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
-    AppUi.showMinimized()
+    #AppUi.showMinimized()
     login.close()
     del (login)
 
@@ -1376,7 +1376,7 @@ def main():
     except:
         pass
     login = app_login(login_success)
-    login.move(2000, 1000)
+    #login.move(2000, 1000)
     login.show()
 
 

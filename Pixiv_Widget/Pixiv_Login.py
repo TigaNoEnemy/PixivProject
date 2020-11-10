@@ -129,9 +129,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         if 'token' in result:
             self.loginToken = result['token']
             self.auto = result['auto']
-            username = result['login_account']
-            print(username,'8888888'*8)
-            self.lineEdit.setText(username)
+            self.username = result['login_account']
+            self.lineEdit.setText(self.username)
         elif 'is_success' in result and not result['is_success']:
             self.EXIT = app_logout(self, main=lambda: print(0), isLogout=False)
             self.EXIT.show()
@@ -192,7 +191,6 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
 
             ID = int(response['response']['user']['id'])
             USER = response['response']['user']['name']
-            print(self.username)
             self.login_info_parser.update_token(pixiv_id=ID, user=USER, login_account=self.username,
                                                 access_token=response['response']['refresh_token'],
                                                 next_time_auto_login=self.auto)
