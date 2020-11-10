@@ -49,6 +49,7 @@ class Largable_Label(QLabel):
         super(Largable_Label, self).__init__(parent)
         self.animation_is_start = False
         self.info = info
+        self.setToolTip(info['illust']['title'])
 
     def add_shadow(self):
         self.shadow = QGraphicsDropShadowEffect(self)
