@@ -39,7 +39,7 @@ class login_info_parser:
         self.check_file()
         self.key = uuid.UUID(int=uuid.getnode()).hex[-8:]
 
-    def update_token(self, pixiv_id, user, access_token, next_time_auto_login):
+    def update_token(self, pixiv_id, user, login_account, access_token, next_time_auto_login):
         des_obj = des(self.key, CBC, self.key, pad=None, padmode=PAD_PKCS5)
         access_token = des_obj.encrypt(access_token, padmode=PAD_PKCS5)
         access_token = b2a_hex(access_token).decode('utf-8')
@@ -49,17 +49,23 @@ class login_info_parser:
         try:
             cur.execute('''create table USER(
                 id int primary key, 
-                pixiv_id int unique, 
+                pixiv_id int unique,
+                login_account varchar(255),
                 user varchar(255) unique, 
                 access_token varchar(255), 
                 next_time_auto_login boolean, 
                 login_time datetime
                 )''')
-        except:
-            pass
-        else:
-            cur.execute(f'insert into USER(id, pixiv_id, user, access_token, next_time_auto_login, login_time) values(1, 0, "0", "0", 0, "{_datetime}")')
-        query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id} where id=1'
+            
+        except Exception as e:
+            print(f"creat error <{e}>")
+        try:
+            cur.execute(f'insert into USER(id, pixiv_id, login_account, user, access_token, next_time_auto_login, login_time) values(1, 0, "0", "0", "0", 0, "{_datetime}")')
+        except Exception as e:
+            print(f"insert error <{e}>")
+
+        query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id}, login_account="{login_account}" where id=1'
+        print(query)
         cur.execute(query)
         cur.close()
         conn.commit()
@@ -75,15 +81,18 @@ class login_info_parser:
         except:
             token = None
             auto = False
+            login_account = ""
         else:
             try:
                 token = user_box.__next__()
             except StopIteration:
+                login_account = ""
                 token = None
                 auto = False
             else:
-                auto = token[4]
-                token = token[3].encode('utf-8')
+                auto = token[5]
+                login_account = token[2]
+                token = token[4].encode('utf-8')     
 
         cur.close()
         conn.commit()
@@ -96,7 +105,7 @@ class login_info_parser:
                     os.remove(self.login_token_file)
                 token = None
         print('Complete: get_token')
-        return {'token': token, 'auto': auto}
+        return {'token': token, 'auto': auto, 'login_account': login_account}
 
     def check_file(self):
         if not os.path.exists(self.loging_token_dir):
