@@ -15,6 +15,7 @@ class clickable_label(QLabel):
         self.double_click_time = double_click_time
         self.timer = QTimer()
         self.timer.timeout.connect(self.emit_click)
+        self.setStyleSheet("QToolTip{background-color: #000000; color: #FFFFFF; border: none}")
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1:
