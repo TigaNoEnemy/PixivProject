@@ -543,6 +543,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.rank_pic_s[title] += 1
 
             self.cache_item_box[title].pop(self.cache_item_box[title].index(i))
+        self.test()
 
     def action_to_command(self):
         # 链接操作与函数
@@ -1357,14 +1358,24 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.R18Button.setVisible(self.has_r18)
         self.ajust_cate_widget_size()
 
-    def test(self, info):
-        pass
-
+    def test(self, info=None):
+        from find import IKnowChildren
+        print('开始写入！')
+        f = open('Widget_Children.csv', 'w')
+        f.write('层级@序号@对象名@类别@x@y@w@h@子对象名@子类别@_x@_y@_w@_h@style_sheet\n')
+        f.close()
+        a = IKnowChildren()
+        for i in a.find_children(self):
+            f = open('Widget_Children.csv', 'a')
+            print(i, end='')
+            f.write(i)
+            f.close()
+        print('手工！')
 
 def login_success(login, user_id, username, user_pic_link):
     global AppUi
     AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
-    #AppUi.showMinimized()
+    AppUi.showMinimized()
     login.close()
     del (login)
 
@@ -1376,7 +1387,8 @@ def main():
     except:
         pass
     login = app_login(login_success)
-    #login.move(2000, 1000)
+    login.move(2000, 1000)
+    login.showMinimized()
     login.show()
 
 
