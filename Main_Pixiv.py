@@ -37,6 +37,7 @@ cgitb.enable(format='text', logdir='log_file')
 class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def __init__(self, api, user_id, username, user_pic_link):
         super(main_pixiv, self).__init__()
+        #self.setStyleSheet("QToolTip{background-color: #000000; color: #FFFFFF; border: none}")
         base_thread.root = self
         self.api = api
         self.get_setting()
@@ -51,8 +52,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.setWindowIcon(QIcon(self.app_icon))
         self.setWindowTitle('Pixiv')
         self.tab = {}
-        self.tabWidget.setStyleSheet(
-            "QTabWidget:pane{background-color: transparent;border:none;}\nQTabBar:tab{color:rgb(255, 255, 255); background-color: rgba(102, 206, 255, 128)}\nQTabBar:tab:selected{background-color: rgba(102, 206, 255, 255)}")
+        # self.tabWidget.setStyleSheet(
+        #     "QTabWidget:pane{background-color: transparent;border:none;}\nQTabBar:tab{color:rgb(255, 255, 255); background-color: rgba(102, 206, 255, 128)}\nQTabBar:tab:selected{background-color: rgba(102, 206, 255, 255)}")
         self.tabWidget.setTabsClosable(True)
         self.tabWidget.tabCloseRequested.connect(self.close_tab)
         self.tabWidget.currentChanged['int'].connect(self.change_tab)
@@ -133,6 +134,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
+        self.set_style()
 
     def move_self_to_center(self):
         from PyQt5.QtWidgets import QDesktopWidget
@@ -299,7 +301,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.main_window_background)))
             self.setPalette(window_pale)
         else:
-            self.setStyleSheet('background-color: rgb(0, 0, 0)')
+            #self.setStyleSheet('background-color: rgb(0, 0, 0)')
+            pass
 
     def rebuild(self, title):
         from Pixiv_Widget.My_Widget import my_widget
@@ -307,8 +310,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         h = self.tabWidget.height()
         w = self.tabWidget.width()
         self.scrollAreas[title] = QScrollArea(self.tab[title])
-        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 45))
-        self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h-25))
+        #self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scrollAreas[title].setWidgetResizable(False)
         self.scrollAreas[title].setObjectName("scrollArea")
@@ -357,14 +360,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.tabWidget.setVisible(True)
             self.tab[title] = my_widget(flag=flag)
             self.tab[title].set_loading(False)
-            self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            ##self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             self.tab[title].setObjectName("tab[title]")
 
             # h = self.tabWidget.height()
             # w = self.tabWidget.width()
             # self.scrollAreas[title] = QScrollArea(self.tab[title])
             # self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
-            # self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            # #self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             # self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             # self.scrollAreas[title].setWidgetResizable(False)
             # self.scrollAreas[title].setObjectName("scrollArea")
@@ -669,14 +672,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if title not in self.tab:
             self.tab[title] = my_widget(flag='用户')
             self.tab[title].set_loading(False)
-            self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            ##self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             self.tab[title].setObjectName("tab[title]")
             
             # h = self.tabWidget.height()
             # w = self.tabWidget.width()
             # self.scrollAreas[title] = QScrollArea(self.tab[title])
             # self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h - 32))
-            # self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+            # #self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
             # self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             # self.scrollAreas[title].setWidgetResizable(False)
             # self.scrollAreas[title].setObjectName("scrollArea")
@@ -807,21 +810,21 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def set_font_style(self):
         F = f"""color:{self.font_color}font: {self.font}"""
-        self.RankButton.setStyleSheet(F)
-        self.recommendButton.setStyleSheet(F)
-        self.logoutButton.setStyleSheet(F)
-        self.dayFemaleButton.setStyleSheet(F)
-        self.dayMaleButton.setStyleSheet(F)
-        self.dayMangaButton.setStyleSheet(F)
-        self.dayRookieButton.setStyleSheet(F)
-        self.monthButton.setStyleSheet(F)
-        self.weekButton.setStyleSheet(F)
-        self.weekOriginalButton.setStyleSheet(F)
-        self.R18Button.setStyleSheet(F)
-        self.settingsButton.setStyleSheet(F)
-        self.showDownloadButton.setStyleSheet(F)
-        self.searchButton.setStyleSheet(F)
-        self.aboutButton.setStyleSheet(F)
+        #self.RankButton.setStyleSheet(F)
+        #self.recommendButton.setStyleSheet(F)
+        #self.logoutButton.setStyleSheet(F)
+        #self.dayFemaleButton.setStyleSheet(F)
+        #self.dayMaleButton.setStyleSheet(F)
+        #self.dayMangaButton.setStyleSheet(F)
+        #self.dayRookieButton.setStyleSheet(F)
+        #self.monthButton.setStyleSheet(F)
+        #self.weekButton.setStyleSheet(F)
+        #self.weekOriginalButton.setStyleSheet(F)
+        #self.R18Button.setStyleSheet(F)
+        #self.settingsButton.setStyleSheet(F)
+        #self.showDownloadButton.setStyleSheet(F)
+        #self.searchButton.setStyleSheet(F)
+        #self.aboutButton.setStyleSheet(F)
         F = """QPushButton{color: %s}
                                   QPushButton:hover{background-color:%s; color:black}
                                   QPushButton{border:2px}
@@ -830,18 +833,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                                   QPushButton:pressed{background-color:%s}
                                   """ % (self.font_color, self.focus_color, self.press_color)
 
-        self.infoFrame.moreButton.setStyleSheet(F)
-        self.infoFrame.saveButton.setStyleSheet(F)
+        #self.infoFrame.moreButton.setStyleSheet(F)
+        #self.infoFrame.saveButton.setStyleSheet(F)
         # self.bigReloadButton.setStyleSheet(F)
-        self.infoFrame.escapeDownloadPageButton.setStyleSheet(F)
+        #self.infoFrame.escapeDownloadPageButton.setStyleSheet(F)
 
-        self.downloadTipsLabel.setStyleSheet("background-color:rgba(0,0,0,0)")
+        #self.downloadTipsLabel.setStyleSheet("background-color:rgba(0,0,0,0)")
         #self._searchButton.setStyleSheet(F)
         #self.cancelSearchButton.setStyleSheet(F)
 
         # 用户名控件样式
-        self.usernameLabel.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n"
-                                         "color: rgb(255, 255, 255);")
+        #self.usernameLabel.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n"
+        #                                 "color: rgb(255, 255, 255);")
 
     def _logout(self):
         from Pixiv_Widget.Pixiv_Login import app_logout
@@ -1278,8 +1281,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.tabWidget.resize(smallFrame_w, height - 80)
 
         for i in self.tab:
-            self.tab[i].resize(smallFrame_w, height - 112)
-            self.scrollAreas[i].resize(smallFrame_w - 3, height - 122)
+            self.tab[i].resize(smallFrame_w, height - 107)
+            self.scrollAreas[i].resize(smallFrame_w - 3, height - 105)
 
         per_row_should_pic_num = (smallFrame_w - 18) // 240  # 计算每行最多可显示多少张图(一张图占宽240)
 
@@ -1336,6 +1339,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self._search(isMoreButton=False)
             self.searchFrame.show_search_frame()
 
+        elif qevent.key() == Qt.Key_F:
+            self.test()
+
+        elif qevent.key() == Qt.Key_S:
+            self.set_style()
+
+    def set_style(self):
+        f = open('Main_Style.qss', encoding='utf-8')
+        style = f.read()
+        self.setStyleSheet(style)
+        f.close()
+        self.update()
+
     def Setting_page(self):
         info = {}
         info['big_pic_size'] = self.big_pic_size
@@ -1359,23 +1375,31 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.ajust_cate_widget_size()
 
     def test(self, info=None):
+        return 
         from find import IKnowChildren
         print('开始写入！')
-        f = open('Widget_Children.csv', 'w')
-        f.write('层级@序号@对象名@类别@x@y@w@h@子对象名@子类别@_x@_y@_w@_h@style_sheet\n')
+        import time
+        p = int(time.time())
+        k = str(p)[-3:]
+        f = open(f'Widget_Children-{k}.csv', 'w', encoding='utf-8')
+        f.write('层级@序号@对象名@类别@内存@x@y@w@h@style_sheet@子对象名@子类别@子内存@_x@_y@_w@_h@sub_style_sheet\n')
         f.close()
         a = IKnowChildren()
         for i in a.find_children(self):
-            f = open('Widget_Children.csv', 'a')
+            f = open(f'Widget_Children-{k}.csv', 'a', encoding='utf-8')
             print(i, end='')
             f.write(i)
             f.close()
         print('手工！')
+        import pandas as pd
+        
+        n = pd.read_csv(f'Widget_Children-{k}.csv', sep='@')
+        n.to_excel(f'Widget_Children-{k}.xlsx', index=0)
 
 def login_success(login, user_id, username, user_pic_link):
     global AppUi
     AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
-    AppUi.showMinimized()
+    # AppUi.showMinimized()
     login.close()
     del (login)
 
@@ -1387,8 +1411,8 @@ def main():
     except:
         pass
     login = app_login(login_success)
-    login.move(2000, 1000)
-    login.showMinimized()
+    # login.move(2000, 1000)
+    # login.showMinimized()
     login.show()
 
 

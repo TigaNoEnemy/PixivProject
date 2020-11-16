@@ -14,7 +14,7 @@ def main():
     a = text_scroll(parent=None)
     a.setText(_text)
     a.click.connect(lambda: print('发射！！'))
-    a.setStyleSheet('color: rgb(0, 0, 0);border-width:0;border-style:outset')
+    #a.setStyleSheet('color: rgb(0, 0, 0);border-width:0;border-style:outset')
     a.show()
     sys.exit(app.exec_())
 
@@ -24,7 +24,7 @@ class text_scroll(QTextEdit):
     def __init__(self, parent):
         super(text_scroll, self).__init__(parent)
         self.setReadOnly(True)
-        self.setStyleSheet('color: rgb(255, 255, 255);border-width:0;border-style:outset;')
+        #self.setStyleSheet('color: rgb(255, 255, 255);border-width:0;border-style:outset;')
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.dont_send = False
         self.timer = QTimer()

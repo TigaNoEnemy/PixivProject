@@ -159,7 +159,7 @@ if __name__ == '__main__':
     from prettyprinter import cpprint
     i.one_label_is_clicked.connect(lambda x: cpprint(x))
     i.setGeometry(QRect(0, 0, 620 + 24, 744 + 24))
-    i.setStyleSheet('background-color: rgb(154, 240, 155)')
+    #i.setStyleSheet('background-color: rgb(154, 240, 155)')
     i.show()
     m.resize(i.width(), i.height())
     m.move(2000, 1000)

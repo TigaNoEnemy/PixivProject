@@ -1,0 +1,37 @@
+app_login QWidget{
+	border-radius:3px;
+}
+
+#interrupt_login_button{
+	background-color: rgba(255, 255, 255, 0);
+	border: none;
+}
+
+#loginGIF{
+	background-color: rgb(102, 206, 255);
+}
+
+#loginText{
+	font: 20pt "Noto Sans CJK SC";
+	background-color: rgb(102, 206, 255);
+}
+
+#widget{
+	background-color: rgb(102, 206, 255);
+}
+
+#autoLogin{
+	background-color: rgb(102, 206, 255);
+}
+
+#widget #label{
+	font: 20pt "Noto Sans CJK SC"
+}
+
+#lineEdit, #lineEdit_2{
+	background-color: rgb(255, 255, 255);
+}
+
+#pushButton{
+	background-color: rgb(255, 255, 255);
+}

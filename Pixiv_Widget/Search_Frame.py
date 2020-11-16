@@ -28,8 +28,8 @@ class search_frame(QFrame, search_frame.Ui_Frame):
                                           QPushButton{padding:2px 4px}
                                           QPushButton:pressed{background-color:black}
                                           """
-        self.searchButton.setStyleSheet(F)
-        self.cancelSearchButton.setStyleSheet(F)
+        #self.searchButton.setStyleSheet(F)
+        #self.cancelSearchButton.setStyleSheet(F)
 
     def init_search_frame(self):
         target = ['标签', '画师', '作品id', '画师id']

@@ -30,7 +30,7 @@ class my_button(QPushButton):
                                   QPushButton{padding:2px 4px}
                                   QPushButton:pressed{background-color:%s}
                                   """%(FONT_COLOR, FOCUS_COLOR, PRESS_COLOR)
-        self.setStyleSheet(F)
+        #self.setStyleSheet(F)
 
     def mouseReleaseEvent(self, qevent):
         super(my_button, self).mouseReleaseEvent(qevent)
@@ -78,11 +78,11 @@ class show_users_frame(QFrame):
         self.resize(1257, 811)
         self.userHeadLabel = QLabel(self)
         self.userHeadLabel.setGeometry(QRect(30, 20, 50, 50))
-        self.userHeadLabel.setStyleSheet("background-color: rgb(255, 228, 249);")
+        #self.userHeadLabel.setStyleSheet("background-color: rgb(255, 228, 249);")
         self.userHeadLabel.setObjectName("userHeadLabel")
         self.usernameLabel = clickable_label(self, info={'user_id': user_id})
         self.usernameLabel.setGeometry(QRect(90, 50, 171, 20))
-        self.usernameLabel.setStyleSheet("background-color: rgb(175, 255, 246);")
+        #self.usernameLabel.setStyleSheet("background-color: rgb(175, 255, 246);")
         self.usernameLabel.setObjectName("usernameLabel")
         self.followButton = my_button(self)
         self.followButton.setGeometry(QRect(350, 40, 51, 30))
@@ -107,7 +107,7 @@ class show_users_frame(QFrame):
         self.friendButton.setObjectName("friendButton")
         import random
         a = tuple([random.randint(0, 255) for i in range(3)])
-        self.setStyleSheet(f"background-color: rgb{a};")
+        #self.setStyleSheet(f"background-color: rgb{a};")
         self.show()
         self.retranslateUi()
         QMetaObject.connectSlotsByName(self)
@@ -179,7 +179,7 @@ class show_users_frame(QFrame):
 
             self.label[i] = clickable_label(self, info={'illust': illusts[i]})
             self.label[i].setGeometry(QRect(30+i*250, 110, 234, 234))
-            self.label[i].setStyleSheet("background-color: rgb(232, 255, 148);")
+            #self.label[i].setStyleSheet("background-color: rgb(232, 255, 148);")
             self.label[i].setAlignment(Qt.AlignCenter)
             self.label[i].click.connect(self.show_big_pic)
             self.label[i].setObjectName("label")

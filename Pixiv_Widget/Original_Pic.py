@@ -24,7 +24,7 @@ class original_pic(QMainWindow):
         self.original_pic_size = 1
         self.check_info()
         self.setupUi()
-        self.setStyleSheet('background-color: rgb(230, 230, 230)')
+        #self.setStyleSheet('background-color: rgb(230, 230, 230)')
         self.move_self_to_center()
 
     def move_self_to_center(self):

@@ -64,7 +64,7 @@ class Comment_Widget(QFrame, Ui_commentWidget):
                 x = (self.comments_scroll.width() - label.width()) // 2
                 y = (self.comments_scroll.height() - label.height()) // 2
                 label.move(int(x), int(y))
-                label.setStyleSheet('color: rgb(255, 255, 255)')
+                #label.setStyleSheet('color: rgb(255, 255, 255)')
                 label.show()
 
             self.comment_scrollArea.verticalScrollBar().valueChanged.connect(self.slide_down)

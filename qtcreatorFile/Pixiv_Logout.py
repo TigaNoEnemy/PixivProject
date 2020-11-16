@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.centralWidget.setObjectName("centralWidget")
         self.label = QtWidgets.QLabel(self.centralWidget)
         self.label.setGeometry(QtCore.QRect(114, 50, 311, 91))
-        self.label.setStyleSheet("font: 20pt \"Noto Sans CJK SC\";")
+        #self.label.setStyleSheet("font: 20pt \"Noto Sans CJK SC\";")
         self.label.setObjectName("label")
         self.OKButton = QtWidgets.QPushButton(self.centralWidget)
         self.OKButton.setGeometry(QtCore.QRect(120, 190, 80, 26))

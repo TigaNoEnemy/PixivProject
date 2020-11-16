@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(0, 20, 421, 101))
-        self.label.setStyleSheet("font: 20pt \"Noto Sans CJK SC\";")
+        #self.label.setStyleSheet("font: 20pt \"Noto Sans CJK SC\";")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)

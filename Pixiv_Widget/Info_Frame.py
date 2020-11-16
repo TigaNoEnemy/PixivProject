@@ -147,7 +147,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.detail_labels['illust_id'].setGeometry(QRect(right_label_x, 100 + 4 * 30, right_label_w, label_h))
 
         for k in self.detail_labels:
-            self.detail_labels[k].setStyleSheet('background-color: rgba(255, 255, 255, 0);color: white')
+            #self.detail_labels[k].setStyleSheet('background-color: rgba(255, 255, 255, 0);color: white')
             self.detail_labels[k].setWordWrap(True)
             self.detail_labels[k].show()
 

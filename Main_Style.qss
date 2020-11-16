@@ -1,0 +1,536 @@
+Comment_Widget QScrollArea #comment_scrollArea{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+QFrame QCommandLinkButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QFrame QLabel#authLabel{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QLabel#downloadTipsLabel{
+	background-color:rgba(0,0,0,0);
+}
+
+
+QFrame QLabel#login_user_pic_label{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+
+QFrame QLabel#picnNumLabel{
+	background-color: rgba(122, 122, 122, 150);
+	font: 16pt "Noto Sans CJK SC";
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QLabel#textLabel{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QLabel#time_label{
+	color: rgb(209, 209, 209);
+	color: rgb(147, 147, 147);
+}
+
+
+QFrame QLabel#user_name_label{
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QLabel#usernameLabel{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QPushButton#likeButton{
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QPushButton#s_saveButton{
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame QScrollArea#bigPicScrollArea{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+QFrame Show_Head_Label#user_pic_label{
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame clickable_label#picLabel{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+
+QFrame info_frame#Frame{
+	background-color: rgb(29, 23, 31);
+}
+
+
+QFrame my_label#usernameLabel{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+QFrame search_frame#Frame{
+	background-color: rgb(25, 25, 25);
+}
+
+
+QStackedWidget my_widget#tab[title]{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+
+QWidget QCommandLinkButton#R18Button{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#RankButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#dayFemaleButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#dayMaleButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#dayMangaButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#dayRookieButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#monthButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#recommendButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#weekButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QCommandLinkButton#weekOriginalButton{
+	color:rgb(255, 255, 255);
+	font: 12pt "Noto Sans CJK SC";
+}
+
+
+QWidget QFrame#SmallFrame{
+	background-color: rgba(112, 112, 112, 100);
+}
+
+
+QWidget QFrame#frame{
+	background-color: rgba(112, 112, 112, 100);
+}
+
+
+QWidget QFrame#function_frame{
+	background-color: rgba(112, 112, 112, 100);
+}
+
+
+QWidget QLabel#bigPicLabel{
+	background-color: rgb(255, 255, 255);
+}
+
+
+QWidget QScrollArea#cate_scrollArea{
+	background-color: rgba(122, 122, 122, 50);
+}
+
+
+QWidget QWidget#comments_scroll{
+	background-color: rgba(64, 64, 64, 0);
+}
+
+
+info_frame QLabel#titleText{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+info_frame QLabel{
+	background-color: rgba(255, 255, 255, 0);
+	color: white
+}
+
+
+info_frame Show_Head_Label#user_pic_label{
+	background-color: rgb(255, 255, 255);
+}
+
+
+info_frame my_label#authText{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+}
+
+
+info_frame my_label{
+	background-color: rgba(255, 255, 255, 0);
+	color: white
+}
+
+
+info_frame text_scroll#text_scroll{
+	background-color: rgba(255, 255, 255, 0);
+	color: rgb(255, 255, 255);
+	border: none
+}
+
+
+my_widget QScrollArea#scrollArea{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(1, 213, 195);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(107, 158, 134);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(130, 157, 22);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(147, 103, 53);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(167, 216, 158);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(187, 137, 4);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(193, 124, 162);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(218, 125, 21);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(223, 35, 181);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(237, 3, 86);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(239, 193, 228);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(34, 44, 105);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(39, 243, 51);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(53, 115, 23);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(55, 199, 253);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(63, 36, 148);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(77, 13, 187);
+}
+
+
+my_widget show_users_frame#show_users_frame{
+	background-color: rgb(84, 174, 110);
+}
+
+
+my_widget small_pic_frame#small_pic_frame{
+	background-color: rgba(122,122,122,150)
+}
+
+
+search_frame QComboBox#searchComboBox{
+	color: rgb(255, 255, 255);
+	background-color: rgb(50, 50, 50);
+}
+
+
+search_frame QLineEdit#searchLineEdit{
+	color: rgb(255, 255, 255);
+	background-color: rgb(50, 50, 50);
+}
+
+
+show_users_frame QLabel#userHeadLabel{
+	background-color: rgb(255, 228, 249);
+}
+
+
+show_users_frame clickable_label#label{
+	background-color: rgb(232, 255, 148);
+}
+
+
+show_users_frame clickable_label#usernameLabel{
+	background-color: rgb(175, 255, 246);
+}
+
+QFrame QTabWidget:pane{
+	background-color: transparent;
+	border:none;
+}
+
+
+QTabBar:tab{
+	color:rgb(255, 255, 255);
+	background-color: rgba(102, 206, 255, 128);
+}
+
+QTabBar:tab:selected{
+	background-color: rgba(102, 206, 255, 255);
+}
+
+
+info_frame QPushButton{
+	color: rgb(255, 255, 255);
+	border:2px;
+	border-radius:15px;
+	padding:2px 4px
+}
+
+info_frame QPushButton:hover{
+	background-color:lightblue;
+	color:black;
+}
+
+info_frame QPushButton:pressed{
+	background-color:black
+}
+
+
+search_frame QPushButton{
+	color: rgb(255, 255, 255);
+	border:2px;
+	border-radius:15px;
+	padding:2px 4px;
+}
+
+search_frame QPushButton:hover{
+	background-color:lightblue;
+	color:black
+}
+
+search_frame QPushButton:pressed{
+	background-color:black;
+}
+
+
+TableView QHeaderView::section{
+	background-color:rgba(0, 0, 0, 0);
+	font:13pt '宋体';
+	color: white;
+}
+
+
+QToolTip{
+	background-color: #000000;
+	color: #FFFFFF;
+	border: none;
+}
+
+
+show_users_frame QPushButton{
+	color: rgb(255, 255, 255);
+	border:2px;
+	border-radius:15px;
+	padding:2px 4px;
+}
+
+show_users_frame QPushButton:hover{
+	background-color:black;
+	color:black;
+}
+
+show_users_frame QPushButton:pressed{
+	background-color:black;
+}
+
+/*以下为手动编辑*/
+
+/*用户名Label*/
+#usernameLabel{
+	background-color: rgba(255, 255, 255, 0);
+    color: rgb(255, 255, 0);
+}
+
+/*包裹左边侧栏的分类按钮的QScrollArea*/
+#cate_scrollArea{
+	background-color: rgba(122, 122, 122, 0);
+	border: none;
+}
+
+/*包裹左边侧栏的分类按钮的QScrollArea里的widget*/
+#cate_widget{
+	background-color: rgba(0, 0, 0, 0);
+}
+
+/*包裹左下角功能按钮的frame*/
+#function_frame{
+	background-color: rgba(112, 112, 112, 0);
+	border: none;
+}
+
+/*侧边所有QCommandLinkButton*/
+QCommandLinkButton{
+	background-color: rgba(112, 112, 112, 100);
+}
+
+/*右边包裹浏览小图、大图、下载详情页的frame*/
+#SmallFrame{
+	background-color: rgba(112, 112, 112, 100);
+}
+
+/*右边显示大图的ScrollArea*/
+#bigPicScrollArea{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+/*右边显示大图的ScrollArea里的widget*/
+#scrollAreaWidgetContents_3{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+#comment_scrollArea{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+/*展示评论的QTextBrowser*/
+QFrame QTextBrowser#comment_text{
+	color: rgb(255, 255, 255);
+	background-color: rgb(48, 51, 41);
+	border: none;
+}
+
+One_Comment QFrame #frame{
+	background-color: rgb(48, 51, 41);
+}
+
+/*单个评论区的最外层frame*/
+#oneComment{
+	background-color: rgb(48, 51, 41);
+}
+
+/*浏览小图中包含众多小图的widget*/
+#scrollAreaWidgetContent{
+	background-color: rgba(122, 122, 122, 0);
+}
+
+/*小图的最二层frame*/
+small_pic_frame QFrame#frame{
+	background-color: rgba(122, 122, 122, 0);
+}
+
+small_pic_frame QPushButton{
+	color: rgb(255, 255, 255);
+	border:2px;
+	border-radius:15px;
+	padding:2px 4px;
+}
+
+small_pic_frame QPushButton:hover{
+	color: rgb(0,0,0);
+	background-color: lightblue;
+	border:2px;
+	border-radius:15px;
+	padding:2px 4px;
+}
+
+/*下载页面*/
+QTableView{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+/*下载页面表头*/
+QHeaderView{
+	background-color: rgba(255, 255, 255, 0);
+}
+
+QTabWidget QWidget{
+	border: none;
+}

@@ -140,3 +140,5 @@ pixivTmp/
 *.autosave
 
 Widget_Children.csv
+
+~\$Widget_Children_all\.xlsx

@@ -27,10 +27,10 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.api = my_api()
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setupUi(self)
-        self.widget.setStyleSheet("QWidget:{border-radius:3px}")
-        self.exit_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
+        #self.widget.setStyleSheet("QWidget:{border-radius:3px}")
+        #self.exit_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
         self.exit_button.clicked.connect(self.close)
-        self.interrupt_login_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
+        #self.interrupt_login_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
         self.interrupt_login_button.clicked.connect(self.relogin)
         self.interrupt_login_button.setVisible(False)
         self.setFixedSize(520, 431)
@@ -64,6 +64,14 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.login_time_counter = QTimer()
         self.login_time_counter.timeout.connect(self.provide_escape_button)
         self.not_to_login = False   # 当为True时中断登录
+
+        self.set_style()
+
+    def set_style(self):
+        f = open('Login_Style.qss', encoding='utf-8')
+        style = f.read()
+        f.close()
+        self.setStyleSheet(style)
 
     def provide_escape_button(self):
         self.login_time_counter.stop()
@@ -155,7 +163,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
             window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.login_background)))
             self.setPalette(window_pale)
         else:
-            self.setStyleSheet('background-color: rgb(86, 86, 86)')
+            #self.setStyleSheet('background-color: rgb(86, 86, 86)')
+            pass
 
     def action_to_command(self):
         self.pushButton.clicked.connect(self.sub_login)

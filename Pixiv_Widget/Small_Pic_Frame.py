@@ -35,7 +35,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.timer.timeout.connect(self.change_rotate)
         self.check_info()
         self.setupUi(self)
-        self.setStyleSheet('background-color: rgba(122,122,122,150)')
+        #self.setStyleSheet('background-color: rgba(122,122,122,150)')
 
         self.load_pic_success = False   #当图片加载不成功时，为False，不响应点击图片的动作
         self.picLabel.click.connect(self.pic_is_clicked)

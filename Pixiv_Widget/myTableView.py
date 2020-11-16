@@ -11,7 +11,7 @@ class TableView(QtWidgets.QTableView):
         self.model = QtGui.QStandardItemModel(0, 3)
         self.model.setHorizontalHeaderLabels(['文件', '下载状态', '进度'])
         self.setModel(self.model)
-        self.horizontalHeader().setStyleSheet("QHeaderView::section{background-color:rgba(0, 0, 0, 0);font:13pt '宋体';color: white;};")
+        #self.horizontalHeader().setStyleSheet("QHeaderView::section{background-color:rgba(0, 0, 0, 0);font:13pt '宋体';color: white;};")
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
     def count_process(self, image_size, file, timer, row, file_name):
