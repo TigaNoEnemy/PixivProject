@@ -81,7 +81,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         screen_rect = desktop.screenGeometry()
         height = screen_rect.height()
 
-        self.set_font_style()
         picture = QPixmap(self.tips_dot)
         self.downloadTipsLabel.setPixmap(picture)
         self.downloadTipsLabel.setVisible(False)
@@ -808,44 +807,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.infoFrame.text_scroll.setVisible(True)
             self.infoFrame.user_pic_label.setVisible(True)
 
-    def set_font_style(self):
-        F = f"""color:{self.font_color}font: {self.font}"""
-        #self.RankButton.setStyleSheet(F)
-        #self.recommendButton.setStyleSheet(F)
-        #self.logoutButton.setStyleSheet(F)
-        #self.dayFemaleButton.setStyleSheet(F)
-        #self.dayMaleButton.setStyleSheet(F)
-        #self.dayMangaButton.setStyleSheet(F)
-        #self.dayRookieButton.setStyleSheet(F)
-        #self.monthButton.setStyleSheet(F)
-        #self.weekButton.setStyleSheet(F)
-        #self.weekOriginalButton.setStyleSheet(F)
-        #self.R18Button.setStyleSheet(F)
-        #self.settingsButton.setStyleSheet(F)
-        #self.showDownloadButton.setStyleSheet(F)
-        #self.searchButton.setStyleSheet(F)
-        #self.aboutButton.setStyleSheet(F)
-        F = """QPushButton{color: %s}
-                                  QPushButton:hover{background-color:%s; color:black}
-                                  QPushButton{border:2px}
-                                  QPushButton{border-radius:15px}
-                                  QPushButton{padding:2px 4px}
-                                  QPushButton:pressed{background-color:%s}
-                                  """ % (self.font_color, self.focus_color, self.press_color)
-
-        #self.infoFrame.moreButton.setStyleSheet(F)
-        #self.infoFrame.saveButton.setStyleSheet(F)
-        # self.bigReloadButton.setStyleSheet(F)
-        #self.infoFrame.escapeDownloadPageButton.setStyleSheet(F)
-
-        #self.downloadTipsLabel.setStyleSheet("background-color:rgba(0,0,0,0)")
-        #self._searchButton.setStyleSheet(F)
-        #self.cancelSearchButton.setStyleSheet(F)
-
-        # 用户名控件样式
-        #self.usernameLabel.setStyleSheet("background-color: rgba(255, 255, 255, 0);\n"
-        #                                 "color: rgb(255, 255, 255);")
-
     def _logout(self):
         from Pixiv_Widget.Pixiv_Login import app_logout
         def del_p():
@@ -860,7 +821,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         return True
 
     def closeEvent(self, event):
-        # 待解决
+        # 待解决,关闭后删除某些东西
         log_file_list = os.listdir('log_file')
         for file in log_file_list:
             _file = f'log_file/{file}'
@@ -1063,10 +1024,12 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.sub_windows[url].setWindowTitle(title)
 
     def saveOriginalPic(self, illust):
-
+        import re
         self.getImageSizeThreads = {}
         illust_id = illust['id']
         title = illust['title']
+        titlePath = re.sub(r'[?/\*<>:|]', '_', title)
+        file_name = re.sub(r'[?/\*<>:|]', '_', title)
         n = 1
         if illust['meta_single_page']:
             self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
@@ -1079,6 +1042,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.getImageSizeThreads[f"{illust_id}_{n}"].wait()
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
 
+            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
+            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "n": n}
+            self.create_download_progress(info=info)
+
         for j in illust['meta_pages']:
             self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
                                                                        url=j['image_urls']['original'],
@@ -1088,13 +1055,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.getImageSizeThreads[f"{illust_id}_{n}"].finish.connect(self.download_or_not)
             self.getImageSizeThreads[f"{illust_id}_{n}"].wait()
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
-            n += 1
-
-            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "row": n}
+            
+            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
+            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "n": n}
             self.create_download_progress(info=info)
 
-            if not self.table.isVisible():
-                self.downloadTipsLabel.setVisible(True)
+            n += 1
+
+        if not self.table.isVisible():
+            self.downloadTipsLabel.setVisible(True)
 
     def download_or_not(self, result):
         import re
@@ -1130,7 +1099,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             else:
                 dontDownload = 1
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", 'row': n}
+        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", 'n': n}
         self.create_download_progress(info=info)
 
         if not dontDownload:
@@ -1181,23 +1150,25 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         image_size = info['image_size']
         file = info['save_file']
         d_timer_id = info['download_timer_id']
-        n = info['n']   # 一个作品的第n张图片
+        n = info['n'] - 1   # 一个作品的第n张图片
 
-        row = self.table.model().rowCount() + 1
+        row = self.table.model().rowCount()
 
         file_name = file.split('/')[-1][:-4]
         if image_size is None:
-            self.table.model.setItem(row, 0, QStandardItem(file_name))
-            self.table.model.setItem(row, 1, QStandardItem('等待下载'))
-            self.table.model.setItem(row, 2, QStandardItem('0%'))
-            self.table.model.item(row, 0).setForeground(QBrush(QColor(255, 255, 255)))
-            self.table.model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
-            self.table.model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
+            self.table._model.setItem(row, 0, QStandardItem(file_name))
+            self.table._model.setItem(row, 1, QStandardItem('等待下载'))
+            self.table._model.setItem(row, 2, QStandardItem('0%'))
+            self.table._model.item(row, 0).setForeground(QBrush(QColor(255, 255, 255)))
+            self.table._model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
+            self.table._model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
+
+            self.table.info[d_timer_id] = row
 
         if not image_size is None:
             self.downloadTimer[d_timer_id] = QTimer()
             self.downloadTimer[d_timer_id].timeout.connect(
-                lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], n, file_name))
+                lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], d_timer_id, file_name))
             self.downloadTimer[d_timer_id].start(1000)
 
         #self.downloadNum += 1
