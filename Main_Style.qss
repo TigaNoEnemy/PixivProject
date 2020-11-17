@@ -231,94 +231,8 @@ my_widget QScrollArea#scrollArea{
 
 
 my_widget show_users_frame#show_users_frame{
-	background-color: rgb(1, 213, 195);
+	background-color: rgba(255, 255, 255, 0);
 }
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(107, 158, 134);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(130, 157, 22);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(147, 103, 53);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(167, 216, 158);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(187, 137, 4);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(193, 124, 162);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(218, 125, 21);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(223, 35, 181);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(237, 3, 86);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(239, 193, 228);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(34, 44, 105);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(39, 243, 51);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(53, 115, 23);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(55, 199, 253);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(63, 36, 148);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(77, 13, 187);
-}
-
-
-my_widget show_users_frame#show_users_frame{
-	background-color: rgb(84, 174, 110);
-}
-
 
 my_widget small_pic_frame#small_pic_frame{
 	background-color: rgba(122,122,122,150)
@@ -338,7 +252,7 @@ search_frame QLineEdit#searchLineEdit{
 
 
 show_users_frame QLabel#userHeadLabel{
-	background-color: rgb(255, 228, 249);
+	background-color: rgba(255, 228, 249, 0);
 }
 
 
@@ -348,7 +262,7 @@ show_users_frame clickable_label#label{
 
 
 show_users_frame clickable_label#usernameLabel{
-	background-color: rgb(175, 255, 246);
+	background-color: rgba(175, 255, 246, 0);
 }
 
 QFrame QTabWidget:pane{
@@ -359,7 +273,7 @@ QFrame QTabWidget:pane{
 
 QTabBar:tab{
 	color:rgb(255, 255, 255);
-	background-color: rgba(102, 206, 255, 128);
+	background-color: rgba(102, 102, 102, 128);
 }
 
 QTabBar:tab:selected{
@@ -407,7 +321,7 @@ TableView QHeaderView::section{
 	color: white;
 }
 
-
+/*提示板*/
 QToolTip{
 	background-color: #000000;
 	color: #FFFFFF;

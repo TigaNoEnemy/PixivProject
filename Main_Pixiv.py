@@ -110,7 +110,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.now_per_row_pic_num = self.per_row_pic_num
         self.baseThread = {}
         self.now_page = 'show_pic'
-        self.downloadNum = 0  # 下载数，用于下载页面的排版（待增加下载页）
+        #self.downloadNum = 0  # 下载数，用于下载页面的排版（待增加下载页）
         self.downloadTimer = {}
         self.pbar = {}
         self.downloadThreads = {}
@@ -518,7 +518,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             info['loading_gif'] = self.loading_gif
             info['timeout_pic'] = self.timeout_pic
             info['temp_path'] = self.temp_path
-            info['start_row'] = int(self.downloadNum / self.per_row_pic_num)
+            info['start_row'] = int(self.table.model().rowCount() / self.per_row_pic_num)#int(self.downloadNum / self.per_row_pic_num)
             info['save_path'] = self.save_path
             info['has_r18'] = self.has_r18
             info['no_h'] = self.no_h
@@ -1090,7 +1090,11 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
             n += 1
 
-        self.downloadTipsLabel.setVisible(True)
+            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "row": n}
+            self.create_download_progress(info=info)
+
+            if not self.table.isVisible():
+                self.downloadTipsLabel.setVisible(True)
 
     def download_or_not(self, result):
         import re
@@ -1126,7 +1130,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             else:
                 dontDownload = 1
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': f"{illust_id}_{n}"}
+        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", 'row': n}
         self.create_download_progress(info=info)
 
         if not dontDownload:
@@ -1177,24 +1181,26 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         image_size = info['image_size']
         file = info['save_file']
         d_timer_id = info['download_timer_id']
-        # n = info['n']   # 一个作品的第n张图片
+        n = info['n']   # 一个作品的第n张图片
 
-        row = self.downloadNum
+        row = self.table.model().rowCount() + 1
 
         file_name = file.split('/')[-1][:-4]
-        self.table.model.setItem(row, 0, QStandardItem(file_name))
-        self.table.model.setItem(row, 1, QStandardItem('等待下载'))
-        self.table.model.setItem(row, 2, QStandardItem('0%'))
-        self.table.model.item(row, 0).setForeground(QBrush(QColor(255, 255, 255)))
-        self.table.model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
-        self.table.model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
+        if image_size is None:
+            self.table.model.setItem(row, 0, QStandardItem(file_name))
+            self.table.model.setItem(row, 1, QStandardItem('等待下载'))
+            self.table.model.setItem(row, 2, QStandardItem('0%'))
+            self.table.model.item(row, 0).setForeground(QBrush(QColor(255, 255, 255)))
+            self.table.model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
+            self.table.model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
 
-        self.downloadTimer[d_timer_id] = QTimer()
-        self.downloadTimer[d_timer_id].timeout.connect(
-            lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], row, file_name))
-        self.downloadTimer[d_timer_id].start(1000)
-        self.downloadTipsLabel.setVisible(True)
-        self.downloadNum += 1
+        if not image_size is None:
+            self.downloadTimer[d_timer_id] = QTimer()
+            self.downloadTimer[d_timer_id].timeout.connect(
+                lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], n, file_name))
+            self.downloadTimer[d_timer_id].start(1000)
+
+        #self.downloadNum += 1
 
     # @profile
     def returnSmallPic(self):
