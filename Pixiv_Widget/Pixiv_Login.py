@@ -4,6 +4,9 @@ from PyQt5.QtGui import QIcon, QPalette, QBrush, QMovie, QPixmap
 from PyQt5.QtCore import QTimer, pyqtSignal, Qt
 import pixivpy3
 
+import sys
+sys.path.append('.')
+
 # qtcreator模块导入
 from qtcreatorFile import pixiv_login_1
 from qtcreatorFile import Pixiv_Logout
@@ -16,7 +19,7 @@ from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
+class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
     def __init__(self, login_success):
         super(app_login, self).__init__()
@@ -66,6 +69,10 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
         self.not_to_login = False   # 当为True时中断登录
 
         self.set_style()
+        # 为了圆角时不产生黑色背景
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        ###
 
     def set_style(self):
         f = open('Login_Style.qss', encoding='utf-8')
@@ -246,6 +253,9 @@ class app_login(QMainWindow, pixiv_login_1.Ui_MainWindow):
                 self.sub_login()
                 self.startGIF()
 
+        if qevent.key() == Qt.Key_S:
+            self.set_style()
+
 
 class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
     """docstring for app_logout"""
@@ -308,9 +318,10 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
 
 
 if __name__ == '__main__':
-    import sys
-
     app = QApplication(sys.argv)
-    a = app_login(login_success=lambda x,y,z,j: a.close())
+    a = app_login(login_success=lambda x,y,z,j: print(''))
+    a.lineEdit.setReadOnly(True)
+    a.lineEdit_2.setReadOnly(True)
+    a.move(2000, 1000)
     a.show()
     sys.exit(app.exec_())

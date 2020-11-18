@@ -44,8 +44,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.setMinimumSize(917, 660 - 52)
         #self.setMinimumSize(1257, 811)
         self.setupUi(self)
+        self.set_style()
+        smallFrame_h = self.SmallFrame.height()
+        # 为了得出tabbar的高度
+        self.tabWidget.addTab(QWidget(), 'test_tab_bar_height')
+        self.tabBar_h = self.tabWidget.tabBar().height()
+        self.tabWidget.removeTab(0)
+        ###
+        tab_h = self.tabWidget.height()
+        infoFrame_h = smallFrame_h - tab_h
         self.infoFrame = info_frame(self.SmallFrame, main=self, info={'temp_path': self.temp_path, 'timeout_pic': self.timeout_pic})
-        self.infoFrame.setGeometry(QRect(0, 730, 1041, 82))
+        self.infoFrame.setGeometry(QRect(0, 730, 1041, infoFrame_h))
         self.searchFrame = search_frame(self.SmallFrame, main=self)
         self.searchFrame.setGeometry(QRect(0, -120, 1041, 120))
 
@@ -54,7 +63,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.tab = {}
         # self.tabWidget.setStyleSheet(
         #     "QTabWidget:pane{background-color: transparent;border:none;}\nQTabBar:tab{color:rgb(255, 255, 255); background-color: rgba(102, 206, 255, 128)}\nQTabBar:tab:selected{background-color: rgba(102, 206, 255, 255)}")
-        self.tabWidget.setTabsClosable(True)
+        #self.tabWidget.setTabsClosable(True)
         self.tabWidget.tabCloseRequested.connect(self.close_tab)
         self.tabWidget.currentChanged['int'].connect(self.change_tab)
 
@@ -114,7 +123,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.pbar = {}
         self.downloadThreads = {}
         self.cache_item_box = {}
-        self.add_background()
+        #self.add_background()
         self.R18Button.setVisible(self.has_r18)
         self.create_download_view()
         self.progressThreads = {}
@@ -133,7 +142,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
-        self.set_style()
 
     def move_self_to_center(self):
         from PyQt5.QtWidgets import QDesktopWidget
@@ -308,8 +316,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         h = self.tabWidget.height()
         w = self.tabWidget.width()
+        print(self.tabBar_h, '?'*90)
+        tabBar_h = self.tabWidget.tabBar().height()
         self.scrollAreas[title] = QScrollArea(self.tab[title])
-        self.scrollAreas[title].setGeometry(QRect(0, 0, w - 3, h-25))
+        self.scrollAreas[title].setGeometry(QRect(0, 0, w-3, h-self.tabBar_h))
         #self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         self.scrollAreas[title].setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scrollAreas[title].setWidgetResizable(False)
@@ -521,6 +531,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             info['save_path'] = self.save_path
             info['has_r18'] = self.has_r18
             info['no_h'] = self.no_h
+            info['main'] = self
 
             small_pic_frame_x = x[self.rank_pic_s[title] % self.now_per_row_pic_num]
             small_pic_frame_y = ((self.rank_pic_s[title] // self.now_per_row_pic_num)) * 411
@@ -916,7 +927,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.raise_()
 
         # 创建作品相关区
-        info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path}
+        info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path, 'has_r18': self.has_r18, 'no_h': self.no_h}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
         illust_related_frame_w = self.illust_related_frame.width()
@@ -1237,8 +1248,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         smallFrame_h = self.SmallFrame.height()
 
         # downloadPageScroll_width = self.SmallFrame.width() #self.table.width()
-
-        self.table.resize(smallFrame_w, height - 80)
+        infoFrame_h = self.infoFrame.height()
+        self.table.resize(smallFrame_w, height - infoFrame_h)
 
         self.bigPicScrollArea.resize(smallFrame_w-340, height - 80)
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height())
@@ -1255,7 +1266,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         # self.scrollAreaWidgetContents_3.setStyleSheet("background-color: black")
 
-        self.tabWidget.resize(smallFrame_w, height - 80)
+        self.tabWidget.resize(smallFrame_w, height - infoFrame_h)
 
         for i in self.tab:
             self.tab[i].resize(smallFrame_w, height - 107)

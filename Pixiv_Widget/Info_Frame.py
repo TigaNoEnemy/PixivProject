@@ -9,7 +9,7 @@ import sys
 sys.path.append('.')
 from qtcreatorFile import info_frame_1
 from Pixiv_Widget.My_Label import my_label
-from Pixiv_Widget.My_Widget import Show_Head_Label
+#from Pixiv_Widget.My_Widget import Show_Head_Label
 from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb

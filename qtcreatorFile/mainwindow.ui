@@ -33,7 +33,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -51,7 +51,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+      <string notr="true"/>
      </property>
      <property name="widgetResizable">
       <bool>false</bool>
@@ -106,7 +106,10 @@
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+      <string notr="true"/>
+     </property>
+     <property name="tabsClosable">
+      <bool>true</bool>
      </property>
     </widget>
     <zorder>DownloadPageScroll</zorder>
@@ -123,7 +126,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -141,7 +144,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string/>
@@ -157,8 +160,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string/>
@@ -178,7 +180,7 @@ color: rgb(255, 255, 255);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(112, 112, 112, 100);</string>
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -196,10 +198,14 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>注销</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../RES/注销-p.png</normaloff>../RES/注销-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="showDownloadButton">
@@ -212,10 +218,14 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>下载</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../RES/下载-p.png</normaloff>../RES/下载-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="settingsButton">
@@ -228,10 +238,14 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>设置</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../RES/设置-p.png</normaloff>../RES/设置-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="searchButton">
@@ -244,10 +258,14 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>搜索</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../RES/搜索-p.png</normaloff>../RES/搜索-p.png</iconset>
      </property>
     </widget>
     <widget class="QLabel" name="downloadTipsLabel">
@@ -260,7 +278,7 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="text">
-      <string>TextLabel</string>
+      <string/>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="aboutButton">
@@ -273,10 +291,14 @@ color: rgb(255, 255, 255);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>关于</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../RES/关于.png</normaloff>../RES/关于.png</iconset>
      </property>
     </widget>
     <zorder>aboutButton</zorder>
@@ -296,7 +318,7 @@ color: rgb(255, 255, 255);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(122, 122, 122, 50);</string>
+     <string notr="true"/>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -329,10 +351,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>原创</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="recommendButton">
@@ -345,10 +371,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>推荐</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayMangaButton">
@@ -361,10 +391,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>漫画</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayFemaleButton">
@@ -377,10 +411,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>女性</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayRookieButton">
@@ -393,10 +431,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>新人</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="monthButton">
@@ -409,10 +451,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>每月</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="R18Button">
@@ -425,10 +471,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>R18</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayMaleButton">
@@ -441,10 +491,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>男性</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="RankButton">
@@ -457,10 +511,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>每日</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="weekButton">
@@ -473,10 +531,14 @@ color: rgb(255, 255, 255);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 12pt &quot;Noto Sans CJK SC&quot;;</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>每周</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
     </widget>

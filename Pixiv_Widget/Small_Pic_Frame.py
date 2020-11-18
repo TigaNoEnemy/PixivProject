@@ -50,7 +50,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.rotate += 1
 
     def check_info(self):
-        key = ['illust', 'api', 'loading_gif', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h']
+        key = ['illust', 'api', 'loading_gif', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h', 'main']
         need_key = []
         need_not_key = []
         for i in self.info:
@@ -184,6 +184,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     def load_complete_pic(self, info):
         self.is_loding = False
         timeout_pic = self.info['timeout_pic']
+        main = self.info['main']
+        illust = self.info['illust']
 
         file = info['file']
         picture = QPixmap(file)
@@ -193,7 +195,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             picture = QPixmap(timeout_pic)
         else:
             self.s_saveButton.setText('保存原图')
-            self.s_saveButton.clicked.connect(self.save_original_pic)
+            self.s_saveButton.clicked.connect(lambda: main.saveOriginalPic(illust))
             self.load_pic_success = True
 
         self.picLabel.resize(234, 234)
@@ -227,81 +229,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.download_small_pic_thread.finish.connect(self.load_complete_pic)
         self.download_small_pic_thread.wait()
         self.download_small_pic_thread.start()
-
-    def save_original_pic(self):
-        illust = self.info['illust']
-        api = self.info['api']
-        start_row = self.info['start_row']   # 指示创建的下载进度控件应该在第几行
-
-        illust_id = illust['id']
-
-        self.get_image_size_threads = {}
-        n = 1 # 指示图片为该作品第几张图片
-        if illust['meta_single_page']:
-            url = self.info['illust']['meta_single_page']['original_image_url']
-            self.get_image_size_threads[f"{illust_id}_{start_row}"] = base_thread(self, api.get_image_size, url=url, info={'n': n, 'url': url, 'row': start_row})
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].finish.connect(self.download_or_not)
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].wait()
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].start()
-            start_row += 1
-            n += 1
-        
-        for j in illust['meta_pages']:
-            url = j['image_urls']['original']
-            self.get_image_size_threads[f"{illust_id}_{start_row}"] = base_thread(self, api.get_image_size, url=j['image_urls']['original'], info={'n': n, 'url': url, 'row': start_row})
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].finish.connect(self.download_or_not)
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].wait()
-            self.get_image_size_threads[f"{illust_id}_{start_row}"].start()
-            start_row += 1
-            n += 1
-        
-    def download_or_not(self, result):
-        import re
-        import shutil
-
-        # 判断是否下载原图片
-        illust_id = self.info['illust']['id']
-        title = self.info['illust']['title']
-        save_path = self.info['save_path']
-        temp_path = self.info['temp_path']
-        api = self.info['api']
-        row = self.info['start_row']
-
-        image_size = int(result['image_size'])
-        n = result['n']     # 指示该作品第几张图片
-        url = result['url']
-        
-
-        dontDownload = 0    # 为1时表示该原图本地已存在
-        dir_name = re.sub(r'[?/\*<>:|]', '_', title)
-        dir_name = f"{dir_name}_{illust_id}"
-        file_name = re.sub(r'[?/\*<>:|]', '_', title)
-
-        try:
-            os.mkdir(f'{save_path}/{dir_name}')
-        except:
-            pass
-        temp_file = f"{temp_path}/{illust_id}_{n}_original"
-        save_file = f"""{save_path}/{dir_name}/{file_name}_{n}.jpg"""
-        save_file_path = f"""{save_path}/{dir_name}"""
-        if not self.remove_imperfect_image(save_file, image_size):
-            print('You have the same.')
-            dontDownload = 1
-        elif not self.remove_imperfect_image(temp_file, image_size):
-            try:
-                shutil.copyfile(temp_file, save_file)
-            except Exception as e:
-                pass
-            else:
-                dontDownload = 1
-
-        self.progress.emit({'image_size': int(image_size), 'save_file': save_file, 'download_timer_id': f"{illust_id}_{n}"})
-        #self.create_download_progress(image_size=image_size, file=save_file, d_timer_id=f"{illust_id}_{n}", row=result['row'])
-        if not hasattr(self, 'downloadThreads'):
-            self.downloadThreads = {}
-        if not dontDownload:
-            self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, api.download, url=url, path=save_file_path, name=f"{file_name}_{n}.jpg")
-            self.downloadThreads[f"{illust_id}_{n}"].start()
 
     def pic_is_clicked(self, info):
         if self.load_pic_success:

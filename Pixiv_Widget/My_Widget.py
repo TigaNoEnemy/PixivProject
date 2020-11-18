@@ -8,6 +8,8 @@ import sys
 sys.path.append('.')
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.My_Label import Largable_Label
+from Pixiv_Widget.My_Label import Loading_Label
+from Pixiv_Widget.Clickable_Label import clickable_label
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -54,7 +56,7 @@ class my_widget(QWidget):
         self.update()
 
 class Scroll_Widget(QWidget):
-    """docstring for Scroll_Widget"""
+    """调整大图位置"""
     def adjust_size(self):
         height = 0
         width = self.width()
@@ -179,8 +181,13 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
         temp_path = self.info['temp_path']
         api = self.info['api']
         file_name = self.info['illust_id']
+        no_h = self.info['no_h']
+        has_r18 = self.info['has_r18']
 
-        file = f"{temp_path}/{file_name}"
+        if not has_r18:
+            file = f"{temp_path}/{file_name}"
+        else:
+            file = no_h
         if os.path.exists(file):
             self.load_relate_pic({'file_name': file_name})
 
@@ -213,15 +220,20 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
                 pass
             self.get_relate_pic()
         else:
-            self.picture = self.picture.scaled(124, 124, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.setPixmap(self.picture)
             self.is_loading = False
 
-            self.set_original_geometry(self.x(), self.y(), self.width(), self.height())
+            #self.set_original_geometry(self.x(), self.y(), self.width(), self.height())
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1:
             self.click.emit(self.info)
+
+class Show_User_Illust_Label(Illust_Relate_Pic_Label):
+    """为搜索作者时显示的作品图片而做"""
+    pass
+        
         
 if __name__ == '__main__':
     import sys

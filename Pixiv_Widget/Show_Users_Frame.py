@@ -6,6 +6,8 @@ import os
 
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.Clickable_Label import clickable_label
+from Pixiv_Widget.My_Widget import Show_User_Illust_Label
+from Pixiv_Widget.My_Widget import Show_Head_Label
 
 
 import cgitb
@@ -17,20 +19,6 @@ class my_button(QPushButton):
         super(my_button, self).__init__(parent)
         self.arg = arg
         self.clickable = True
-        self.setupUi()
-
-    def setupUi(self):
-        FONT_COLOR = 'rgb(255, 255, 255);'
-        FOCUS_COLOR = 'lightblue'
-        PRESS_COLOR = 'black'
-        F = """QPushButton{color: %s}
-                                  QPushButton:hover{background-color:%s; color:black}
-                                  QPushButton{border:2px}
-                                  QPushButton{border-radius:15px}
-                                  QPushButton{padding:2px 4px}
-                                  QPushButton:pressed{background-color:%s}
-                                  """%(FONT_COLOR, FOCUS_COLOR, PRESS_COLOR)
-        #self.setStyleSheet(F)
 
     def mouseReleaseEvent(self, qevent):
         super(my_button, self).mouseReleaseEvent(qevent)
@@ -76,10 +64,20 @@ class show_users_frame(QFrame):
         self.setObjectName("show_users_frame")
         self.setEnabled(True)
         self.resize(1257, 811)
-        self.userHeadLabel = QLabel(self)
+        #     key = ['url', 'temp_path', 'user_id', 'api']
+        user = self.info['user_preview']
+        info = {
+                'url': user['user']['profile_image_urls']['medium'], 
+                'temp_path': self.info['temp_path'], 
+                'user_id': user['user']['id'], 
+                'api': self.info['api'],
+                }
+        self.userHeadLabel = Show_Head_Label(self, info=info)
         self.userHeadLabel.setGeometry(QRect(30, 20, 50, 50))
         #self.userHeadLabel.setStyleSheet("background-color: rgb(255, 228, 249);")
         self.userHeadLabel.setObjectName("userHeadLabel")
+        self.userHeadLabel.get_head()
+
         self.usernameLabel = clickable_label(self, info={'user_id': user_id})
         self.usernameLabel.setGeometry(QRect(90, 50, 171, 20))
         #self.usernameLabel.setStyleSheet("background-color: rgb(175, 255, 246);")
@@ -105,9 +103,7 @@ class show_users_frame(QFrame):
         self.friendButton = my_button(self)
         self.friendButton.setGeometry(QRect(710, 40, 51, 30))
         self.friendButton.setObjectName("friendButton")
-        import random
-        a = tuple([random.randint(0, 255) for i in range(3)])
-        #self.setStyleSheet(f"background-color: rgb{a};")
+
         self.show()
         self.retranslateUi()
         QMetaObject.connectSlotsByName(self)
@@ -117,8 +113,8 @@ class show_users_frame(QFrame):
 
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("self", "self"))
-        self.userHeadLabel.setText(_translate("self", "TextLabel"))
-        self.usernameLabel.setText(_translate("self", "TextLabel"))
+        self.userHeadLabel.setText(_translate("self", ""))
+        self.usernameLabel.setText(_translate("self", ""))
         self.followButton.setText(_translate("self", "关注"))
         self.collectionButton.setText(_translate("self", "收藏"))
         self.illustButton.setText(_translate("self", "作品集"))
@@ -133,7 +129,6 @@ class show_users_frame(QFrame):
 
         user = self.info['user_preview']
         api = self.info['api']
-        loading_gif = self.info['loading_gif']
         temp_path = self.info['temp_path']
         has_r18 = self.info['has_r18']
         no_h = self.info['no_h']
@@ -154,55 +149,60 @@ class show_users_frame(QFrame):
             'temp_path': temp_path, 
             'url': user_head_url
             }
-        if not os.path.exists(file):
-            self.userHeadThread = base_thread(self, api.cache_pic, url=user_head_url, path=temp_path, file_name=temp_file_name, info=info)
-            self.userHeadThread.finish.connect(self.load_complete_pic)
-            self.userHeadThread.wait()
-            self.userHeadThread.start()
-        else:
-            info['isSuccess'] = True
-            self.load_complete_pic(info)
+        # if not os.path.exists(file):
+        #     self.userHeadThread = base_thread(self, api.cache_pic, url=user_head_url, path=temp_path, file_name=temp_file_name, info=info)
+        #     self.userHeadThread.finish.connect(self.load_complete_pic)
+        #     self.userHeadThread.wait()
+        #     self.userHeadThread.start()
+        # else:
+        #     info['isSuccess'] = True
+        #     self.load_complete_pic(info)
 
         self.label = {}
-        self.get_illust_thread = {}
+        #self.get_illust_thread = {}
         for i in range(len(illusts)):
             url = illusts[i]['image_urls']['square_medium']
+            title = illusts[i]['title']
             if 'R-18' in str(illusts[i]['tags']):
                 temp_file_name = f"{illusts[i]['id']}_r18"
             else:
                 temp_file_name = illusts[i]['id']
-            file = f"{temp_path}/{temp_file_name}"
-            just_show = True
-            if not has_r18 and 'R-18' in str(illusts[i]['tags']):
-                file = no_h
-                just_show = False
+            #file = f"{temp_path}/{temp_file_name}"
+            #just_show = True
+            # if not has_r18 and 'R-18' in str(illusts[i]['tags']):
+            #     file = no_h
+            #     just_show = False
 
-            self.label[i] = clickable_label(self, info={'illust': illusts[i]})
+            info = {'url': url, 'title': title, 'illust_id': temp_file_name, 'temp_path': temp_path, 'api': api, 'illust': illusts[i], 'has_r18': has_r18, 'no_h': no_h}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
+            self.label[i] = Show_User_Illust_Label(self, info=info)
+            self.label[i].set_is_loading(True)
+            self.label[i].get_relate_pic()
+            self.label[i].click.connect(self.show_big_pic)
             self.label[i].setGeometry(QRect(30+i*250, 110, 234, 234))
-            #self.label[i].setStyleSheet("background-color: rgb(232, 255, 148);")
+            self.label[i].set_original_geometry(30+i*250, 110, 234, 234)
             self.label[i].setAlignment(Qt.AlignCenter)
             self.label[i].click.connect(self.show_big_pic)
             self.label[i].setObjectName("label")
             self.label[i].show()
-            gif = QMovie(loading_gif)
-            self.label[i].setMovie(gif)
-            gif.start()
-            info = {
-                'label': self.label[i], 
-                'temp_file_name': temp_file_name, 
-                'temp_path': temp_path, 
-                'url': url, 
-                'just_show': just_show,
-                'self': 'small'
-                }
-            if not os.path.exists(file):
-                self.get_illust_thread[i] = base_thread(self, api.cache_pic, info=info, url=url, path=temp_path, file_name=temp_file_name)
-                self.get_illust_thread[i].finish.connect(self.load_complete_pic)
-                self.get_illust_thread[i].wait()
-                self.get_illust_thread[i].start()
-            else:
-                info['isSuccess'] = True
-                self.load_complete_pic(info)
+            # gif = QMovie(loading_gif)
+            # self.label[i].setMovie(gif)
+            # gif.start()
+            # info = {
+            #     'label': self.label[i], 
+            #     'temp_file_name': temp_file_name, 
+            #     'temp_path': temp_path, 
+            #     'url': url, 
+            #     'just_show': just_show,
+            #     'self': 'small'
+            #     }
+            # if not os.path.exists(file):
+            #     self.get_illust_thread[i] = base_thread(self, api.cache_pic, info=info, url=url, path=temp_path, file_name=temp_file_name)
+            #     self.get_illust_thread[i].finish.connect(self.load_complete_pic)
+            #     self.get_illust_thread[i].wait()
+            #     self.get_illust_thread[i].start()
+            # else:
+            #     info['isSuccess'] = True
+            #     self.load_complete_pic(info)
 
     def load_complete_pic(self, result):
         from PyQt5.QtGui import QPixmap

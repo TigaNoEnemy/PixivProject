@@ -13,18 +13,18 @@ class clickable_label(QLabel):
         super(clickable_label, self).__init__(parent)
         self.info = info
         self.double_click_time = double_click_time
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.emit_click)
+        self.clicked_timer = QTimer()
+        self.clicked_timer.timeout.connect(self.emit_click)
         #self.setStyleSheet("QToolTip{background-color: #000000; color: #FFFFFF; border: none}")
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1:
-            if self.timer.isActive():
-                self.timer.stop()
+            if self.clicked_timer.isActive():
+                self.clicked_timer.stop()
                 self.double_click.emit(self.info)
             else:
-                self.timer.start(self.double_click_time)
+                self.clicked_timer.start(self.double_click_time)
 
     def emit_click(self):
-        self.timer.stop()
+        self.clicked_timer.stop()
         self.click.emit(self.info)

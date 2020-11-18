@@ -1,3 +1,7 @@
+#MainWindow{
+	background-image: url(./RES/background.jpg);
+}
+
 Comment_Widget QScrollArea #comment_scrollArea{
 	background-color: rgba(255, 255, 255, 0);
 }
@@ -271,6 +275,8 @@ QFrame QTabWidget:pane{
 }
 
 
+
+
 QTabBar:tab{
 	color:rgb(255, 255, 255);
 	background-color: rgba(102, 102, 102, 128);
@@ -373,6 +379,10 @@ show_users_frame QPushButton:pressed{
 /*侧边所有QCommandLinkButton*/
 QCommandLinkButton{
 	background-color: rgba(112, 112, 112, 100);
+}
+
+QCommandLinkButton QIcon{
+	background-image: url(./RES/正常-p.png)
 }
 
 /*右边包裹浏览小图、大图、下载详情页的frame*/

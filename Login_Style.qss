@@ -1,5 +1,5 @@
 app_login QWidget{
-	border-radius:3px;
+	border-radius:15px;
 }
 
 #interrupt_login_button{
@@ -22,16 +22,22 @@ app_login QWidget{
 
 #autoLogin{
 	background-color: rgb(102, 206, 255);
+	font: 9pt "Noto Sans CJK SC"
 }
 
-#widget #label{
-	font: 20pt "Noto Sans CJK SC"
+#label, #label_2, #label_3{
+	font: 18pt "Noto Sans CJK SC"
 }
 
 #lineEdit, #lineEdit_2{
 	background-color: rgb(255, 255, 255);
+	font: 10pt "Noto Sans CJK SC"
 }
 
 #pushButton{
 	background-color: rgb(255, 255, 255);
+}
+
+#interrupt_login_button, #exit_button{
+	border-image: url(./RES/exit.png);
 }

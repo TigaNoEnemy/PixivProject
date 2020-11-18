@@ -3,7 +3,7 @@ import sys
 sys.path.append('.')
 from PyQt5.QtWidgets import QLabel, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QPixmap, QColor
-from PyQt5.QtCore import pyqtSignal, Qt, QRect, QPropertyAnimation
+from PyQt5.QtCore import pyqtSignal, Qt, QRect, QPropertyAnimation, QTimer
 
 
 import cgitb
@@ -139,6 +139,48 @@ class Largable_Label(QLabel):
         else:
             self.setPixmap(pic)
 
+class Loading_Label(QLabel):
+    """加载图片是转圈, 暂时无用"""
+    def __init__(self, parent, *args, **kwargs):
+        super(Loading_Label, self).__init__(parent, *args, **kwargs)
+        self.is_loading = True
+        self.rotate = 90
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.change_rotate)
+        self.timer.start(5)
+
+    def change_rotate(self):
+        self.rotate += 1
+        
+    def paintEvent(self,qevent):
+        from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
+        from PyQt5.QtCore import QRectF, Qt
+        super(Loading_Label, self).paintEvent(qevent)
+
+        if self.is_loading:
+            width = self.width()
+            height = self.height()
+            load_x = width/2//2
+            load_y = height/2//2
+
+            painter = QPainter(self)
+            painter.setPen(Qt.NoPen)
+            painter.setRenderHints(QPainter.Antialiasing)
+            painter.setBrush(QBrush(QColor(255, 255, 255)))
+            painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
+
+            pen = QPen()
+            pen.setColor(QColor("#5481FF"))
+            pen.setWidth(3)
+            painter.setPen(pen)
+            painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
+        else:
+            if self.timer.isActive():
+                self.timer.stop()
+
+        self.update()
+        
+
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication, QMainWindow
     app = QApplication(sys.argv)
@@ -146,10 +188,10 @@ if __name__ == '__main__':
     m.resize(150, 150)
     info = {'temp_path': '/home/minming/Desktop/人像', 'illust_id': '7.png'}
     
-    a = Largable_Label(m, info=info)
+    a = Loading_Label(m)
     a.resize(100, 100)
     a.move((m.width()-a.width())/2, (m.height()-a.height())/2)
-    a.set_original_geometry(a.x(), a.y(), a.width(), a.height())
+    #a.set_original_geometry(a.x(), a.y(), a.width(), a.height())
     #pic = pic.scaled(a.width(), a.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
     m.move(2000, 1000)
     m.show()

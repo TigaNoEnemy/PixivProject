@@ -47,6 +47,8 @@ class Illust_Relate(QFrame, Ui_illust_relate):
 
             temp_path = self.info['temp_path']
             api = self.info['api']
+            has_r18 = self.info['has_r18']
+            no_h = self.info['no_h']
 
             self.relate_labels = {}
 
@@ -56,7 +58,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                 file_name = str(i['id'])
 
                 #['url', 'temp_path', 'user_id', 'api']
-                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api, 'illust': i}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
+                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api, 'illust': i, 'has_r18': has_r18, 'no_h': no_h}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
 
                 self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
                 self.relate_labels[file_name].resize(124, 124)
@@ -65,6 +67,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                 self.relate_labels[file_name].move(label_x, label_y)
                 self.relate_labels[file_name].set_is_loading(True)
                 self.relate_labels[file_name].get_relate_pic()
+                self.relate_labels[file_name].set_original_geometry(label_x, label_y, 124, 124)
                 self.relate_labels[file_name].click.connect(self.label_is_clicked)
                 self.relate_labels[file_name].show()
                 self.pic_num += 1
