@@ -130,7 +130,7 @@ class Largable_Label(QLabel):
         height = self.height()
         temp_path = self.info['temp_path']
         illust_id = self.info['illust_id']
-        file = f"{temp_path}/{illust_id}"
+        file = self.file
         pic = QPixmap(file)
         try:
             pic = pic.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)

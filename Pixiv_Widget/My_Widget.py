@@ -137,9 +137,9 @@ class Show_Head_Label(QLabel):
         if self.picture.isNull():
             try:
                 os.remove(file)
-            except:
-                pass
-            print(self.info)
+            except Exception as e:
+                print(e)
+
             self.get_head()
         else:
             self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -183,24 +183,25 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
         file_name = self.info['illust_id']
         no_h = self.info['no_h']
         has_r18 = self.info['has_r18']
+        tags = self.info['illust']
 
-        if not has_r18:
-            file = f"{temp_path}/{file_name}"
+        if not has_r18 and 'R-18' in str(tags):
+            self.file = file = no_h
+        elif 'R-18' in str(tags):
+            file_name = f'{file_name}_r18'
+            self.file = file = f"{temp_path}/{file_name}"
         else:
-            file = no_h
+            self.file = file = f"{temp_path}/{file_name}"
         if os.path.exists(file):
-            self.load_relate_pic({'file_name': file_name})
+            self.load_relate_pic({'file': file})
 
         else:
-            self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file_name': file_name})
+            self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file': file})
             self.get_head_thread.finish.connect(self.load_relate_pic)
             self.get_head_thread.wait()
             self.get_head_thread.start()
 
     def load_relate_pic(self, info):
-        temp_path = self.info['temp_path']
-        file_name = self.info['illust_id']
-        file = file = f"{temp_path}/{file_name}"
         if info.get('ERROR', False):
             try:
                 os.remove(file)
@@ -208,10 +209,8 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
                 pass
             self.get_relate_pic()
             return
-        url = self.info['url']
-        api = self.info['api']
 
-        file = f"{temp_path}/{file_name}"
+        file = info['file']
         self.picture = QPixmap(file)
         if self.picture.isNull():
             try:

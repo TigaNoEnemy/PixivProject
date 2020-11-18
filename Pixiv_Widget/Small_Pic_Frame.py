@@ -60,7 +60,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             if i not in self.info:
                 need_key.append(i)
         if (need_key or need_not_key) and 'test' not in self.info:
-            print(self.info)
             raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
 
     # def setupUi1(self):

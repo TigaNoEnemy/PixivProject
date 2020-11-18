@@ -316,7 +316,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         h = self.tabWidget.height()
         w = self.tabWidget.width()
-        print(self.tabBar_h, '?'*90)
         tabBar_h = self.tabWidget.tabBar().height()
         self.scrollAreas[title] = QScrollArea(self.tab[title])
         self.scrollAreas[title].setGeometry(QRect(0, 0, w-3, h-self.tabBar_h))
