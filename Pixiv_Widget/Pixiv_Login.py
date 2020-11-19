@@ -74,6 +74,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
         ###
 
+        self.trag = False
+
     def set_style(self):
         f = open('Login_Style.qss', encoding='utf-8')
         style = f.read()
@@ -255,6 +257,20 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
         if qevent.key() == Qt.Key_S:
             self.set_style()
+
+    def mousePressEvent(self, qevent):
+        from PyQt5.QtCore import QSize
+        if qevent.button() == 1 and qevent.x() in range(0, self.width()-30) and qevent.y() in range(0, 30):
+            self.drag = True
+            self.old_pos = qevent.pos()
+
+    def mouseMoveEvent(self, qevent):
+        if self.drag:
+            diff_pos = qevent.pos() - self.old_pos
+            self.move(self.pos() + diff_pos)
+
+    def mouseReleaseEvent(self, qevent):
+        self.drag = False
 
 
 class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):

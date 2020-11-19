@@ -14,16 +14,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_commentWidget(object):
     def setupUi(self, commentWidget):
         commentWidget.setObjectName("commentWidget")
-        commentWidget.resize(535, 916)
+        commentWidget.resize(340, 830)
         self.comment_scrollArea = QtWidgets.QScrollArea(commentWidget)
         self.comment_scrollArea.setGeometry(QtCore.QRect(0, 0, 340, 830))
-        #self.comment_scrollArea.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         self.comment_scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.comment_scrollArea.setWidgetResizable(False)
         self.comment_scrollArea.setObjectName("comment_scrollArea")
         self.comments_scroll = QtWidgets.QWidget()
         self.comments_scroll.setGeometry(QtCore.QRect(0, 0, 338, 200))
-        #self.comments_scroll.setStyleSheet("background-color: rgba(64, 64, 64, 0);")
         self.comments_scroll.setObjectName("comments_scroll")
         self.comment_scrollArea.setWidget(self.comments_scroll)
 

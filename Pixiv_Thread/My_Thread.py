@@ -25,10 +25,10 @@ class base_thread(QThread):
     thread_pool = 5     # 特定线程限制在thread_pool个
     root = None
 
-    def __init__(self, parent, method, info={}, **argv):
+    def __init__(self, parent, method, info={}, **args):
         super(base_thread, self).__init__(self.root)
         self.method = method
-        self.argv = argv
+        self.args = args
         self.info = info
 
     #@profile
@@ -46,18 +46,22 @@ class base_thread(QThread):
             big_frame_thread_num.num += 1
 
         command = f'self.method('
-        for i in self.argv:
-            if isinstance(self.argv[i], str):
-                command += f'{i}="{self.argv[i]}",'
+        for i in self.args:
+            if isinstance(self.args[i], str):
+                command += f'{i}="{self.args[i]}",'
             else:
-                command += f'{i}={self.argv[i]},'
+                command += f'{i}={self.args[i]},'
         if command.endswith(','):
             command = command[:-1]
         command += ')'
+
         try:
             a = eval(command)
         except pixivpy3.utils.PixivError:
-            self.finish.emit({'ERROR': True})
+            error_info = {'info': self.info}    # 传递给连接好的函数
+            error_info.update({'ERROR': True})  
+            error_info.update({'method': self.method, 'args': self.args})   # 提供网络错误时执行的函数及该函数所需的参数
+            self.finish.emit(error_info)
         else:
             if isinstance(a, dict):
                 a.update(self.info)

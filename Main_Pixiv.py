@@ -369,7 +369,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.tab[title] = my_widget(flag=flag)
             self.tab[title].set_loading(False)
             ##self.tab[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
-            self.tab[title].setObjectName("tab[title]")
+            self.tab[title].setObjectName("tab")
 
             # h = self.tabWidget.height()
             # w = self.tabWidget.width()
@@ -489,13 +489,24 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def parse_pic_info(self, ranking={}):
         from PyQt5.QtCore import QRect
+        if 'ERROR' in ranking or 'error' in ranking:    # 网络错误, 重新请求
+            method = ranking['method']
+            args = ranking['args']
+            info = ranking['info']
+            self.baseThread['get_img_info'] = base_thread(self, method,
+                                                              info=info,
+                                                              **args,
+                                                              )
+            self.baseThread['get_img_info'].finish.connect(self.parse_pic_info)
+            self.baseThread['get_img_info'].wait()
+            self.baseThread['get_img_info'].start()
+            title = ranking['info']['title']
+            self.scrollAreaWidgetContents[title].add_load_time(1)
 
-        if 'ERROR' in ranking or 'error' in ranking:    # 网络错误
-            print(ranking)
             return
+
         if 'next_url' not in ranking and not ranking.get('load_cache', False):       # 搜索作品id时没有next_url, 因此需判断
             ranking = self.add_key_to_result(ranking)
-            print(ranking)
 
         title = ranking['title']  # tab_title
 

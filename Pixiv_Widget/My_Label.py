@@ -95,6 +95,9 @@ class Largable_Label(QLabel):
             self.resizeAnimation(old_rect, new_rect, 'larging_complete')
 
     def resizeAnimation(self, old_rect, new_rect, state):
+        if hasattr(self, 'is_loading'):
+            if self.is_loading:
+                return 
         try:
             self.animation.disconnect()
         except:
@@ -132,11 +135,8 @@ class Largable_Label(QLabel):
         illust_id = self.info['illust_id']
         file = self.file
         pic = QPixmap(file)
-        try:
+        if not pic.isNull():
             pic = pic.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        except AttributeError:
-            pass
-        else:
             self.setPixmap(pic)
 
 class Loading_Label(QLabel):
@@ -145,9 +145,9 @@ class Loading_Label(QLabel):
         super(Loading_Label, self).__init__(parent, *args, **kwargs)
         self.is_loading = True
         self.rotate = 90
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.change_rotate)
-        self.timer.start(5)
+        self.loading_timer = QTimer()
+        self.loading_timer.timeout.connect(self.change_rotate)
+        self.loading_timer.start(5)
 
     def change_rotate(self):
         self.rotate += 1
@@ -175,8 +175,8 @@ class Loading_Label(QLabel):
             painter.setPen(pen)
             painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
         else:
-            if self.timer.isActive():
-                self.timer.stop()
+            if self.loading_timer.isActive():
+                self.loading_timer.stop()
 
         self.update()
         

@@ -2,8 +2,25 @@
 	background-image: url(./RES/background.jpg);
 }
 
-Comment_Widget QScrollArea #comment_scrollArea{
+/*评论是否还有更多的label*/
+#no_more_comment_label{
+	color: rgb(255, 255, 255);
+	font:12pt "MicroSoft YaHei";
+}
+
+/*单个评论区的最外层frame*/
+#oneComment{
+	background-color: rgb(48, 51, 41);
+}
+
+/*评论区的scroll area*/
+#comment_scrollArea{
 	background-color: rgba(255, 255, 255, 0);
+}
+
+/*评论区的最外层frame*/
+Comment_Widget{
+	background-color: rgba(150, 200, 250, 0);
 }
 
 QFrame QCommandLinkButton{
@@ -411,14 +428,7 @@ QFrame QTextBrowser#comment_text{
 	border: none;
 }
 
-One_Comment QFrame #frame{
-	background-color: rgb(48, 51, 41);
-}
 
-/*单个评论区的最外层frame*/
-#oneComment{
-	background-color: rgb(48, 51, 41);
-}
 
 /*浏览小图中包含众多小图的widget*/
 #scrollAreaWidgetContent{

@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import QWidget, QLabel
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
+from PyQt5 import sip
 
 import os 
 import sys
@@ -23,15 +24,20 @@ class my_widget(QWidget):
         self.timer.timeout.connect(self.change_rotate)
         self.timer.start(5)
 
+        self.load_time = 1 # 请求次数
+
     def change_rotate(self):
         self.rotate += 1
 
     def set_loading(self, p):
         self.is_loading = p
 
+    def add_load_time(self, value):
+        self.load_time += value
+
     def paintEvent(self,qevent):
         from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
-        from PyQt5.QtCore import QRectF, Qt
+        from PyQt5.QtCore import QRectF, Qt, QPointF
 
         if self.is_loading:
             width = self.width()
@@ -50,10 +56,23 @@ class my_widget(QWidget):
             pen.setWidth(3)
             painter.setPen(pen)
             painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate*16, -90*16)# 画圆环, 进度条
+
+            font = QFont('MicroSoft YaHei', 17, QFont.Bold, False)
+            painter.setFont(font)
+            pen = QPen()
+            pen.setColor(QColor("#5481FF"))
+            painter.setPen(pen)
+            font_width = painter.fontMetrics().width(str(self.load_time))
+            font_height = painter.fontMetrics().height()
+            painter.drawText(QPointF((width-font_width)//2+1, (height-font_height)//2+font_height/1.3), str(self.load_time))
+
         else:
             self.timer.stop()
 
         self.update()
+
+    def close(self):
+        super(my_widget, self).close()
 
 class Scroll_Widget(QWidget):
     """调整大图位置"""
@@ -226,7 +245,7 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
             #self.set_original_geometry(self.x(), self.y(), self.width(), self.height())
 
     def mouseReleaseEvent(self, qevent):
-        if qevent.button() == 1:
+        if qevent.button() == 1 and not self.is_loading:
             self.click.emit(self.info)
 
 class Show_User_Illust_Label(Illust_Relate_Pic_Label):
@@ -239,22 +258,32 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     from utils.Process_Token import login_info_parser
     from Pixiv_Api.My_Api import my_api
-    cfg = login_info_parser()
-    info = cfg.get_token()
-    # api = my_api()
 
-    # api.require_appapi_hosts('public-api.secure.pixiv.net')
+    def test_show_head_label():
+        cfg = login_info_parser()
+        info = cfg.get_token()
+        # api = my_api()
 
-    # api.auth(refresh_token=info['token'])
+        # api.require_appapi_hosts('public-api.secure.pixiv.net')
 
-    app = QApplication(sys.argv)
-    key = {'url': '', 'api': ',', 'user_id': '1652353', 'temp_path': '.'}
-    a = Show_Head_Label(info=key)
-    a.resize(100, 100)
-    a.get_head()
-    
-    # b = QPixmap(f"./user_1652353_pic")
-    # a.setPixmap(b)
-    # a.is_loading = False
-    a.show()
-    sys.exit(app.exec_())
+        # api.auth(refresh_token=info['token'])
+
+        app = QApplication(sys.argv)
+        key = {'url': '', 'api': ',', 'user_id': '1652353', 'temp_path': '.'}
+        a = Show_Head_Label(info=key)
+        a.resize(100, 100)
+        a.get_head()
+        
+        # b = QPixmap(f"./user_1652353_pic")
+        # a.setPixmap(b)
+        # a.is_loading = False
+        a.show()
+        sys.exit(app.exec_())
+
+    def test_my_widget():
+        app = QApplication(sys.argv)
+        m = my_widget()
+        m.show()
+        sys.exit(app.exec_())
+
+    test_my_widget()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>916</height>
+    <width>340</width>
+    <height>830</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,6 @@
      <width>340</width>
      <height>830</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
    </property>
    <property name="horizontalScrollBarPolicy">
     <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -39,9 +36,6 @@
       <width>338</width>
       <height>200</height>
      </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgba(64, 64, 64, 0);</string>
     </property>
    </widget>
   </widget>
