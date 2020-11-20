@@ -26,7 +26,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         self.setupUi(self)
         self.resize(620+24, 744+24)
         self.info = info
-        self.get_relate()
+        
         self.pic_num = 1    # 记录已加载多少张图
 
         # 下载相关图资料时的动作所需的配置
@@ -34,7 +34,9 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         self.rotate = 90
         self.loading_timer = QTimer()
         self.loading_timer.timeout.connect(self.change_rotate)
-        self.loading_timer.start(self.loading_timer_start_num)
+
+        self.load_time = 0 # 请求相关图资料次数
+        self.get_relate()
         ###
 
     def change_rotate(self):
@@ -62,6 +64,15 @@ class Illust_Relate(QFrame, Ui_illust_relate):
             pen.setWidth(3)
             painter.setPen(pen)
             painter.drawArc(QRectF(load_x+10, load_y+10, 30, 30), -self.rotate*16, -90*16)# 画圆环, 进度条
+
+            font = QFont('MicroSoft YaHei', 12, QFont.Bold, False)
+            painter.setFont(font)
+            pen = QPen()
+            pen.setColor(QColor("#5481FF"))
+            painter.setPen(pen)
+            font_width = painter.fontMetrics().width(str(self.load_time))
+            font_height = painter.fontMetrics().height()
+            painter.drawText((width-font_width)//2+1, 50*1.65, str(self.load_time))
         else:
             if self.loading_timer.isActive():
                 self.loading_timer.stop()
@@ -69,6 +80,10 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         self.update()
 
     def get_relate(self):
+        self.load_time += 1
+        if not self.loading_timer.isActive():
+            self.loading_timer.start(self.loading_timer_start_num)
+
         api = self.info['api']
         temp_path = self.info['temp_path']
         illust_id = self.info['illust_id']#['id']    # 获取相关性的作品id

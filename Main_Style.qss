@@ -465,6 +465,48 @@ QHeaderView{
 	background-color: rgba(255, 255, 255, 0);
 }
 
+/*浏览小图的外层tabwidget*/
 QTabWidget QWidget{
 	border: none;
+}
+
+
+/*滚动条*/
+QScrollBar:vertical
+{
+    background-color:rgba(48, 51, 41,255); 
+    width: 12px;
+}
+
+QScrollBar::handle:vertical:hover{
+	background:qlineargradient(
+		spread:pad, x1:0, y1:0, x2:0, y2:1, 
+		stop:0 rgb(255, 0, 0), 
+		stop: 0.17 rgb(255, 165, 0), 
+		stop:0.34 rgb(255, 255, 0),
+		stop: 0.51 rgb(0, 255, 0), 
+		stop: 0.68 rgb(0,127,255), 
+		stop: 0.85 rgb(0,0,255), 
+		stop: 1 rgb(139, 0, 255)
+		);
+	border-radius: 6px; 
+}
+
+QScrollBar::handle:vertical{
+	background:qlineargradient(
+		spread:pad, x1:0, y1:0, x2:0, y2:1, 
+		stop:0 rgba(255, 0, 0, 100), 
+		stop: 0.17 rgba(255, 165, 0, 100), 
+		stop:0.34 rgba(255, 255, 0, 100),
+		stop: 0.51 rgba(0, 255, 0, 100), 
+		stop: 0.68 rgba(0,127,255, 100), 
+		stop: 0.85 rgba(0,0,255, 100), 
+		stop: 1 rgba(139, 0, 255, 100)
+		);
+	border-radius: 6px; 
+}
+
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
+	height: 0px;
+	width: 0px;
 }

@@ -101,6 +101,7 @@ class Show_Head_Label(QLabel):
         self.timer.timeout.connect(self.change_rotate)
         self.timer.start(5)
         self.setPixmap(QPixmap(''))
+        self.setAlignment(Qt.AlignCenter)
 
     # def check_info(self):
     #     key = ['url', 'temp_path', 'user_id', 'api']
