@@ -474,7 +474,7 @@ QTabWidget QWidget{
 /*滚动条*/
 QScrollBar:vertical
 {
-    background-color:rgba(48, 51, 41,255); 
+    background-color:rgba(48, 51, 41,0); 
     width: 12px;
 }
 

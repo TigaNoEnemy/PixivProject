@@ -25,6 +25,7 @@ class my_widget(QWidget):
         self.timer.start(5)
 
         self.load_time = 1 # 请求次数
+        self.is_loading = True
 
     def change_rotate(self):
         self.rotate += 1

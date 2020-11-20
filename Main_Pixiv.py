@@ -1314,8 +1314,11 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                     child_new_x = int((scrollAreaWidgetContents_w - child_w) / 2)
                     child.move(child_new_x, child_y)
             else:
+                scrollAreaWidgetContent_h = (ceil((self.rank_pic_s[i]) / self.now_per_row_pic_num)) * 411
+                if scrollAreaWidgetContent_h < 200:
+                    scrollAreaWidgetContent_h = 200
                 self.scrollAreaWidgetContents[i].resize(self.now_per_row_pic_num * 240,
-                                                        (ceil((self.rank_pic_s[i]) / self.now_per_row_pic_num)) * 411)
+                                                        scrollAreaWidgetContent_h)
         # self.scrollAreaWidgetContents_2.setStyleSheet("background-color: black")
 
         # 调整搜索框

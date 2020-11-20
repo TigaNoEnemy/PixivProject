@@ -143,21 +143,6 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
 
 
     def closeEvent(self, qevent):
-        if not hasattr(self, 'small_pic_info_timer'):
-            self.small_pic_info_timer = QTimer()
-            self.small_pic_info_timer.timeout.connect(lambda: self.closeEvent(qevent))
-        for i in self._parent.tabWidget.children():
-            for j in i.children():
-                print('999')
-                print(j, getattr(j, 'is_loading', False))
-                if getattr(j, 'is_loading', False):
-                    print('666')
-                    self.small_pic_info_timer.start(500)
-                    return
-
-        if self.small_pic_info_timer.isActive():
-            self.small_pic_info_timer.stop()
-
         self.set_user_settings()
         per_row_pic_num = self._setting['per_row_pic_num']
         h = self._parent.height()

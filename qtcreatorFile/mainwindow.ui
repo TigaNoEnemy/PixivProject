@@ -32,9 +32,6 @@
       <height>811</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
@@ -49,9 +46,6 @@
        <width>1041</width>
        <height>731</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
      </property>
      <property name="widgetResizable">
       <bool>false</bool>
@@ -73,10 +67,7 @@
          <width>1041</width>
          <height>611</height>
         </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);</string>
-       </property>
+       </property>       
        <property name="text">
         <string>TextLabel</string>
        </property>
@@ -104,10 +95,7 @@
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
@@ -124,10 +112,7 @@
       <width>120</width>
       <height>91</height>
      </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
+    </property>    
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
@@ -142,10 +127,7 @@
        <width>50</width>
        <height>50</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string/>
      </property>
@@ -158,10 +140,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string/>
      </property>
@@ -178,10 +157,7 @@
       <width>120</width>
       <height>200</height>
      </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
+    </property>    
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
@@ -196,10 +172,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string>注销</string>
      </property>
@@ -216,10 +189,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string>下载</string>
      </property>
@@ -236,10 +206,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string>设置</string>
      </property>
@@ -256,10 +223,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string>搜索</string>
      </property>
@@ -289,10 +253,7 @@
        <width>121</width>
        <height>41</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <property name="text">
       <string>关于</string>
      </property>
@@ -316,10 +277,7 @@
       <width>121</width>
       <height>522</height>
      </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
+    </property>    
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
@@ -337,10 +295,7 @@
        <width>119</width>
        <height>519</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
+     </property>     
      <widget class="QCommandLinkButton" name="weekOriginalButton">
       <property name="geometry">
        <rect>
@@ -349,10 +304,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>     
       <property name="text">
        <string>原创</string>
       </property>
@@ -369,10 +321,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>推荐</string>
       </property>
@@ -389,10 +338,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>     
       <property name="text">
        <string>漫画</string>
       </property>
@@ -409,10 +355,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>女性</string>
       </property>
@@ -429,10 +372,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>新人</string>
       </property>
@@ -449,10 +389,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>每月</string>
       </property>
@@ -469,10 +406,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>R18</string>
       </property>
@@ -489,10 +423,7 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
+      </property>      
       <property name="text">
        <string>男性</string>
       </property>
@@ -510,9 +441,6 @@
         <height>41</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
       <property name="text">
        <string>每日</string>
       </property>
@@ -529,9 +457,6 @@
         <width>121</width>
         <height>41</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
       </property>
       <property name="text">
        <string>每周</string>
