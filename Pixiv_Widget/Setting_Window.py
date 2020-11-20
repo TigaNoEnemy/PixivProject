@@ -1,29 +1,45 @@
 #!/usr/bin/env python3
 #自定义设置界面
+import sys
+sys.path.append('.')
 
-from PyQt5.QtWidgets import QFileDialog, QMainWindow
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QFileDialog, QMainWindow, QFrame
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtGui import QIcon, QPixmap
 
 from qtcreatorFile import settings_window
 
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class setting_window(QMainWindow, settings_window.Ui_MainWindow):
+class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
     """docstring for setting_window"""
     _closed = pyqtSignal(dict)
     def __init__(self, parent, info):
         super(setting_window, self).__init__(parent)
         self._parent = parent
         self.setupUi(self)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.scrollAreaWidgetContents.resize(798, 1000)
+        
         self.info = info
         self.check_info()
         self.myset()    # 读取配置
         self.setFixedSize(self.width(), self.height())
         self.action_to_command()
+        #self.scrollArea.horizontalScrollBar().setVisible(False)
         self._setting = {}
+        self.move_self_to_center()
+
+    def move_self_to_center(self):
+        parent_x = self._parent.x()
+        parent_y = self._parent.y()
+        parent_w = self._parent.width()
+        parent_h = self._parent.height()
+        width = self.width()
+        height = self.height()
+
+        x = (parent_w - width)//2
+        y = (parent_h - height)//2
+        self.move(x+parent_x, y+parent_y)
 
     def check_info(self):
         key = ['big_pic_size', 'per_row_pic_num', 'temp_path', 'save_path','has_r18', 'every_time_show_pic_num']
@@ -127,6 +143,21 @@ class setting_window(QMainWindow, settings_window.Ui_MainWindow):
 
 
     def closeEvent(self, qevent):
+        if not hasattr(self, 'small_pic_info_timer'):
+            self.small_pic_info_timer = QTimer()
+            self.small_pic_info_timer.timeout.connect(lambda: self.closeEvent(qevent))
+        for i in self._parent.tabWidget.children():
+            for j in i.children():
+                print('999')
+                print(j, getattr(j, 'is_loading', False))
+                if getattr(j, 'is_loading', False):
+                    print('666')
+                    self.small_pic_info_timer.start(500)
+                    return
+
+        if self.small_pic_info_timer.isActive():
+            self.small_pic_info_timer.stop()
+
         self.set_user_settings()
         per_row_pic_num = self._setting['per_row_pic_num']
         h = self._parent.height()
@@ -134,10 +165,18 @@ class setting_window(QMainWindow, settings_window.Ui_MainWindow):
         setting = self._setting
         self._closed.emit(setting)
 
+    def paintEvent(self, qevent):
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        widget_height = 0
+        widget_width = self.scrollArea.width() - self.scrollArea.verticalScrollBar().width() - 2
+        for i in self.scrollAreaWidgetContents.children():
+            if isinstance(i, QFrame):
+                widget_height += i.height()
+        self.scrollAreaWidgetContents.resize(widget_width, widget_height)
+
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
-    import sys
 
     p = QApplication(sys.argv)
 
@@ -152,5 +191,6 @@ if __name__ == '__main__':
     info['every_time_show_pic_num'] = 20
 
     a = setting_window(parent=None, info=info)
+    a.closeEvent = lambda x: print("nice")
     a.show()
     sys.exit(p.exec_())

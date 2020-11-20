@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys
+sys.path.append('.')
+
 from qtcreatorFile import info_window_1
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -6,17 +9,18 @@ from PyQt5.QtCore import Qt, pyqtSignal
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class _info_window(QMainWindow, info_window_1.Ui_MainWindow):
+class _info_window(QMainWindow, info_window_1.Ui_InfoWindow):
     """docstring for _info_window"""
     closed = pyqtSignal()
-    def __init__(self, parent):
-        super(_info_window, self).__init__()
+    def __init__(self, parent=None):
+        super(_info_window, self).__init__(parent)
         self._parent = parent
         self.setupUi(self)
         self.setFixedSize(self.width(), self.height())
         self.command_to_action()
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.move_self_to_center()
+        if parent:
+            self.move_self_to_center()
         self.move_children_to_certer()
 
     def move_children_to_certer(self):
@@ -51,8 +55,7 @@ class _info_window(QMainWindow, info_window_1.Ui_MainWindow):
         del self
 
 if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWidgets import QApplication, QMainWindow
 
     app = QApplication(sys.argv)
     a = _info_window()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>InfoWindow</class>
+ <widget class="QMainWindow" name="InfoWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>关于</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -27,7 +27,7 @@
      <string notr="true">font: 20pt &quot;Noto Sans CJK SC&quot;;</string>
     </property>
     <property name="text">
-     <string>谨以此献给六两三的机霸们</string>
+     <string>哒哒哒哒～</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -43,7 +43,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>向他们致敬</string>
+     <string>布雷</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -56,7 +56,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>版本：因为作者太菜，本软件不配拥有版本号。</string>
+     <string>本版：大beta</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

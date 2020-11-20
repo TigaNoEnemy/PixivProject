@@ -35,7 +35,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.timer.timeout.connect(self.change_rotate)
         self.check_info()
         self.setupUi(self)
-        #self.setStyleSheet('background-color: rgba(122,122,122,150)')
 
         self.load_pic_success = False   #当图片加载不成功时，为False，不响应点击图片的动作
         self.picLabel.click.connect(self.pic_is_clicked)
@@ -61,38 +60,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
                 need_key.append(i)
         if (need_key or need_not_key) and 'test' not in self.info:
             raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
-
-    # def setupUi1(self):
-    #     self.setStyleSheet('background-color: rgb(255, 255, 255)')
-    #     self.picLabel = clickable_label(self, info=self.info, double_click_time=1)
-    #     self.picLabel.click.connect(self.pic_is_clicked)
-    #     self.picLabel.setGeometry(QRect(0, 0, 0, 0))
-    #     self.picLabel.setStyleSheet("background-color: rgb(255, 255, 255);")
-    #     self.picLabel.setAlignment(Qt.AlignCenter)
-    #     self.picLabel.setObjectName("picLabel")
-    #     self.textLabel = QLabel(self)
-    #     self.textLabel.setGeometry(QRect(5, 234, 234, 51))
-    #     self.textLabel.setObjectName("textLabel")
-    #     self.textLabel.setWordWrap(True)
-    #     self.s_saveButton = QPushButton(self)
-    #     self.s_saveButton.setGeometry(QRect(0, 370, 121, 41))
-    #     self.s_saveButton.setObjectName("s_saveButton")
-    #     self.likeButton = QPushButton(self)
-    #     self.likeButton.setGeometry(QRect(120, 370, 121, 41))
-    #     self.likeButton.setObjectName("likeButton")
-    #     self.authLabel = QLabel(self)
-    #     self.authLabel.setGeometry(QRect(5, 285, 234, 41))
-    #     self.authLabel.setObjectName("authLabel")
-    #     self.picnNumLabel = QLabel(self)
-    #     self.picnNumLabel.setGeometry(QRect(204, 0, 30, 30))
-    #     self.picnNumLabel.setStyleSheet(
-    #         "background-color: rgba(122, 122, 122, 150);\n"
-    #         "font: 16pt \"Noto Sans CJK SC\";"
-    #         )
-    #     self.picnNumLabel.setAlignment(Qt.AlignCenter)
-    #     self.picnNumLabel.setObjectName("picnNumLabel")
-    #     self.setStyleSheet("background-color: rgb(189, 189, 189);")
-    #     self.setFrameShape(QFrame.StyledPanel)
 
     def my_set(self):
         # 加载图片，文本

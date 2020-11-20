@@ -3,7 +3,7 @@
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QScrollArea
 from PyQt5.QtGui import QIcon, QPixmap, QBrush
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import QRect, Qt, QTimer
 from PyQt5.Qt import QPropertyAnimation
 from math import ceil
 import sys
@@ -30,6 +30,9 @@ from Pixiv_Widget.Search_Frame import search_frame
 from Pixiv_Widget.comment_widget import Comment_Widget
 from Pixiv_Widget.illust_relate import Illust_Relate
 from Pixiv_Widget.My_Widget import Scroll_Widget
+from Pixiv_Widget.My_Widget import my_widget
+
+
 
 cgitb.enable(format='text', logdir='log_file')
 
@@ -312,8 +315,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             pass
 
     def rebuild(self, title):
-        from Pixiv_Widget.My_Widget import my_widget
-
         h = self.tabWidget.height()
         w = self.tabWidget.width()
         tabBar_h = self.tabWidget.tabBar().height()

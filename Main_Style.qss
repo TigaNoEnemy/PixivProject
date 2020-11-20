@@ -510,3 +510,12 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 	height: 0px;
 	width: 0px;
 }
+
+#SettingWindow{
+	background-color: rgb(150, 200, 250);
+}
+
+#pic_title_label, #file_title_label{
+	font: 18pt;
+	color: rgb(0,0,0);
+}
