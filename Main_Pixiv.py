@@ -1097,6 +1097,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         title = result['title']
     
         if not result['isSuccess']:
+            # 网络错误重新下载
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
             return 
 
@@ -1126,14 +1127,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 dontDownload = 1
 
         d_timer_id = f"{illust_id}_{n}"
-        self.downloadTimer[d_timer_id] = QTimer()
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n, 'timer':
-        self.downloadTimer[d_timer_id]}
+        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n}
         
         self.create_download_progress(info=info)
 
         if not dontDownload:
+            info.update({'timer_box': self.downloadTimer})
             self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.download_has_size_pic, response=response, output_file=f"{path}/{file_name}_{n}.jpg", info=info)
             self.downloadThreads[f"{illust_id}_{n}"].finish.connect(self.table.set_download_failure)
             self.downloadThreads[f"{illust_id}_{n}"].wait()
@@ -1183,12 +1183,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         file = info['save_file']
         d_timer_id = info['download_timer_id']
         n = info['n'] - 1   # 一个作品的第n张图片
-        timer = info['timer']
-
-        row = self.table.model().rowCount()
 
         file_name = file.split('/')[-1][:-4]
         if image_size is None:
+            self.table.info[d_timer_id] = row = self.table.model().rowCount()
             self.table._model.setItem(row, 0, QStandardItem(file_name))
             self.table._model.setItem(row, 1, QStandardItem('等待下载'))
             self.table._model.setItem(row, 2, QStandardItem('0%'))
@@ -1196,12 +1194,11 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.table._model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
             self.table._model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
 
-            self.table.info[d_timer_id] = row
-
-        if not image_size is None:
-            timer.timeout.connect(
+        else:
+            self.downloadTimer[d_timer_id] = QTimer()
+            self.downloadTimer[d_timer_id].timeout.connect(
                 lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], d_timer_id, file_name))
-            timer.start(1000)
+            self.downloadTimer[d_timer_id].start(1000)
 
         #self.downloadNum += 1
 

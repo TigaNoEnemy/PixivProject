@@ -20,6 +20,7 @@ class TableView(QtWidgets.QTableView):
 
     def count_process(self, image_size, file, timer, d_timer_id, file_name):
         row = self.info[d_timer_id]
+        print(f"row = {row}")
         value = 0
         if os.path.exists(file):
             file_size = os.path.getsize(file)
@@ -38,9 +39,13 @@ class TableView(QtWidgets.QTableView):
 
     def set_download_failure(self, info):
         isSuccess = info['isSuccess']
+        timer_box = info['timer_box']
+        d_timer_id = info['download_timer_id']
+        row = self.info[d_timer_id]
         if not isSuccess:
-            info['timer'].stop()
+            timer_box[d_timer_id].stop()
             self._model.setItem(row, 1, QtGui.QStandardItem("下载失败"))
+            self._model.item(row, 1).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
         
  
 if __name__ == "__main__":
