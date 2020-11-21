@@ -35,6 +35,12 @@ class TableView(QtWidgets.QTableView):
             timer.stop()
         self._model.item(row, 1).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
         self._model.item(row, 2).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
+
+    def set_download_failure(self, info):
+        isSuccess = info['isSuccess']
+        if not isSuccess:
+            info['timer'].stop()
+            self._model.setItem(row, 1, QtGui.QStandardItem("下载失败"))
         
  
 if __name__ == "__main__":

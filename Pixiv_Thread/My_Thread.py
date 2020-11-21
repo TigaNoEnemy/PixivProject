@@ -45,18 +45,8 @@ class base_thread(QThread):
                 time.sleep(1)
             big_frame_thread_num.num += 1
 
-        command = f'self.method('
-        for i in self.args:
-            if isinstance(self.args[i], str):
-                command += f'{i}="{self.args[i]}",'
-            else:
-                command += f'{i}={self.args[i]},'
-        if command.endswith(','):
-            command = command[:-1]
-        command += ')'
-
         try:
-            a = eval(command)
+            a = self.method(**self.args)
         except pixivpy3.utils.PixivError:
             error_info = {'info': self.info}    # 传递给连接好的函数
             error_info.update({'ERROR': True})  

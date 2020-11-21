@@ -2,7 +2,7 @@
 
 from PyQt5.QtWidgets import QLabel, QMainWindow
 from PyQt5.QtCore import QRect, pyqtSignal, Qt, QRectF
-from PyQt5.QtGui import QMovie, QPixmap, QPainter, QPen, QFont, QColor
+from PyQt5.QtGui import QMovie, QPixmap, QPainter, QPen, QFont, QColor, QBrush
 import os
 
 from Pixiv_Thread.My_Thread import base_thread
@@ -86,7 +86,7 @@ class original_pic(QMainWindow):
         print(file)
         info = {'file': file, 'url': url, 'timeout_pic': timeout_pic}
         if not os.path.exists(file):
-            self.get_img_size_thread = base_thread(self, api.get_image_size, info=info, url=url)
+            self.get_img_size_thread = base_thread(self, api.get_image_size, info=info, url=url, timeout=self.timeout)
             self.get_img_size_thread.finish.connect(self.create_download_thread)
             self.get_img_size_thread.wait()
             self.get_img_size_thread.start()
@@ -95,15 +95,23 @@ class original_pic(QMainWindow):
             self.load_original_pic(info)
 
     def create_download_thread(self, info):
+        if not info['isSuccess']:
+            self.create_get_img_size_thread()
+            return
+
         url = self.info['url']
         temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
+
+        file = f"{temp_path}/{temp_file_name}"
+
         api = self.info['api']
 
-        if 'image_size' in info:
-            self.original_pic_size = info['image_size']
+        response = info['response']
 
-        self.show_original_threads = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=temp_file_name, info=info, timeout=self.timeout)
+        self.original_pic_size = info['image_size']
+
+        self.show_original_threads = base_thread(self, api.download_has_size_pic, response=response, output_file=file)
         self.show_original_threads.finish.connect(self.load_original_pic)
         self.show_original_threads.start()
 
@@ -174,19 +182,27 @@ class original_pic(QMainWindow):
             percent = file_size/self.original_pic_size
             rotateAngle = 360*percent
             painter = QPainter(self)
+            painter.setPen(Qt.NoPen)
             painter.setRenderHints(QPainter.Antialiasing)
+            painter.setBrush(QBrush(QColor(255, 255, 255)))
+            painter.drawEllipse(load_x, load_y, 50, 50)
+
             pen = QPen()
             pen.setColor(QColor("#5481FF"))
-            pen.setWidth(1)
+            pen.setWidth(3)
             painter.setPen(pen)
-            painter.drawArc(QRectF(load_x, load_y, 50, 50), 90*16, -rotateAngle*16)#(0 - 0) * 0, -rotateAngle * 16)  # 画圆环, 进度条
-     
-            font = QFont()
-            font.setFamily("微软雅黑")
-            font.setPointSize(11)
-            painter.setFont(font)
-            painter.setPen(QColor("#5481FF"))
-            painter.drawText(QRectF(load_x, load_y, 50, 50), Qt.AlignCenter, f"{int(percent*100)}%")  # 显示进度条当前进度
+            if self.original_pic_size == -1:
+                if not self.timer.isActive():
+                    self.timer.start(10)
+                painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate*16, -90*16)
+            else:
+                painter.drawArc(QRectF(load_x, load_y, 50, 50), 90*16, -rotateAngle*16)#(0 - 0) * 0, -rotateAngle * 16)  # 画圆环, 进度条
+                font = QFont()
+                font.setFamily("微软雅黑")
+                font.setPointSize(11)
+                painter.setFont(font)
+                painter.setPen(QColor("#5481FF"))
+                painter.drawText(QRectF(load_x, load_y, 50, 50), Qt.AlignCenter, f"{int(percent*100)}%")  # 显示进度条当前进度
 
         self.update()
 

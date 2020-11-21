@@ -1083,20 +1083,25 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
             n += 1
 
-        if not self.table.isVisible():
-            self.downloadTipsLabel.setVisible(True)
+        self.downloadTipsLabel.setVisible(True)
 
     def download_or_not(self, result):
         import re
         import os
         import shutil
 
-        image_size = int(result['image_size'])
+        
         n = result['n']
         illust_id = result['illust_id']
         url = result['url']
         title = result['title']
+    
+        if not result['isSuccess']:
+            self.getImageSizeThreads[f"{illust_id}_{n}"].start()
+            return 
 
+        response = result['response']
+        image_size = int(result['image_size'])
         temp_file_name = f"{illust_id}_{n}_original"
 
         dontDownload = 0
@@ -1120,12 +1125,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             else:
                 dontDownload = 1
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", 'n': n}
+        d_timer_id = f"{illust_id}_{n}"
+        self.downloadTimer[d_timer_id] = QTimer()
+
+        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n, 'timer':
+        self.downloadTimer[d_timer_id]}
+        
         self.create_download_progress(info=info)
 
         if not dontDownload:
-            self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.download, url=url, path=path,
-                                                                   name=f"{file_name}_{n}.jpg")
+            self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.download_has_size_pic, response=response, output_file=f"{path}/{file_name}_{n}.jpg", info=info)
+            self.downloadThreads[f"{illust_id}_{n}"].finish.connect(self.table.set_download_failure)
+            self.downloadThreads[f"{illust_id}_{n}"].wait()
             self.downloadThreads[f"{illust_id}_{n}"].start()
 
     def remove_imperfect_image(self, file, image_size):
@@ -1172,6 +1183,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         file = info['save_file']
         d_timer_id = info['download_timer_id']
         n = info['n'] - 1   # 一个作品的第n张图片
+        timer = info['timer']
 
         row = self.table.model().rowCount()
 
@@ -1187,10 +1199,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.table.info[d_timer_id] = row
 
         if not image_size is None:
-            self.downloadTimer[d_timer_id] = QTimer()
-            self.downloadTimer[d_timer_id].timeout.connect(
+            timer.timeout.connect(
                 lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], d_timer_id, file_name))
-            self.downloadTimer[d_timer_id].start(1000)
+            timer.start(1000)
 
         #self.downloadNum += 1
 

@@ -38,7 +38,7 @@ class my_widget(QWidget):
 
     def paintEvent(self,qevent):
         from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
-        from PyQt5.QtCore import QRectF, Qt, QPointF
+        from PyQt5.QtCore import QRectF, Qt
 
         if self.is_loading:
             width = self.width()
@@ -58,14 +58,13 @@ class my_widget(QWidget):
             painter.setPen(pen)
             painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate*16, -90*16)# 画圆环, 进度条
 
-            font = QFont('MicroSoft YaHei', 17, QFont.Bold, False)
+            font = QFont()
+            font.setFamily("MicroSoft YaHei")
+            font.setBold(True)
+            font.setPointSize(18)
             painter.setFont(font)
-            pen = QPen()
-            pen.setColor(QColor("#5481FF"))
-            painter.setPen(pen)
-            font_width = painter.fontMetrics().width(str(self.load_time))
-            font_height = painter.fontMetrics().height()
-            painter.drawText(QPointF((width-font_width)//2+1, (height-font_height)//2+font_height/1.3), str(self.load_time))
+            painter.setPen(QColor("#5481FF"))
+            painter.drawText(QRectF(load_x, load_y, 50, 50), Qt.AlignCenter, str(self.load_time))  # 显示进度条当前进度
 
         else:
             self.timer.stop()

@@ -118,11 +118,12 @@ class big_pic_frame(QFrame):
         url = info['url']
         temp_path = info['temp_path']
         temp_file_name = info['temp_file_name']
+        response = info['response']
+        output_file = f"{temp_path}/{temp_file_name}"
 
-        if 'image_size' in info:
-            self.pic_size = info['image_size']
+        self.pic_size = info['image_size']
 
-        self.thread = base_thread(None, method=api.cache_pic, url=url, file_name=temp_file_name, path=temp_path, info=info)
+        self.thread = base_thread(None, method=api.download_has_size_pic, response=response, output_file=output_file)
         self.thread.finish.connect(self.load_big_pic_complete)
         self.thread.wait()
         self.thread.start()

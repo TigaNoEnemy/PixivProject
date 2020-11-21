@@ -94,11 +94,11 @@ QFrame QScrollArea#bigPicScrollArea{
 }
 
 /*QFrame Show_Head_Label#user_pic_label{
-	background-color: rgb(255, 255, 255, 0);
+	background-color: rgba(255, 255, 255, 0);
 }*/
 
 #user_pic_label{
-	background-color: rgb(255, 255, 255, 0);
+	background-color: rgba(255, 255, 255, 0);
 }
 
 QFrame clickable_label#picLabel{
@@ -264,7 +264,13 @@ my_widget small_pic_frame#small_pic_frame{
 
 search_frame QComboBox#searchComboBox{
 	color: rgb(255, 255, 255);
-	background-color: rgb(50, 50, 50);
+	background-color: rgba(48, 51, 41, 255);
+}
+
+/*搜索框选项下拉样式*/
+#searchComboBox QAbstractItemView{
+	background-color: rgba(48, 51, 41, 125);
+	border: none;
 }
 
 
