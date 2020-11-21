@@ -41,7 +41,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.setWindowTitle('Pixiv')
         self.GIF = QMovie(self.login_gif)
         self.loginGIF.setMovie(self.GIF)
-        self.add_background()
+        #self.add_background()
         self.lineEdit.setPlaceholderText('请输入账号')
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
         self.api = my_api()
@@ -107,15 +107,15 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.save_path = self.cfg.save_path
         self.big_pic_size = self.cfg.big_pic_size
         self.timeout_pic = self.cfg.timeout_pic
-        self.loading_gif = self.cfg.loading_gif
-        self.login_background = self.cfg.login_background
-        self.main_window_background = self.cfg.main_window_background
-        self.font_color = self.cfg.font_color
-        self.font = self.cfg.font
-        self.press_color = self.cfg.press_color
-        self.focus_color = self.cfg.focus_color
+        # self.loading_gif = self.cfg.loading_gif
+        # self.login_background = self.cfg.login_background
+        # self.main_window_background = self.cfg.main_window_background
+        # self.font_color = self.cfg.font_color
+        # self.font = self.cfg.font
+        # self.press_color = self.cfg.press_color
+        # self.focus_color = self.cfg.focus_color
         self.app_icon = self.cfg.app_icon
-        self.loading_big_gif = self.cfg.loading_big_gif
+        # self.loading_big_gif = self.cfg.loading_big_gif
         self.login_gif = self.cfg.login_gif
         self.has_r18 = self.cfg.has_r18
         self.every_time_show_pic_num = self.cfg.every_time_show_pic_num
@@ -165,15 +165,15 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         else:
             self.autoLogin_2.setVisible(False)
 
-    def add_background(self):
-        import os
-        if os.path.exists(self.login_background):
-            window_pale = QPalette()
-            window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.login_background)))
-            self.setPalette(window_pale)
-        else:
-            #self.setStyleSheet('background-color: rgb(86, 86, 86)')
-            pass
+    # def add_background(self):
+    #     import os
+    #     if os.path.exists(self.login_background):
+    #         window_pale = QPalette()
+    #         window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.login_background)))
+    #         self.setPalette(window_pale)
+    #     else:
+    #         #self.setStyleSheet('background-color: rgb(86, 86, 86)')
+    #         pass
 
     def action_to_command(self):
         self.pushButton.clicked.connect(self.sub_login)

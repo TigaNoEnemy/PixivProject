@@ -40,7 +40,7 @@ class original_pic(QMainWindow):
         self.move(x + parent_x, y + parent_y)
 
     def check_info(self):
-        key = ['url', 'temp_path', 'temp_file_name', 'api', 'loading_gif', 'title', 'timeout_pic']
+        key = ['url', 'temp_path', 'temp_file_name', 'api', 'title', 'timeout_pic']
         need_key = []
         need_not_key = []
         for i in self.info:

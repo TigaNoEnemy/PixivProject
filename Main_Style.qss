@@ -1,5 +1,5 @@
 #MainWindow{
-	background-image: url(./RES/background.jpg);
+	background-color: rgb(48, 51, 41);
 }
 
 /*评论是否还有更多的label*/
@@ -28,94 +28,95 @@ QFrame QCommandLinkButton{
 	font: 12pt "Noto Sans CJK SC";
 }
 
-
+/*小图浏览画师名称label*/
 QFrame QLabel#authLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
+	font: 9pt "MicroSoft YaHei";
 }
 
-
+/*下载按钮上的红点*/
 QFrame QLabel#downloadTipsLabel{
 	background-color:rgba(0,0,0,0);
 }
 
-
+/*用户头像label*/
 QFrame QLabel#login_user_pic_label{
 	background-color: rgba(255, 255, 255, 0);
 }
 
-
+/*小图浏览右上角指示作品包含多少图片的Label*/
 QFrame QLabel#picnNumLabel{
 	background-color: rgba(122, 122, 122, 150);
 	font: 16pt "Noto Sans CJK SC";
 	color: rgb(255, 255, 255);
 }
 
-
+/*小图浏览作品标题label*/
 QFrame QLabel#textLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
+	font: 12pt "MicroSoft YaHei";
 }
 
-
+/*评论时间Label*/
 QFrame QLabel#time_label{
 	color: rgb(209, 209, 209);
-	color: rgb(147, 147, 147);
 }
 
-
+/*评论用户名Label*/
 QFrame QLabel#user_name_label{
 	color: rgb(255, 255, 255);
+	font: 9pt "MicroSoft YaHei";
 }
 
 
+/*登录的用户名Label*/
 QFrame QLabel#usernameLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
+	font: 12pt "MicroSoft YaHei";
 }
 
-
+/*小图浏览"だいすき"按钮*/
 QFrame QPushButton#likeButton{
 	color: rgb(255, 255, 255);
 }
 
-
+/*小图浏览"保存原图"按钮*/
 QFrame QPushButton#s_saveButton{
 	color: rgb(255, 255, 255);
 }
 
-
+/*装载大图的scroll area*/
 QFrame QScrollArea#bigPicScrollArea{
 	background-color: rgba(255, 255, 255, 0);
 }
 
-QFrame Show_Head_Label#user_pic_label{
-	color: rgb(255, 255, 255);
-}
+/*QFrame Show_Head_Label#user_pic_label{
+	background-color: rgb(255, 255, 255, 0);
+}*/
 
+#user_pic_label{
+	background-color: rgb(255, 255, 255, 0);
+}
 
 QFrame clickable_label#picLabel{
 	background-color: rgba(255, 255, 255, 0);
 }
 
-
+/*显示作品详细信息的frame*/
 QFrame info_frame#Frame{
 	background-color: rgb(29, 23, 31);
 }
 
-
-QFrame my_label#usernameLabel{
-	background-color: rgba(255, 255, 255, 0);
-	color: rgb(255, 255, 255);
-}
-
-
+/*搜索框外层frame*/
 QFrame search_frame#Frame{
 	background-color: rgb(25, 25, 25);
 }
 
-
-QStackedWidget my_widget#tab[title]{
+/*tabWidget 的子控件widget*/
+QStackedWidget my_widget#tab{
 	background-color: rgba(255, 255, 255, 0);
 }
 
@@ -189,7 +190,7 @@ QWidget QFrame#frame{
 	background-color: rgba(112, 112, 112, 100);
 }
 
-
+/*装载左下角的功能按钮的frame*/
 QWidget QFrame#function_frame{
 	background-color: rgba(112, 112, 112, 100);
 }
@@ -199,7 +200,7 @@ QWidget QLabel#bigPicLabel{
 	background-color: rgb(255, 255, 255);
 }
 
-
+/*装载每日、新人、每月等按钮的frame*/
 QWidget QScrollArea#cate_scrollArea{
 	background-color: rgba(122, 122, 122, 50);
 }
@@ -209,24 +210,25 @@ QWidget QWidget#comments_scroll{
 	background-color: rgba(64, 64, 64, 0);
 }
 
-
+/*下方作品详情的标题label*/
 info_frame QLabel#titleText{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
+	font: 9pt "MicroSoft YaHei";
 }
 
 
 info_frame QLabel{
 	background-color: rgba(255, 255, 255, 0);
-	color: white
+	color: white；
 }
 
 
-info_frame Show_Head_Label#user_pic_label{
+/*info_frame Show_Head_Label#user_pic_label{
 	background-color: rgb(255, 255, 255);
-}
+}*/
 
-
+/*作品详情中的画师名称Label*/
 info_frame my_label#authText{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);

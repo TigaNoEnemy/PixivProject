@@ -187,15 +187,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.save_path = cfg.save_path
         self.big_pic_size = cfg.big_pic_size
         self.timeout_pic = cfg.timeout_pic
-        self.loading_gif = cfg.loading_gif
-        self.login_background = cfg.login_background
-        self.main_window_background = cfg.main_window_background
-        self.font_color = cfg.font_color
-        self.font = cfg.font
-        self.press_color = cfg.press_color
-        self.focus_color = cfg.focus_color
+        # self.loading_gif = cfg.loading_gif
+        # self.login_background = cfg.login_background
+        # self.main_window_background = cfg.main_window_background
+        # self.font_color = cfg.font_color
+        # self.font = cfg.font
+        # self.press_color = cfg.press_color
+        # self.focus_color = cfg.focus_color
         self.app_icon = cfg.app_icon
-        self.loading_big_gif = cfg.loading_big_gif
+        # self.loading_big_gif = cfg.loading_big_gif
         self.login_gif = cfg.login_gif
         self.has_r18 = cfg.has_r18
         self.every_time_show_pic_num = cfg.every_time_show_pic_num
@@ -303,16 +303,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.table.setGeometry(QRect(0, 0, width, 731))
         self.table.setupUi()
         self.table.setVisible(False)
-
-    def add_background(self):
-        from PyQt5.QtGui import QPalette
-        if os.path.exists(self.main_window_background):
-            window_pale = QPalette()
-            window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.main_window_background)))
-            self.setPalette(window_pale)
-        else:
-            #self.setStyleSheet('background-color: rgb(0, 0, 0)')
-            pass
 
     def rebuild(self, title):
         h = self.tabWidget.height()
@@ -535,7 +525,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             illust_id = i['id']
             info['illust'] = i
             info['api'] = self.api
-            info['loading_gif'] = self.loading_gif
+            #info['loading_gif'] = self.loading_gif
             info['timeout_pic'] = self.timeout_pic
             info['temp_path'] = self.temp_path
             info['start_row'] = int(self.table.model().rowCount() / self.per_row_pic_num)#int(self.downloadNum / self.per_row_pic_num)
@@ -763,9 +753,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         n = 0
         for i in user_box:
             user_id = i['user']['id']
-            info = {'user_preview': i, 'api': self.api, 'loading_gif': self.loading_gif,
-                    'timeout_pic': self.timeout_pic, 'temp_path': self.temp_path, 'save_path': self.save_path,
-                    'has_r18': self.has_r18, 'no_h': self.no_h, 'app': self}
+            info = {
+                'user_preview': i, 
+                'api': self.api, 
+                #'loading_gif': self.loading_gif,
+                'timeout_pic': self.timeout_pic, 
+                'temp_path': self.temp_path, 
+                'save_path': self.save_path,
+                'has_r18': self.has_r18, 
+                'no_h': self.no_h, 
+                'app': self
+                }
             smallFrame_w = self.SmallFrame.width()
             scrollAreaWidgetContent_w = self.scrollAreaWidgetContents[title].width()
             frames_x = (scrollAreaWidgetContent_w - 790) // 2
@@ -844,9 +842,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def closeEvent(self, event):
         # 待解决,关闭后删除某些东西
-        log_file_list = os.listdir('log_file')
+        log_dir = './log_file'
+        log_file_list = os.listdir(log_dir)
         for file in log_file_list:
-            _file = f'log_file/{file}'
+            _file = f'{log_dir}/{file}'
             if not os.path.getsize(_file):
                 os.remove(_file)
 
@@ -1037,7 +1036,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'temp_path': temp_path,
             'temp_file_name': file_name,
             'api': self.api,
-            'loading_gif': self.loading_gif,
+            #'loading_gif': self.loading_gif,
             'title': title,
             'timeout_pic': self.timeout_pic,
         }

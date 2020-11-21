@@ -118,8 +118,13 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
 
     # 配置生效
     def set_user_settings(self):
-        temp_path = self.cache_lineEdit.text()
-        save_path = self.save_lineEdit.text()
+        temp_path = self.cache_lineEdit.text().strip()
+        if not temp_path:
+            temp_path = self.info['temp_path']
+        save_path = self.save_lineEdit.text().strip()
+        if not save_path:
+            save_path = self.info['save_path']
+
         per_row_pic_num = self.everyRowPicNumComboBox.currentText()
         if self.r18_checkBox.isChecked():
             has_r18 = 'True'

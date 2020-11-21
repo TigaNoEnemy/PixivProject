@@ -49,7 +49,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.rotate += 1
 
     def check_info(self):
-        key = ['illust', 'api', 'loading_gif', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h', 'main']
+        key = ['illust', 'api', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h', 'main']
         need_key = []
         need_not_key = []
         for i in self.info:

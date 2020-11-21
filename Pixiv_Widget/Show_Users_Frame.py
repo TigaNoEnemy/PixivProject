@@ -42,7 +42,7 @@ class show_users_frame(QFrame):
         self.action_to_command()
 
     def check_info(self):
-        key = ['user_preview', 'api', 'loading_gif', 'timeout_pic', 'temp_path', 'save_path', 'has_r18', 'no_h', 'app']
+        key = ['user_preview', 'api', 'timeout_pic', 'temp_path', 'save_path', 'has_r18', 'no_h', 'app']
         need_key = []
         need_not_key = []
         for i in self.info:
