@@ -301,7 +301,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.table = TableView(self.SmallFrame)
         width = self.SmallFrame.width()
         self.table.setGeometry(QRect(0, 0, width, 731))
-        self.table.setupUi()
         self.table.setVisible(False)
 
     def rebuild(self, title):
@@ -1135,7 +1134,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if not dontDownload:
             info.update({'timer_box': self.downloadTimer})
             self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.download_has_size_pic, response=response, output_file=f"{path}/{file_name}_{n}.jpg", info=info)
-            self.downloadThreads[f"{illust_id}_{n}"].finish.connect(self.table.set_download_failure)
+            self.downloadThreads[f"{illust_id}_{n}"].finish.connect(self.table.set_download_final_status)
             self.downloadThreads[f"{illust_id}_{n}"].wait()
             self.downloadThreads[f"{illust_id}_{n}"].start()
 
@@ -1185,20 +1184,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         n = info['n'] - 1   # 一个作品的第n张图片
 
         file_name = file.split('/')[-1][:-4]
-        if image_size is None:
-            self.table.info[d_timer_id] = row = self.table.model().rowCount()
-            self.table._model.setItem(row, 0, QStandardItem(file_name))
-            self.table._model.setItem(row, 1, QStandardItem('等待下载'))
-            self.table._model.setItem(row, 2, QStandardItem('0%'))
-            self.table._model.item(row, 0).setForeground(QBrush(QColor(255, 255, 255)))
-            self.table._model.item(row, 1).setForeground(QBrush(QColor(255, 255, 255)))
-            self.table._model.item(row, 2).setForeground(QBrush(QColor(255, 255, 255)))
 
-        else:
-            self.downloadTimer[d_timer_id] = QTimer()
-            self.downloadTimer[d_timer_id].timeout.connect(
-                lambda: self.table.count_process(image_size, file, self.downloadTimer[d_timer_id], d_timer_id, file_name))
-            self.downloadTimer[d_timer_id].start(1000)
+        self.table.set_item(image_size, file, self.downloadTimer, d_timer_id, file_name)
 
         #self.downloadNum += 1
 
