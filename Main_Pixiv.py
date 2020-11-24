@@ -1127,7 +1127,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         d_timer_id = f"{illust_id}_{n}"
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n}
+        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n, 'dontDownload': dontDownload}
         
         self.create_download_progress(info=info)
 
@@ -1145,7 +1145,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             if file_size < image_size:
                 try:
                     os.remove(file)
-                except:
+                except Exception as e:
+                    print(e)
                     return False
                 return True
             return False
@@ -1181,11 +1182,12 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         image_size = info['image_size']
         file = info['save_file']
         d_timer_id = info['download_timer_id']
-        n = info['n'] - 1   # 一个作品的第n张图片
+        dontDownload = info.get('dontDownload', False)
+        #n = info['n'] - 1   # 一个作品的第n张图片
 
         file_name = file.split('/')[-1][:-4]
 
-        self.table.set_item(image_size, file, self.downloadTimer, d_timer_id, file_name)
+        self.table.set_item(image_size, file, self.downloadTimer, d_timer_id, file_name, self, dontDownload)
 
         #self.downloadNum += 1
 

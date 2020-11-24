@@ -28,7 +28,7 @@ class Operate_Button(QItemDelegate):
 
         if platform.system() == "Windows":
             import os
-            os.startfile('file_dir')
+            os.startfile(file_dir)
         else:
             import subprocess
             subprocess.call(['xdg-open', file_dir])
@@ -40,13 +40,20 @@ class Operate_Button(QItemDelegate):
         d_timer_id = item.info['d_timer_id']
         root.getImageSizeThreads[d_timer_id].start()
 
-        image_size = item['image_size']
-        file = item['file']
-        timer_box = item['timer_box']
-        d_timer_id = item['d_timer_id']
-        file_name = item['file_name']
+        # image_size = item.info['image_size']
+        file = item.info['file']
+        # timer_box = item.info['timer_box']
+        # d_timer_id = item.info['d_timer_id']
+        # file_name = item.info['file_name']
+        row = item.info['row']
+        main = item.info['main']
 
-        self.parent().set_item(image_size, file, timer_box, d_timer_id, file_name)
+        info = item.info.copy()
+        info['save_file'] = file
+        info['download_timer_id'] = d_timer_id
+        self.parent()._model.removeRow(row)
+        main.create_download_progress(info=info)
+        #self.parent().set_item(image_size, file, timer_box, d_timer_id, file_name, main)
 
     def paint(self, painter, option, index):
         if not self.parent().indexWidget(index):
@@ -151,16 +158,17 @@ class TableView(QTableView):
         #self._model.item(row, 1).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
         
 
-    def set_item(self, image_size, file, timer_box, d_timer_id, file_name):
+    def set_item(self, image_size, file, timer_box, d_timer_id, file_name, main, dontDownload=False):
         if image_size is None:
             self.info[d_timer_id] = row = self.model().rowCount()
             info = {
                     'file_name': file_name, 
                     'file': file, 
                     'd_timer_id': d_timer_id, 
-                    'main': self.parent(),
+                    'main': main,
                     'image_size': image_size,
                     'timer_box': timer_box,
+                    'row': row,
                     }
             self._model.setItem(row, 0, My_Item(file_name, info=info))
             self._model.setItem(row, 1, My_Item('等待下载'))
@@ -170,7 +178,8 @@ class TableView(QTableView):
             timer_box[d_timer_id] = QTimer()
             timer_box[d_timer_id].timeout.connect(
                 lambda: self.count_process(image_size, file, d_timer_id, file_name))
-            timer_box[d_timer_id].start(1000)
+            if not dontDownload:
+                timer_box[d_timer_id].start(1000)
         
  
 if __name__ == "__main__":
