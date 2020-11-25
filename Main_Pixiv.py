@@ -137,8 +137,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.scrollAreas = {}
         self.scrollAreaWidgetContents = {}
-        width = 240 * self.per_row_pic_num + 135
-        self.resize(width, int(height * 0.75))
+        # width = 240 * self.per_row_pic_num + 135
+        # self.resize(width, int(height * 0.75))
 
         self.move_self_to_center()  # 移动窗口到中央
         self.show()
@@ -150,11 +150,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         from PyQt5.QtWidgets import QDesktopWidget
         desktop_w = QDesktopWidget().width()
         desktop_h = QDesktopWidget().height()
+
+        self.resize(desktop_w*0.5, desktop_h*0.75)
+
         width = self.width()
         height = self.height()
 
         x = (desktop_w - width) // 2
         y = (desktop_h - height) // 2
+
         self.move(x, y)
 
     def ajust_cate_widget_size(self):
@@ -1098,6 +1102,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if not result['isSuccess']:
             # 网络错误重新下载
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
+            print(result)
             return 
 
         response = result['response']

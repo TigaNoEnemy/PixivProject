@@ -151,7 +151,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         self.set_user_settings()
         per_row_pic_num = self._setting['per_row_pic_num']
         h = self._parent.height()
-        self._parent.resize(240*per_row_pic_num+200, h)
+        self._parent.resize(240*per_row_pic_num+135, h)
         setting = self._setting
         self._closed.emit(setting)
 

@@ -35,25 +35,26 @@ class Operate_Button(QItemDelegate):
 
     def reconnect(self, index):
         item = index.model().item(index.row(), 0)
-
-        root = item.info['main']
+        timer_box = item.info['timer_box']
         d_timer_id = item.info['d_timer_id']
+        if timer_box[d_timer_id].isActive():
+            return
+        
+        root = item.info['main']
         root.getImageSizeThreads[d_timer_id].start()
 
         # image_size = item.info['image_size']
         file = item.info['file']
-        # timer_box = item.info['timer_box']
+        
         # d_timer_id = item.info['d_timer_id']
         # file_name = item.info['file_name']
         row = item.info['row']
-        main = item.info['main']
 
         info = item.info.copy()
         info['save_file'] = file
         info['download_timer_id'] = d_timer_id
-        self.parent()._model.removeRow(row)
-        main.create_download_progress(info=info)
-        #self.parent().set_item(image_size, file, timer_box, d_timer_id, file_name, main)
+        # self.parent()._model.removeRow(row)
+        root.create_download_progress(info=info)
 
     def paint(self, painter, option, index):
         if not self.parent().indexWidget(index):
@@ -160,7 +161,8 @@ class TableView(QTableView):
 
     def set_item(self, image_size, file, timer_box, d_timer_id, file_name, main, dontDownload=False):
         if image_size is None:
-            self.info[d_timer_id] = row = self.model().rowCount()
+
+            self.info[d_timer_id] = row = self.info.get(d_timer_id, self.model().rowCount())
             info = {
                     'file_name': file_name, 
                     'file': file, 
@@ -180,6 +182,12 @@ class TableView(QTableView):
                 lambda: self.count_process(image_size, file, d_timer_id, file_name))
             if not dontDownload:
                 timer_box[d_timer_id].start(1000)
+            else:
+                info = {}
+                info['isSuccess'] = True
+                info['timer_box'] = timer_box
+                info['download_timer_id'] = d_timer_id
+                self.set_download_final_status(info)
         
  
 if __name__ == "__main__":
