@@ -89,9 +89,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.user_pic_thread.start()
 
 
-        desktop = QApplication.desktop()
-        screen_rect = desktop.screenGeometry()
-        height = screen_rect.height()
+        # desktop = QApplication.desktop()
+        # screen_rect = desktop.screenGeometry()
+        # height = screen_rect.height()
 
         picture = QPixmap(self.tips_dot)
         self.downloadTipsLabel.setPixmap(picture)
@@ -251,6 +251,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': 用户好友}, title='我的好友', isSearch=False))
 
         myBlackList = self.qmenu.addAction('我的黑名单')
+        myBlackList.triggered.connect(
+            lambda x: print("待搞定")
+        )
 
         self.qmenu.exec(QCursor.pos())
 
@@ -310,7 +313,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def rebuild(self, title):
         h = self.tabWidget.height()
         w = self.tabWidget.width()
-        tabBar_h = self.tabWidget.tabBar().height()
+        # tabBar_h = self.tabWidget.tabBar().height()
         self.scrollAreas[title] = QScrollArea(self.tab[title])
         self.scrollAreas[title].setGeometry(QRect(0, 0, w-3, h-self.tabBar_h))
         #self.scrollAreas[title].setStyleSheet("background-color: rgba(255, 255, 255, 0);")
@@ -943,7 +946,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path, 'has_r18': self.has_r18, 'no_h': self.no_h}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
-        illust_related_frame_w = self.illust_related_frame.width()
+        # illust_related_frame_w = self.illust_related_frame.width()
         self.illust_related_frame.move(
             (smallFrame_w - 360 - 644) // 2, self.scrollAreaWidgetContents_3.height())  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744 + 24) # 为相关图放大后可以完全显示而加上24（计算好的结果）
@@ -1096,7 +1099,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         
         n = result['n']
         illust_id = result['illust_id']
-        url = result['url']
+        # url = result['url']
         title = result['title']
     
         if not result['isSuccess']:
@@ -1179,11 +1182,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.downloadTipsLabel.setVisible(False)
 
     def create_download_progress(self, info):
-        from PyQt5.QtGui import QStandardItem
-        from PyQt5.QtGui import QBrush
-        from PyQt5.QtGui import QColor
-        from PyQt5.QtCore import QTimer
-
         image_size = info['image_size']
         file = info['save_file']
         d_timer_id = info['download_timer_id']
