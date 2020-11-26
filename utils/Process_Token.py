@@ -64,7 +64,10 @@ class login_info_parser:
         except Exception as e:
             print(f"insert error <{e}>")
 
-        query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id}, login_account="{login_account}" where id=1'
+        if login_account:
+            query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id}, login_account="{login_account}" where id=1'
+        else:
+            query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id} where id=1'
         print(query)
         cur.execute(query)
         cur.close()

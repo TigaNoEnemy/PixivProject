@@ -3,6 +3,7 @@ from PyQt5.QtGui import QStandardItem, QBrush, QColor, QStandardItemModel
 from PyQt5.QtWidgets import QTableView, QHeaderView, QAbstractItemView, QHBoxLayout, QItemDelegate, QPushButton, QWidget
 from PyQt5.QtCore import QTimer, Qt
 import time
+import sys
 import os
 
 
@@ -20,13 +21,12 @@ class Operate_Button(QItemDelegate):
         super(Operate_Button, self).__init__(parent)
 
     def button_callback(self, index):
-        import platform
         file = index.model().item(index.row(), 0).info['file']
         
         file_dir = file.split('/')[:-1]
         file_dir = '/'.join(file_dir)
 
-        if platform.system() == "Windows":
+        if sys.platform.lower() == "windows":
             import os
             os.startfile(file_dir)
         else:
@@ -191,7 +191,6 @@ class TableView(QTableView):
         
  
 if __name__ == "__main__":
-    import sys
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     qb = TableView()

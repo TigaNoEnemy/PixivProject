@@ -310,20 +310,20 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
         self.cancelButton.clicked.connect(self.disagree)
 
     def agree(self):
-        self.close()
-        self._parent.close()
         self._logout()
 
+
     def _logout(self):
-        if self.isLogout:
-            try:
-                self.login_info_parser.update_token(pixiv_id=1, user='', access_token='', next_time_auto_login=0)
-            except Exception as e:
-                print(e)
-            self.main()
-        else:
-            self.close()
-            self._parent.close()
+        try:
+            self.login_info_parser.update_token(pixiv_id=1, user='', access_token='', next_time_auto_login=0, login_account=None)
+        except Exception as e:
+            print(e)
+
+        self._parent.close()
+        self.main()
+
+        self.close()
+        
 
     def disagree(self):
         self.close()

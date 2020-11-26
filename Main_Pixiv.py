@@ -9,7 +9,7 @@ from math import ceil
 import sys
 from PyQt5 import sip
 import os
-from memory_profiler import profile
+#from memory_profiler import profile
 import cgitb
 
 
@@ -836,6 +836,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def _logout(self):
         from Pixiv_Widget.Pixiv_Login import app_logout
         def del_p():
+            self.p.deleteLater()
+            sip.delete(self.p)
             del self.p
 
         if hasattr(self, 'p'):
@@ -1377,32 +1379,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def test(self, info=None):
         return 
-        from find import IKnowChildren
-        print('开始写入！')
-        import time
-        p = int(time.time())
-        k = str(p)[-3:]
-        f = open(f'Widget_Children-{k}.csv', 'w', encoding='utf-8')
-        f.write('层级@序号@对象名@类别@内存@x@y@w@h@style_sheet@子对象名@子类别@子内存@_x@_y@_w@_h@sub_style_sheet\n')
-        f.close()
-        a = IKnowChildren()
-        for i in a.find_children(self):
-            f = open(f'Widget_Children-{k}.csv', 'a', encoding='utf-8')
-            print(i, end='')
-            f.write(i)
-            f.close()
-        print('手工！')
-        import pandas as pd
-        
-        n = pd.read_csv(f'Widget_Children-{k}.csv', sep='@')
-        n.to_excel(f'Widget_Children-{k}.xlsx', index=0)
 
 def login_success(login, user_id, username, user_pic_link):
     global AppUi
     AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
     # AppUi.showMinimized()
     login.close()
-    del (login)
+    
+    login.deleteLater()
+    sip.delete(login)
 
 
 def main():
