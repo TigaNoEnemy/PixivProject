@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QFrame
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QTimer
 
-from memory_profiler import profile
 
 # 导入自定义模块
 try:

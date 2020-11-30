@@ -1349,10 +1349,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.set_style()
 
     def set_style(self):
-        f = open('Main_Style.qss', encoding='utf-8')
-        style = f.read()
+        try:
+            f = open('Main_Style.qss', encoding='utf-8')
+        except:
+            from utils import Reset_Style
+            Reset_Style.reset_main_style()
+            style = Reset_Style.MAIN_STYLE
+        else:
+            style = f.read()
+            f.close()
+
         self.setStyleSheet(style)
-        f.close()
         self.update()
 
     def Setting_page(self):
@@ -1397,9 +1404,9 @@ def main():
     except:
         pass
     login = app_login(login_success)
+    login.show()
     # login.move(2000, 1000)
     # login.showMinimized()
-    login.show()
 
 
 if __name__ == '__main__':

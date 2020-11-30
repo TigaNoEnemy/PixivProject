@@ -5,7 +5,6 @@ from PyQt5.QtCore import QRect, pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5 import sip
 import os
-from memory_profiler import profile
 
 try:
     from Pixiv_Thread.My_Thread import base_thread

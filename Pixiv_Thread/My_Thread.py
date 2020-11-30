@@ -4,7 +4,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal, QMutex
 import pixivpy3
 import time
-from memory_profiler import profile
 
 
 import cgitb

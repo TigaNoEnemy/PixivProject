@@ -17,12 +17,15 @@ from utils.Project_Setting import setting
 from Pixiv_Api.My_Api import my_api
 from Pixiv_Thread.My_Thread import base_thread
 
+import time
+
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
     def __init__(self, login_success):
         super(app_login, self).__init__()
+        start = time.time()
         self.login_success = login_success
         self.cfg = setting()
         self.get_setting()
@@ -30,6 +33,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.api = my_api()
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setupUi(self)
+        self.set_style()
+        self.reset_RES_dir()
         #self.widget.setStyleSheet("QWidget:{border-radius:3px}")
         #self.exit_button.setStyleSheet("QPushButton{border-image: url(./RES/exit.png)};")
         self.exit_button.clicked.connect(self.close)
@@ -68,7 +73,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.login_time_counter.timeout.connect(self.provide_escape_button)
         self.not_to_login = False   # 当为True时中断登录
 
-        self.set_style()
+        
         # 为了圆角时不产生黑色背景
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -76,10 +81,28 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
         self.trag = False
 
+        print(time.time() - start, '>'*90)
+
+    def reset_RES_dir(self):
+        import shutil, os
+        if not os.path.exists('RES'):
+            os.mkdir('RES')
+            dir_name = os.path.dirname(__file__)
+            RES = f"{dir_name}/RES"
+            for i in os.listdir(RES):
+                shutil.copy(f'{RES}/{i}', f"./RES/{i}")
+
+
     def set_style(self):
-        f = open('Login_Style.qss', encoding='utf-8')
-        style = f.read()
-        f.close()
+        try:
+            f = open('Login_Style.qss', encoding='utf-8')
+        except:
+            from utils import Reset_Style
+            Reset_Style.reset_loging_style()
+            style = Reset_Style.LOGIN_STYLE
+        else:
+            style = f.read()
+            f.close()
         self.setStyleSheet(style)
 
     def provide_escape_button(self):

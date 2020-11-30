@@ -6,7 +6,7 @@ block_cipher = None
 a = Analysis(['./Main_Pixiv.py'],
              pathex=['.'],
              binaries=[],
-             datas=[('./browsers.json', './cloudscraper/user_agent')],
+             datas=[('./browsers.json', './cloudscraper/user_agent'), ('./RES/关于.png', './Pixiv_Widget/RES'), ('./RES/timeout_pic', './Pixiv_Widget/RES'), ('./RES/注销-p.png', './Pixiv_Widget/RES'), ('./RES/no_h', './Pixiv_Widget/RES'), ('./RES/男女-p.png', './Pixiv_Widget/RES'), ('./RES/正常-p.png', './Pixiv_Widget/RES'), ('./RES/下载-p.png', './Pixiv_Widget/RES'), ('./RES/搜索-p.png', './Pixiv_Widget/RES'), ('./RES/pixiv.ico', './Pixiv_Widget/RES'), ('./RES/login_gif', './Pixiv_Widget/RES'), ('./RES/DOWNLOAD_TIPS.png', './Pixiv_Widget/RES'), ('./RES/exit.png', './Pixiv_Widget/RES'), ('./RES/设置-p.png', './Pixiv_Widget/RES')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -26,7 +26,8 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False,
+          icon='pixiv.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
