@@ -11,7 +11,7 @@ import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
 
-THREAD_POOL = ThreadPoolExecutor(max_workers=5)
+THREAD_POOL = ThreadPoolExecutor(max_workers=10)
 
 class base_thread(QObject):
     # 除更新UI以外的其他操作
@@ -31,6 +31,8 @@ class base_thread(QObject):
 
     def emit_signal(self, future):
         result = future.result()
+        result.update(self.info)
+        result.update(self.args)
         self.finish.emit(result)
 
     def wait(self):
