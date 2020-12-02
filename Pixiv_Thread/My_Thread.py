@@ -16,17 +16,17 @@ class QMutex_Manager:
     mutex_status = {i: True for i in range(thread_pool)}
     mutex_box = {i: QMutex() for i in range(thread_pool)}
 
-    @staticmethod
-    def get_mutex():
-        for i in QMutex_Manager.mutex_status:
-            if QMutex_Manager.mutex_status[i]:
+    @classmethod
+    def get_mutex(cls, *args, **kwargs):
+        for i in cls.mutex_status:
+            if cls.mutex_status[i]:
                 return i
 
         # 没有闲置锁，在第i个等待
-        i = QMutex_Manager.wait_mutex
-        QMutex_Manager.wait_mutex += 1
-        if QMutex_Manager.wait_mutex >= QMutex_Manager.thread_pool:
-            QMutex_Manager.wait_mutex = 0
+        i = cls.wait_mutex
+        cls.wait_mutex += 1
+        if cls.wait_mutex >= cls.thread_pool:
+            cls.wait_mutex = 0
         return i
 
 
