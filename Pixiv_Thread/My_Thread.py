@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -8,13 +9,26 @@ import time
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class small_frame_thread_num:
-    # 指示当前有多少个预览图下载线程
-    num = 0
 
-class big_frame_thread_num:
-    # 指示当前有多少个大图下载线程
-    num = 0
+class QMutex_Manager:
+    thread_pool = 10     # 线程限制在thread_pool个
+    wait_mutex = 0      # 当没有闲置锁时，在第wait_mutex个锁等待
+    mutex_status = {i: True for i in range(thread_pool)}
+    mutex_box = {i: QMutex() for i in range(thread_pool)}
+
+    @staticmethod
+    def get_mutex():
+        for i in QMutex_Manager.mutex_status:
+            if QMutex_Manager.mutex_status[i]:
+                return i
+
+        # 没有闲置锁，在第i个等待
+        i = QMutex_Manager.wait_mutex
+        QMutex_Manager.wait_mutex += 1
+        if QMutex_Manager.wait_mutex >= QMutex_Manager.thread_pool:
+            QMutex_Manager.wait_mutex = 0
+        return i
+
 
 class base_thread(QThread):
     # 除更新UI以外的其他操作
@@ -32,18 +46,9 @@ class base_thread(QThread):
 
     #@profile
     def run(self):
-        frame = self.info.get('self', None)
-
-        if frame == 'small':
-            while small_frame_thread_num.num >= self.thread_pool:
-                time.sleep(1)
-            small_frame_thread_num.num += 1
-
-        elif frame == 'big':
-            while big_frame_thread_num.num >= self.thread_pool:
-                time.sleep(1)
-            big_frame_thread_num.num += 1
-
+        lock_id = QMutex_Manager.get_mutex()
+        QMutex_Manager.mutex_box[lock_id].lock()
+        QMutex_Manager.mutex_status[lock_id] = False
         try:
             a = self.method(**self.args)
         except pixivpy3.utils.PixivError:
@@ -58,10 +63,44 @@ class base_thread(QThread):
             else:
                 self.none_finish.emit()
 
-        if frame == 'small':
-            small_frame_thread_num.num -= 1
+        QMutex_Manager.mutex_box[lock_id].unlock()
+        QMutex_Manager.mutex_status[lock_id] = True
 
-        elif frame == 'big':
-            big_frame_thread_num.num -= 1
 
-        #del self
+if __name__ == '__main__':
+    import sys
+    import time
+
+    from PyQt5.QtWidgets import QFrame, QApplication, QPushButton
+
+    class myq(QFrame):
+        index = 0
+
+        def count(self, index):
+            for i in range(3):
+                print(index)
+                time.sleep(1)
+
+            return {'index': index}
+
+        def start_thread(self):
+            self.index += 1
+            p = lambda x: print(x)
+            base_thread.root = self
+            n = base_thread(self, self.count, index=self.index, info={'index': self.index})
+            n.finish.connect(lambda x: print(f"{x['index']} done"))
+            n.wait()
+            n.start()
+
+    app = QApplication(sys.argv)
+    a = myq()
+    b = QPushButton(a)
+    b.clicked.connect(a.start_thread)
+    b.resize(50, 25)
+    b.move(25, 12)
+    b.setText('000')
+    a.resize(100, 50)
+    a.move(2000, 1000)
+    a.show()
+    sys.exit(app.exec_())
+
