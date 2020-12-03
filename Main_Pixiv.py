@@ -1161,10 +1161,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         if not dontDownload:
             info.update({'timer_box': self.downloadTimer})
-            self.downloadThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.download_has_size_pic, response=response, output_file=f"{path}/{file_name}_{n}.jpg", info=info)
-            self.downloadThreads[f"{illust_id}_{n}"].finish.connect(self.table.set_download_final_status)
-            self.downloadThreads[f"{illust_id}_{n}"].wait()
-            self.downloadThreads[f"{illust_id}_{n}"].start()
+            self.downloadThreads[d_timer_id] = base_thread(self, self.api.download_has_size_pic, response=response, output_file=f"{path}/{file_name}_{n}.jpg", info=info)
+            self.downloadThreads[d_timer_id].finish.connect(self.table.set_download_final_status)
+            self.downloadThreads[d_timer_id].wait()
+            self.downloadThreads[d_timer_id].start()
 
     def remove_imperfect_image(self, file, image_size):
         # 删除不完整的图片

@@ -57,25 +57,51 @@ class Operate_Button(QItemDelegate):
                 'download_timer_id': d_timer_id, 
                 'dontDownload': False,
                 'url': url,
+                'timer_box': timer_box,
+                'main': root,
                } 
+
         # self.create_download_progress(info=info)
 
         root.getImageSizeThreads[d_timer_id] = base_thread(root, root.api.get_image_size,
-                                                                       url=url, Range=f"bytes={had_downloaded_size}-",
+                                                                       url=url, Range=f"bytes={had_downloaded_size+1}-",
                                                                        info=info)
-        root.getImageSizeThreads[d_timer_id].finish.connect(root.create_download_progress)
+        root.getImageSizeThreads[d_timer_id].finish.connect(self.write_pic_into_file)
         root.getImageSizeThreads[d_timer_id].wait()
         root.getImageSizeThreads[d_timer_id].start()
 
         # image_size = item.info['image_size']
         # d_timer_id = item.info['d_timer_id']
-        # file_name = item.info['file_name'
+        
 
         # info = item.info.copy()
         # info['save_file'] = file
         # info['download_timer_id'] = d_timer_id
         # self.parent()._model.removeRow(row)
-        # root.create_download_progress(info=info)
+        root.create_download_progress(info=info)
+        row = self.parent().info[d_timer_id]
+        _item = My_Item(item.text(), info=item.info)
+        self.parent()._model.setItem(row, 0, _item)
+
+    def write_pic_into_file(self, info):
+        d_timer_id = info['download_timer_id']
+
+        if not info['isSuccess']:
+            isSuccess = info['isSuccess']
+            timer_box = info['timer_box']
+
+            info = {'isSuccess': isSuccess, 'timer_box': timer_box, 'download_timer_id': d_timer_id}
+            self.parent().set_download_final_status(info)
+            return
+
+        root = info.pop('main')
+        response = info['response']
+        output_file = info['save_file']
+        info.pop('isSuccess', None)
+        root.downloadThreads[d_timer_id] = base_thread(root, root.api.download_has_size_pic, response=response, output_file=output_file, info=info)
+        root.downloadThreads[d_timer_id].finish.connect(root.table.set_download_final_status)
+        root.downloadThreads[d_timer_id].wait()
+        root.downloadThreads[d_timer_id].start()
 
     def paint(self, painter, option, index):
         if not self.parent().indexWidget(index):
@@ -166,6 +192,7 @@ class TableView(QTableView):
         d_timer_id = info['download_timer_id']
         row = self.info[d_timer_id]
         timer_box[d_timer_id].stop()
+
         if not isSuccess:
             self._model.setItem(row, 1, My_Item("下载失败"))
             self.set_row_item_object_name(row, QBrush(QColor('red')))
@@ -206,6 +233,9 @@ class TableView(QTableView):
             self._model.setItem(row, 2, My_Item('0%'))
 
         else:
+            row = self.info[d_timer_id]
+            item = self._model.item(row, 0)
+            item.info['image_size'] = image_size
             timer_box[d_timer_id] = QTimer()
             timer_box[d_timer_id].timeout.connect(
                 lambda: self.count_process(image_size, file, d_timer_id, file_name))
