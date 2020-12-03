@@ -6,6 +6,7 @@ import time
 import sys
 import os
 
+from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -26,35 +27,55 @@ class Operate_Button(QItemDelegate):
         file_dir = file.split('/')[:-1]
         file_dir = '/'.join(file_dir)
 
-        if sys.platform.lower() == "windows":
-            import os
-            os.startfile(file_dir)
-        else:
+        if sys.platform.lower() == "linux":
             import subprocess
             subprocess.call(['xdg-open', file_dir])
+        else:
+            import os
+            os.startfile(file_dir)
 
     def reconnect(self, index):
         item = index.model().item(index.row(), 0)
         timer_box = item.info['timer_box']
         d_timer_id = item.info['d_timer_id']
+        url = item.info['url']
+        file = item.info['file']
+        image_size = item.info['image_size']
+
+        had_downloaded_size = os.path.getsize(file)
+
+        # 下载尚未结束，防止重新下载
         if timer_box[d_timer_id].isActive():
             return
         
         root = item.info['main']
+        #root.getImageSizeThreads[d_timer_id].start()
+
+        info = {
+                'image_size': int(image_size), 
+                'save_file': file, 
+                'download_timer_id': d_timer_id, 
+                'dontDownload': False,
+                'url': url,
+               } 
+        # self.create_download_progress(info=info)
+
+        root.getImageSizeThreads[d_timer_id] = base_thread(root, root.api.get_image_size,
+                                                                       url=url, Range=f"bytes={had_downloaded_size}-",
+                                                                       info=info)
+        root.getImageSizeThreads[d_timer_id].finish.connect(root.create_download_progress)
+        root.getImageSizeThreads[d_timer_id].wait()
         root.getImageSizeThreads[d_timer_id].start()
 
         # image_size = item.info['image_size']
-        file = item.info['file']
-        
         # d_timer_id = item.info['d_timer_id']
-        # file_name = item.info['file_name']
-        row = item.info['row']
+        # file_name = item.info['file_name'
 
-        info = item.info.copy()
-        info['save_file'] = file
-        info['download_timer_id'] = d_timer_id
+        # info = item.info.copy()
+        # info['save_file'] = file
+        # info['download_timer_id'] = d_timer_id
         # self.parent()._model.removeRow(row)
-        root.create_download_progress(info=info)
+        # root.create_download_progress(info=info)
 
     def paint(self, painter, option, index):
         if not self.parent().indexWidget(index):
@@ -159,9 +180,16 @@ class TableView(QTableView):
         #self._model.item(row, 1).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
         
 
-    def set_item(self, image_size, file, timer_box, d_timer_id, file_name, main, dontDownload=False):
-        if image_size is None:
+    def set_item(self, info, dontDownload=False):
+        image_size = info['image_size']
+        file = info['file']
+        timer_box = info['timer_box']
+        d_timer_id = info['d_timer_id']
+        file_name = info['file_name']
+        main = info['main']
+        url = info['url']
 
+        if image_size is None:
             self.info[d_timer_id] = row = self.info.get(d_timer_id, self.model().rowCount())
             info = {
                     'file_name': file_name, 
@@ -171,6 +199,7 @@ class TableView(QTableView):
                     'image_size': image_size,
                     'timer_box': timer_box,
                     'row': row,
+                    'url': url,
                     }
             self._model.setItem(row, 0, My_Item(file_name, info=info))
             self._model.setItem(row, 1, My_Item('等待下载'))

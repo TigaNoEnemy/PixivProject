@@ -1072,7 +1072,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
 
             file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
-            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "n": n}
+            info = {
+                'image_size': None, 
+                'save_file': file, 
+                'download_timer_id': f"{illust_id}_{n}", 
+                "n": n,
+                'url': illust['meta_single_page']['original_image_url']
+                }
             self.create_download_progress(info=info)
 
         for j in illust['meta_pages']:
@@ -1086,7 +1092,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
             
             file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
-            info = {'image_size': None, 'save_file': file, 'download_timer_id': f"{illust_id}_{n}", "n": n}
+            info = {
+                    'image_size': None, 
+                    'save_file': file, 
+                    'download_timer_id': f"{illust_id}_{n}", 
+                    "n": n, 
+                    'url': j['image_urls']['original']
+                    }
             self.create_download_progress(info=info)
 
             n += 1
@@ -1101,7 +1113,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         
         n = result['n']
         illust_id = result['illust_id']
-        # url = result['url']
+        url = result['url']
         title = result['title']
     
         if not result['isSuccess']:
@@ -1137,7 +1149,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         d_timer_id = f"{illust_id}_{n}"
 
-        info = {'image_size': int(image_size), 'save_file': file, 'download_timer_id': d_timer_id, 'n': n, 'dontDownload': dontDownload}
+        info = {
+                'image_size': int(image_size), 
+                'save_file': file, 
+                'download_timer_id': d_timer_id, 
+                'dontDownload': dontDownload,
+                'url': url,
+               }
         
         self.create_download_progress(info=info)
 
@@ -1188,11 +1206,23 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         file = info['save_file']
         d_timer_id = info['download_timer_id']
         dontDownload = info.get('dontDownload', False)
-        #n = info['n'] - 1   # 一个作品的第n张图片
+        url = info['url']
 
         file_name = file.split('/')[-1][:-4]
 
-        self.table.set_item(image_size, file, self.downloadTimer, d_timer_id, file_name, self, dontDownload)
+        info = {
+                'image_size': image_size,
+                'file': file,
+                'timer_box': self.downloadTimer,
+                'd_timer_id': d_timer_id,
+                'file_name': file_name,
+                'main': self,
+                'url': url,
+                }
+        #n = info['n'] - 1   # 一个作品的第n张图片
+
+        self.table.set_item(info, dontDownload)
+        # self.table.set_item(image_size, file, self.downloadTimer, d_timer_id, file_name, self, dontDownload)
 
         #self.downloadNum += 1
 
