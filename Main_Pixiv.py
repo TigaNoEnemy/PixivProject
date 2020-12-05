@@ -1417,23 +1417,26 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def test(self, info=None):
         return 
 
-def login_success(login, user_id, username, user_pic_link):
+def login_success(info):
     global AppUi
-    AppUi = main_pixiv(login.api, user_id, username, user_pic_link)
-    # AppUi.showMinimized()
-    login.close()
-    
+    login = info['parent']
+    api = info['api']
+    user_id = info['ID']
+    username = info['USER']
+    user_pic_link = info['user_head']
+    AppUi = main_pixiv(api, user_id, username, user_pic_link)
+
     login.deleteLater()
     sip.delete(login)
 
 
-def main():
-    global login
-    try:
-        del (AppUi)
-    except:
-        pass
+def main(AppUi=None):
+    if AppUi:
+        AppUi.deleteLater()
+        sip.delete(AppUi)
+
     login = app_login(login_success)
+    login.login_signal.connect(login_success)
     login.show()
     # login.move(2000, 1000)
     # login.showMinimized()

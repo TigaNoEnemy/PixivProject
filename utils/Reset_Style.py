@@ -582,7 +582,7 @@ LOGIN_STYLE = """app_login QWidget{
 	border-image: url(./RES/exit.png);
 }"""
 
-def reset_loging_style():
+def reset_login_style():
 	with open('Login_Style.qss', 'w') as f:
 		f.write(LOGIN_STYLE)
 

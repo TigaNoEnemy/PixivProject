@@ -23,6 +23,7 @@ import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
+    login_signal = pyqtSignal(dict)
     def __init__(self, login_success):
         super(app_login, self).__init__()
         start = time.time()
@@ -98,7 +99,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
             f = open('Login_Style.qss', encoding='utf-8')
         except:
             from utils import Reset_Style
-            Reset_Style.reset_loging_style()
+            Reset_Style.reset_login_style()
             style = Reset_Style.LOGIN_STYLE
         else:
             style = f.read()
@@ -236,18 +237,25 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
                                                 access_token=response['response']['refresh_token'],
                                                 next_time_auto_login=self.auto)
             self.loginText.setText('登录成功')
+
+            info = {
+                'parent': self, 
+                'ID': str(ID), 
+                'USER': USER, 
+                'user_head': response['response']['user']['profile_image_urls']['px_50x50'],
+                'api': self.api
+                }
+
             self.timer = QTimer()
-            self.timer.timeout.connect(lambda: print('=' * 90))
             self.timer.timeout.connect(self.timer.stop)
-            self.timer.timeout.connect(lambda: self.login_success(self, str(ID), USER,
-                                                                  response['response']['user']['profile_image_urls']['px_50x50']))
-            self.timer.start(1000)
+            self.timer.timeout.connect(lambda info: self.emit_login_signal(info))
+
         else:
             self.loginText.setText(response['failed_text'])
             self.loginText.show()
             self.timer = QTimer()
             self.timer.timeout.connect(lambda: [self.autoLogin_2.setVisible(False), self.timer.stop()])
-            self.timer.start(1000)
+            self.timer.start(500)
 
     def sub_login(self):
         self.login_time_counter.start(self.login_timeout)
@@ -295,7 +303,10 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     def mouseReleaseEvent(self, qevent):
         self.drag = False
 
-
+    def emit_login_signal(self, info):
+        self.close()
+        self.login_signal.emit(info)
+        
 class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
     """docstring for app_logout"""
     closed = pyqtSignal()
@@ -343,11 +354,9 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
             print(e)
 
         self._parent.close()
-        self.main()
-
         self.close()
+        self.main(_parent)
         
-
     def disagree(self):
         self.close()
 
