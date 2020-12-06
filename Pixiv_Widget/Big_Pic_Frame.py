@@ -106,9 +106,11 @@ class big_pic_frame(QFrame):
             self.thread.start()
 
     def create_download_thread(self, info):
-
-        if hasattr(self, 'thread'):
+        try:
             del self.thread
+        except AttributeError:
+            pass
+
         api = self.info['api']
 
         if not info['isSuccess']:

@@ -30,7 +30,10 @@ class base_thread(QObject):
         future.add_done_callback(self.emit_signal)
 
     def emit_signal(self, future):
-        result = future.result()
+        if future.exception():
+            result = {'ERROR': True}
+        else:
+            result = future.result()
         result.update(self.info)
         result.update(self.args)
         self.finish.emit(result)

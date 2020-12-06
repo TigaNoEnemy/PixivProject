@@ -92,6 +92,8 @@ class Scroll_Widget(QWidget):
         self.resize(self.width(), height)
 
 class Show_Head_Label(QLabel):
+    load_times = 0      # 记录加载图片的次数
+    allow_load_times = 5    # 允许加载的次数
     def __init__(self, parent=None, info={}, *args, **kwargs):
         super(Show_Head_Label, self).__init__(parent)
         self.info = info
@@ -155,12 +157,14 @@ class Show_Head_Label(QLabel):
         file = f"{temp_path}/{file_name}"
         self.picture = QPixmap(file)
         if self.picture.isNull():
+            self.load_times += 1
             try:
                 os.remove(file)
             except Exception as e:
                 print(e)
-
-            self.get_head()
+            if self.load_times <= self.allow_load_times:
+                self.get_head()
+        
         else:
             self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.setPixmap(self.picture)

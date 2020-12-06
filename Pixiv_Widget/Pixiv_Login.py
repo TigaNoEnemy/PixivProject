@@ -248,7 +248,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
             self.timer = QTimer()
             self.timer.timeout.connect(self.timer.stop)
-            self.timer.timeout.connect(lambda info: self.emit_login_signal(info))
+            self.timer.timeout.connect(lambda: self.emit_login_signal(info))
+            self.timer.start(500)
 
         else:
             self.loginText.setText(response['failed_text'])
