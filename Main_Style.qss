@@ -2,7 +2,7 @@
 	background-color: rgb(48, 51, 41);
 }
 
-/*评论是否还有更多的label*/
+/*评论区是否还有更多的label*/
 #no_more_comment_label{
 	color: rgb(255, 255, 255);
 	font:12pt "MicroSoft YaHei";
@@ -533,4 +533,10 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 #pic_title_label, #file_title_label{
 	font: 18pt;
 	color: rgb(0,0,0);
+}
+
+/*当没有相关图时显示的提示的样式*/
+#no_related_pic_label{
+	color: rgb(255, 255, 255);
+	font:12pt "MicroSoft YaHei";
 }

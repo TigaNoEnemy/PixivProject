@@ -15,6 +15,9 @@ except :
     from Pixiv_Thread.My_Thread import base_thread
     from qtcreatorFile.small_pic_frame import Ui_small_pic_frame
 
+from Pixiv_Api.My_Api import my_api
+from utils.Project_Setting import setting
+
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -27,7 +30,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     timeout = 3
     def __init__(self, parent, info={}, test=False):
         super(small_pic_frame, self).__init__(parent)
-        self.info = info    # info共有七个键illust、api、loading_gif(加载时的动画)、timeout_pic(加载失败时显示的图片)、temp_path(图片缓存文件夹)、start_row(创建进度条需要)、save_path(下载文件夹)
+        self.info = info    # info共有七个键illust、start_row(创建进度条需要)、
         self.rotate = 90
         self.is_loding = True
         self.timer = QTimer()
@@ -38,6 +41,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.load_pic_success = False   #当图片加载不成功时，为False，不响应点击图片的动作
         self.picLabel.click.connect(self.pic_is_clicked)
         self.picLabel.info = self.info
+        self.api = my_api()
+        self.cfg = setting()
         self.picLabel.double_click_time = 1
         if not test:
             self.my_set()
@@ -48,17 +53,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.rotate += 1
 
     def check_info(self):
-        key = ['illust', 'api', 'timeout_pic', 'temp_path', 'start_row', 'save_path', 'has_r18', 'no_h', 'main']
-        need_key = []
-        need_not_key = []
-        for i in self.info:
-            if i not in key:
-                need_not_key.append(i)
-        for i in key:
-            if i not in self.info:
-                need_key.append(i)
-        if (need_key or need_not_key) and 'test' not in self.info:
-            raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
+        key = ['illust', 'start_row', 'main']
 
     def my_set(self):
         # 加载图片，文本
@@ -67,11 +62,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         illust_id = self.info['illust']['id']
         illust_title = self.info['illust']['title']
         author = self.info['illust']['user']['name']
-        api = self.info['api']
         url = self.info['illust']['image_urls']['square_medium']
-        temp_path = self.info['temp_path']
-        has_r18 = self.info['has_r18']
-        no_h = self.info['no_h']
 
         page_count = self.info['illust']['page_count']
 
@@ -82,14 +73,14 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             self.likeButton.setText('いやです')
             self.likeButton.clicked.connect(self.del_favor)
 
-        if not has_r18 and 'R-18' in str(tags):
-            file = no_h
+        if not self.cfg.has_r18 and 'R-18' in str(tags):
+            file = self.cfg.no_h
         elif 'R-18' in str(tags):
             file_name = f'{illust_id}_r18'
-            file = f"{temp_path}/{file_name}"
+            file = f"{self.cfg.temp_path}/{file_name}"
         else:
             file_name = illust_id
-            file = f"{temp_path}/{file_name}"
+            file = f"{self.cfg.temp_path}/{file_name}"
 
         if page_count > 1:
             self.picnNumLabel.setText(str(page_count))
@@ -103,7 +94,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
         info={'file': file, 'self': 'small'}
         if not os.path.exists(file):
-            self.download_small_pic_thread = base_thread(self, api.cache_pic, info=info, url=url, file_name=file_name, path=temp_path, timeout=self.timeout)
+            self.download_small_pic_thread = base_thread(self, self.api.cache_pic, info=info, url=url, file_name=file_name, path=self.cfg.temp_path, timeout=self.timeout)
             self.download_small_pic_thread.finish.connect(self.load_complete_pic)
             self.download_small_pic_thread.wait()
             self.download_small_pic_thread.start()
@@ -116,11 +107,10 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
     def add_favor(self):
         illust_id = self.info['illust']['id']
-        api = self.info['api']
 
         self.likeButton.setText('いやです')
         self.likeButton.setEnabled(False)
-        self.baseThread = base_thread(self, api.illust_bookmark_add, illust_id=illust_id, info={'mode': 'add'})
+        self.baseThread = base_thread(self, self.api.illust_bookmark_add, illust_id=illust_id, info={'mode': 'add'})
         self.baseThread.finish.connect(self.change_like_button)
         self.baseThread.wait()
         self.baseThread.start()
@@ -136,11 +126,10 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
     def del_favor(self):
         illust_id = self.info['illust']['id']
-        api = self.info['api']
 
         self.likeButton.setText('好き')
         self.likeButton.setEnabled(False)
-        self.baseThread = base_thread(self, api.illust_bookmark_delete, illust_id=illust_id, info={'mode': 'delete'})
+        self.baseThread = base_thread(self, self.api.illust_bookmark_delete, illust_id=illust_id, info={'mode': 'delete'})
         self.baseThread.finish.connect(self.change_like_button)
         self.baseThread.wait()
         self.baseThread.start()
@@ -148,7 +137,6 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     #@profile
     def load_complete_pic(self, info):
         self.is_loding = False
-        timeout_pic = self.info['timeout_pic']
         main = self.info['main']
         illust = self.info['illust']
 
@@ -157,7 +145,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         if picture.isNull():
             self.s_saveButton.setText('刷新')
             self.s_saveButton.clicked.connect(self.reload)
-            picture = QPixmap(timeout_pic)
+            picture = QPixmap(self.cfg.timeout_pic)
         else:
             self.s_saveButton.setText('保存原图')
             self.s_saveButton.clicked.connect(lambda: main.saveOriginalPic(illust))
@@ -170,18 +158,16 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     #@profile
     def reload(self, _):
         illust_id = self.info['illust']['id']
-        temp_path = self.info['temp_path']
-        api = self.info['api']
         url = self.info['illust']['image_urls']['square_medium']
 
         tags = self.info['illust']['tags']
 
         if 'R-18' in str(tags):
             file_name = f'{illust_id}_r18'
-            file = f"{temp_path}/{file_name}"
+            file = f"{self.cfg.temp_path}/{file_name}"
         else:
             file_name = illust_id
-            file = f"{temp_path}/{file_name}"
+            file = f"{self.cfg.temp_path}/{file_name}"
         try:
             os.remove(file)
         except:
@@ -190,7 +176,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.timer.start(16)
         self.picLabel.resize(0, 0)
         self.s_saveButton.disconnect()
-        self.download_small_pic_thread = base_thread(self, api.cache_pic, info={'file': file}, url=url, file_name=file_name, path=temp_path, timeout=self.timeout)
+        self.download_small_pic_thread = base_thread(self, self.api.cache_pic, info={'file': file}, url=url, file_name=file_name, path=self.cfg.temp_path, timeout=self.timeout)
         self.download_small_pic_thread.finish.connect(self.load_complete_pic)
         self.download_small_pic_thread.wait()
         self.download_small_pic_thread.start()

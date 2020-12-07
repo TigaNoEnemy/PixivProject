@@ -2,32 +2,34 @@
 import sys
 sys.path.append('.')
 import os
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSignal, QRect, QTimer
-import math
 
 from qtcreatorFile.illust_relate import Ui_illust_relate
 from Pixiv_Widget.Clickable_Label import clickable_label
 from Pixiv_Widget.My_Label import Largable_Label
 from Pixiv_Widget.My_Widget import Illust_Relate_Pic_Label
 from Pixiv_Thread.My_Thread import base_thread
+from Pixiv_Api.My_Api import my_api
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class Illust_Relate(QFrame, Ui_illust_relate):
+    # 5 x 6 阵列
+
     one_label_is_clicked =  pyqtSignal(dict)
+    pic_info_gotten = pyqtSignal()
     loading_timer_start_num = 5
 
     # 加载相关作品的控件
     def __init__(self, parent, info, *args, **kwargs):
-        # info 需要 temp_path, illust_id, api, has_r18, no_h
+        # info 需要 illust_id
         super(Illust_Relate, self).__init__(parent, *args, **kwargs)
         self.setupUi(self)
         self.resize(620+24, 744+24)
         self.info = info
-        
-        self.pic_num = 1    # 记录已加载多少张图
+        self.api = my_api()
 
         # 下载相关图资料时的动作所需的配置
         self.is_loading = True
@@ -84,11 +86,9 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         if not self.loading_timer.isActive():
             self.loading_timer.start(self.loading_timer_start_num)
 
-        api = self.info['api']
-        temp_path = self.info['temp_path']
         illust_id = self.info['illust_id']#['id']    # 获取相关性的作品id
 
-        self.illust_thread = base_thread(self, api.illust_related, illust_id=illust_id)
+        self.illust_thread = base_thread(self, self.api.illust_related, illust_id=illust_id)
         self.illust_thread.finish.connect(self.load_related_illust)
         self.illust_thread.wait()
         self.illust_thread.start()
@@ -100,33 +100,42 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         else:
             self.is_loading = False
             illusts = info['illusts']
+            
+            if not len(illusts):
+                label = QLabel(self)
+                label.setObjectName("no_related_pic_label")
+                label.setText('暂无相关图片')
+                label.adjustSize()
+                label_x = (self.width() - label.width()) // 2
+                label_y = label.height() * 3 // 2
+                label.move(label_x, label_y)
+                self.resize(self.width(), label.height() * 6)
+                label.show()
+         
+            else:
+                self.relate_labels = {}
+                for i in illusts:
+                    url = i['image_urls']['square_medium']
+                    title = i['title']
+                    file_name = str(i['id'])
 
-            temp_path = self.info['temp_path']
-            api = self.info['api']
-            has_r18 = self.info['has_r18']
-            no_h = self.info['no_h']
+                    pic_num = len(self.relate_labels)
 
-            self.relate_labels = {}
+                    #['url', 'temp_path', 'user_id', 'api']
+                    info = {'url': url, 'title': title, 'illust_id': file_name, 'illust': i}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
 
-            for i in illusts:
-                url = i['image_urls']['square_medium']
-                title = i['title']
-                file_name = str(i['id'])
+                    self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
+                    self.relate_labels[file_name].resize(124, 124)
+                    label_y = int(pic_num / 5) * 124 + 12
+                    label_x = (pic_num % 5) * 124 + 12 # 加上12是为了让放大后的图可以显示完全
+                    self.relate_labels[file_name].move(label_x, label_y)
+                    self.relate_labels[file_name].set_is_loading(True)
+                    self.relate_labels[file_name].get_relate_pic()
+                    self.relate_labels[file_name].set_original_geometry(label_x, label_y, 124, 124)
+                    self.relate_labels[file_name].click.connect(self.label_is_clicked)
+                    self.relate_labels[file_name].show()
 
-                #['url', 'temp_path', 'user_id', 'api']
-                info = {'url': url, 'title': title, 'illust_id': file_name, 'temp_path': temp_path, 'api': api, 'illust': i, 'has_r18': has_r18, 'no_h': no_h}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
-
-                self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
-                self.relate_labels[file_name].resize(124, 124)
-                label_y = (math.ceil(self.pic_num / 5) - 1) * 124  + 12# (0/1/.../5) * 124, 加上12是为了让放大后的在边缘的图可以显示完全
-                label_x = (self.pic_num % 5) * 124 + 12 # 加上12是为了让放大后的图可以显示完全
-                self.relate_labels[file_name].move(label_x, label_y)
-                self.relate_labels[file_name].set_is_loading(True)
-                self.relate_labels[file_name].get_relate_pic()
-                self.relate_labels[file_name].set_original_geometry(label_x, label_y, 124, 124)
-                self.relate_labels[file_name].click.connect(self.label_is_clicked)
-                self.relate_labels[file_name].show()
-                self.pic_num += 1
+            self.pic_info_gotten.emit()
 
     def label_is_clicked(self, info={}):
         self.one_label_is_clicked.emit(info)

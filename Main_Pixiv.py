@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QScrollArea
 from PyQt5.QtGui import QIcon, QPixmap, QBrush
 from PyQt5.QtCore import QRect, Qt, QTimer
 from PyQt5.Qt import QPropertyAnimation
-from math import ceil
 import sys
 from PyQt5 import sip
 import os
@@ -31,18 +30,18 @@ from Pixiv_Widget.comment_widget import Comment_Widget
 from Pixiv_Widget.illust_relate import Illust_Relate
 from Pixiv_Widget.My_Widget import Scroll_Widget
 from Pixiv_Widget.My_Widget import my_widget
-
+from Pixiv_Api.My_Api import my_api
 
 
 cgitb.enable(format='text', logdir='log_file')
 
 
 class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
-    def __init__(self, api, user_id, username, user_pic_link):
+    def __init__(self, user_id, username, user_pic_link):
         super(main_pixiv, self).__init__()
         #self.setStyleSheet("QToolTip{background-color: #000000; color: #FFFFFF; border: none}")
         base_thread.root = self
-        self.api = api
+        self.api = my_api()
         self.get_setting()
         self.setMinimumSize(917, 660 - 52)
         #self.setMinimumSize(1257, 811)
@@ -56,7 +55,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         ###
         tab_h = self.tabWidget.height()
         infoFrame_h = smallFrame_h - tab_h
-        self.infoFrame = info_frame(self.SmallFrame, main=self, info={'temp_path': self.temp_path, 'timeout_pic': self.timeout_pic})
+        self.infoFrame = info_frame(self.SmallFrame, main=self, info={})
         self.infoFrame.setGeometry(QRect(0, 730, 1041, infoFrame_h))
         self.searchFrame = search_frame(self.SmallFrame, main=self)
         self.searchFrame.setGeometry(QRect(0, -120, 1041, 120))
@@ -214,22 +213,28 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         user_id = info['tag']
 
         # 用户关注
-        用户关注 = """base_thread(self, self.api.user_following,
-            info={'title': title},
-            user_id=%s,
-            )""" % user_id
+        user_following_thread = base_thread(
+            self, 
+            self.api.user_following,
+            info={'title': '我的关注'},
+            user_id=user_id,
+            )
 
         # 用户粉丝
-        用户粉丝 = """base_thread(self, self.api.user_follower,
-            info={'title': title},
-            user_id=%s,
-            )""" % user_id
+        user_follower_thread = base_thread(
+            self, 
+            self.api.user_follower,
+            info={'title': '我的粉丝'},
+            user_id=user_id,
+            )
 
         # 用户好友
-        用户好友 = """base_thread(self, self.api.user_mypixiv,
-            info={'title': title},
-            user_id=%s,
-            )""" % user_id
+        user_friend_thread = base_thread(
+            self, 
+            self.api.user_mypixiv,
+            info={'title': '我的好友'},
+            user_id=user_id,
+            )
 
         self.qmenu = QMenu()
         myIllusts = self.qmenu.addAction('我的作品')
@@ -240,15 +245,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         myFollow = self.qmenu.addAction('我的关注')
         myFollow.triggered.connect(
-            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': 用户关注}, title='我的关注', isSearch=False))
+            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': user_following_thread}, title='我的关注', isSearch=False))
 
         myFans = self.qmenu.addAction('我的粉丝')
         myFans.triggered.connect(
-            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': 用户粉丝}, title='我的粉丝', isSearch=False))
+            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': user_follower_thread}, title='我的粉丝', isSearch=False))
 
         myFriends = self.qmenu.addAction('我的好友')
         myFriends.triggered.connect(
-            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': 用户好友}, title='我的好友', isSearch=False))
+            lambda x: self.search_user(_mode={'user_id': user_id, 'Thread': user_friend_thread}, title='我的好友', isSearch=False))
 
         myBlackList = self.qmenu.addAction('我的黑名单')
         myBlackList.triggered.connect(
@@ -267,10 +272,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 pass
             else:
                 sip.delete(_dict[item])
-            try:
-                _dict.pop(item)
-            except KeyError:
-                pass
+            
+            _dict.pop(item, None)
             return _dict
 
         title = self.tabWidget.tabText(index)
@@ -530,14 +533,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             info = {}
             illust_id = i['id']
             info['illust'] = i
-            info['api'] = self.api
             #info['loading_gif'] = self.loading_gif
-            info['timeout_pic'] = self.timeout_pic
-            info['temp_path'] = self.temp_path
             info['start_row'] = int(self.table.model().rowCount() / self.per_row_pic_num)#int(self.downloadNum / self.per_row_pic_num)
-            info['save_path'] = self.save_path
-            info['has_r18'] = self.has_r18
-            info['no_h'] = self.no_h
             info['main'] = self
 
             small_pic_frame_x = x[self.rank_pic_s[title] % self.now_per_row_pic_num]
@@ -558,8 +555,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.small_pic_frame_animation[title][illust_id].start()
 
             if (self.rank_pic_s[title] + 1) % self.now_per_row_pic_num == 1:
-                self.scrollAreaWidgetContents[title].resize(self.now_per_row_pic_num * 240, (
-                    ceil((self.rank_pic_s[title] + 1) / self.now_per_row_pic_num)) * 411)
+                self.scrollAreaWidgetContents[title].resize(self.now_per_row_pic_num * 240,  
+                    (self.rank_pic_s[title] // self.now_per_row_pic_num + 1) * 411)
             self.rank_pic_s[title] += 1
 
             self.cache_item_box[title].pop(self.cache_item_box[title].index(i))
@@ -729,7 +726,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                                                              offset=offset)
 
             else:  # 点击左上角 我的...
-                self.baseThread['search_user'] = eval(_mode['Thread'])
+                self.baseThread['search_user'] = _mode['Thread']
 
             self.baseThread['search_user'].finish.connect(self.show_user_info)
             self.baseThread['search_user'].wait()
@@ -761,13 +758,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             user_id = i['user']['id']
             info = {
                 'user_preview': i, 
-                'api': self.api, 
-                #'loading_gif': self.loading_gif,
-                'timeout_pic': self.timeout_pic, 
-                'temp_path': self.temp_path, 
-                'save_path': self.save_path,
-                'has_r18': self.has_r18, 
-                'no_h': self.no_h, 
                 'app': self
                 }
             smallFrame_w = self.SmallFrame.width()
@@ -857,6 +847,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             if not os.path.getsize(_file):
                 os.remove(_file)
 
+        # 关闭线程池
+        base_thread.close_thread()
+
     #@profile
     def show_big_pic(self, info):
         from PyQt5.QtWidgets import QWidget
@@ -888,18 +881,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         else:
             big_pic_frame_illust_id = child_widget.info['illust_id']
 
-        if int(illust_id) != int(big_pic_frame_illust_id):
-            for i in self.scrollAreaWidgetContents_3.children():
-                i.deleteLater()
-                sip.delete(i)
+        #if int(illust_id) != int(big_pic_frame_illust_id):
+        for i in self.scrollAreaWidgetContents_3.children():
+            i.deleteLater()
+            sip.delete(i)
 
-            self.scrollAreaWidgetContents_3.deleteLater()
-            sip.delete(self.scrollAreaWidgetContents_3)
-            ###
-            ### 重建scrollArea里的QWidget
-            self.scrollAreaWidgetContents_3 = Scroll_Widget()
-            self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
-            self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
+        self.scrollAreaWidgetContents_3.deleteLater()
+        sip.delete(self.scrollAreaWidgetContents_3)
+        ###
+        ### 重建scrollArea里的QWidget
+        self.scrollAreaWidgetContents_3 = Scroll_Widget()
+        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+        self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
+
 
         # del self.threads
         # self.threads = {}
@@ -907,7 +901,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         # del self.bigFrames
         # self.bigFrames = {}
 
-        info = {"illust": illust, "api": self.api}
+        info = {"illust": illust}
         self.infoFrame.create_illust_detail_panel(info=info)
 
         n = 1
@@ -938,14 +932,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         except:
             pass
-        self.comment_widget = Comment_Widget(self.SmallFrame, info={'api': self.api, 'illust': illust_id, 'temp_path': self.temp_path})
+        self.comment_widget = Comment_Widget(self.SmallFrame, info={'illust': illust_id})
         self.comment_widget.move(self.bigPicScrollArea.x() + self.bigPicScrollArea.width(), self.bigPicScrollArea.y())
         self.comment_widget.resize(self.comment_widget.width(), self.bigPicScrollArea.height())
         self.comment_widget.show()
         self.infoFrame.raise_()
 
         # 创建作品相关区
-        info = {'api': self.api, 'illust_id': illust['id'], 'temp_path': self.temp_path, 'has_r18': self.has_r18, 'no_h': self.no_h}
+        info = {'illust_id': illust['id']}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
         # illust_related_frame_w = self.illust_related_frame.width()
@@ -954,6 +948,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744 + 24) # 为相关图放大后可以完全显示而加上24（计算好的结果）
         self.illust_related_frame.one_label_is_clicked.connect(self.show_big_pic)
         #self.illust_related_frame.setStyleSheet('background-color: rgb(231, 195, 188)')
+        self.illust_related_frame.pic_info_gotten.connect(self.scrollAreaWidgetContents_3.adjust_size)
         self.illust_related_frame.show()
         ###
 
@@ -1001,12 +996,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
         info = {
-            'api': self.api,
             'url': url,
-            'temp_path': self.temp_path,
             'temp_file_name': file_name,
             'title': title,
-            'timeout_pic': self.timeout_pic,
             'original_pic_url': original_url,
             'tags': tags,
             'illust_id': illust_id
@@ -1035,18 +1027,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         url = info['original_pic_url']
         title = info['title']
         file_name = info['temp_file_name']  # 已加后缀_original
-        temp_path = info['temp_path']
 
         if url in self.sub_windows:
             return
         info = {
             'url': url,
-            'temp_path': temp_path,
             'temp_file_name': file_name,
-            'api': self.api,
-            #'loading_gif': self.loading_gif,
             'title': title,
-            'timeout_pic': self.timeout_pic,
         }
         self.sub_windows[url] = original_pic(parent=self, info=info)
         self.sub_windows[url].myclosed.connect(lambda: try_pop(url))
@@ -1345,7 +1332,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                     child_new_x = int((scrollAreaWidgetContents_w - child_w) / 2)
                     child.move(child_new_x, child_y)
             else:
-                scrollAreaWidgetContent_h = (ceil((self.rank_pic_s[i]) / self.now_per_row_pic_num)) * 411
+                scrollAreaWidgetContent_h = (self.rank_pic_s[i] // self.now_per_row_pic_num + 1) * 411
                 if scrollAreaWidgetContent_h < 200:
                     scrollAreaWidgetContent_h = 200
                 self.scrollAreaWidgetContents[i].resize(self.now_per_row_pic_num * 240,
@@ -1394,12 +1381,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def Setting_page(self):
         info = {}
-        info['big_pic_size'] = self.big_pic_size
-        info['per_row_pic_num'] = self.per_row_pic_num
-        info['temp_path'] = self.temp_path
-        info['save_path'] = self.save_path
-        info['has_r18'] = self.has_r18
-        info['every_time_show_pic_num'] = self.every_time_show_pic_num
 
         self.setting_window = setting_window(self, info=info)
         self.setting_window.setWindowTitle("设置")
@@ -1420,11 +1401,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 def login_success(info):
     global AppUi
     login = info['parent']
-    api = info['api']
     user_id = info['ID']
     username = info['USER']
     user_pic_link = info['user_head']
-    AppUi = main_pixiv(api, user_id, username, user_pic_link)
+    AppUi = main_pixiv(user_id, username, user_pic_link)
 
     login.deleteLater()
     sip.delete(login)

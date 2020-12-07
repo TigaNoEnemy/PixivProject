@@ -14,6 +14,9 @@ except:
     from Pixiv_Widget.Clickable_Label import clickable_label
     from Pixiv_Thread.My_Thread import base_thread
 
+from Pixiv_Api.My_Api import my_api
+from utils.Project_Setting import setting
+
 import cgitb
 
 cgitb.enable(format='text', logdir='log_file')
@@ -28,6 +31,8 @@ class big_pic_frame(QFrame):
     def __init__(self, parent, info):
         super(big_pic_frame, self).__init__(parent)
         self.info = info
+        self.api = my_api()
+        self.cfg = setting()
         self.check_info()
         self.change_file_name()
         self.pic_size = 1
@@ -48,24 +53,12 @@ class big_pic_frame(QFrame):
     #@profile
     def check_info(self):
         # illust_id 用于检测当前显示的作品
-        key = ['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
-        need_key = []
-        need_not_key = []
-        for i in self.info:
-            if i not in key:
-                need_not_key.append(i)
-        for i in key:
-            if i not in self.info:
-                need_key.append(i)
-        if need_key or need_not_key:
-            raise KeyError(f"big_pic_frame doesn't need {need_not_key} and need {need_key}")
+        key = ['url', 'temp_file_name', 'title', 'original_pic_url', 'tags', 'illust_id']
 
     def setupUi(self):
         url = self.info['url']
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
         title = self.info['title']
-        timeout_pic = self.info['timeout_pic']
 
         self.bigPicLabel = clickable_label(self, self.info)
         self.bigPicLabel.setGeometry(QRect(0, 0, 620, 611))
@@ -74,33 +67,30 @@ class big_pic_frame(QFrame):
      
         self.bigPicLabel.setAlignment(Qt.AlignCenter)
 
-        info = {'temp_file_name': temp_file_name, 'url': url, 'temp_path': temp_path, 'title': title, 'timeout_pic': timeout_pic, 'self': 'big'}
+        info = {'temp_file_name': temp_file_name, 'url': url, 'temp_path': self.cfg.temp_path, 'title': title, 'timeout_pic': self.cfg.timeout_pic, 'self': 'big'}
 
         self.create_get_pic_size_thread(info)
 
     def create_get_pic_size_thread(self, info, is_reload=False):
         import os
 
-        api = self.info['api']
-        
-        temp_path = info['temp_path']
         temp_file_name = info['temp_file_name']
         url = info['url']
         if is_reload:
             try:
-                os.remove(f"{temp_path}/{temp_file_name}")
+                os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
             except:
                 pass
         self.is_loading  = True
         self.picture = QPixmap('')
         self.bigPicLabel.setPixmap(self.picture)
-        if os.path.exists(f"{temp_path}/{temp_file_name}"):
+        if os.path.exists(f"{self.cfg.temp_path}/{temp_file_name}"):
             print('Big file is exists.')
             info['isSuccess'] = True
             self.load_big_pic_complete(info)
 
         else:
-            self.thread = base_thread(None, method=api.get_image_size, url=url, info=info)
+            self.thread = base_thread(None, method=self.api.get_image_size, url=url, info=info)
             self.thread.finish.connect(self.create_download_thread)
             self.thread.wait()
             self.thread.start()
@@ -111,20 +101,18 @@ class big_pic_frame(QFrame):
         except AttributeError:
             pass
 
-        api = self.info['api']
 
         if not info['isSuccess']:
             self.load_big_pic_complete(info=info)
             return
         url = info['url']
-        temp_path = info['temp_path']
         temp_file_name = info['temp_file_name']
         response = info['response']
-        output_file = f"{temp_path}/{temp_file_name}"
+        output_file = f"{self.cfg.temp_path}/{temp_file_name}"
 
         self.pic_size = info['image_size']
 
-        self.thread = base_thread(None, method=api.download_has_size_pic, response=response, output_file=output_file)
+        self.thread = base_thread(None, method=self.api.download_has_size_pic, response=response, output_file=output_file)
         self.thread.finish.connect(self.load_big_pic_complete)
         self.thread.wait()
         self.thread.start()
@@ -139,9 +127,7 @@ class big_pic_frame(QFrame):
     def load_big_pic_complete(self, info):
         import os
 
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
-        timeout_pic = self.info['timeout_pic']
         #isSuccess = info['isSuccess']
 
         self.is_loading = False
@@ -150,15 +136,15 @@ class big_pic_frame(QFrame):
         except:
             pass
         
-        temp_file = f"{temp_path}/{temp_file_name}"
+        temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         self.picture = QPixmap(temp_file)
         if self.picture.isNull():
             try:
-                os.remove(f"{temp_path}/{temp_file_name}")
+                os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
             except:
                 pass
             self.bigPicLabel.click.connect(lambda x: self.create_get_pic_size_thread(x, is_reload=True))
-            self.picture = QPixmap(timeout_pic)
+            self.picture = QPixmap(self.cfg.timeout_pic)
 
         pic_width = self.picture.width()
         if pic_width > 620:
@@ -193,10 +179,9 @@ class big_pic_frame(QFrame):
         from PyQt5.QtCore import QRectF
         import os
 
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
 
-        temp_file = f"{temp_path}/{temp_file_name}"
+        temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         try:
             file_size = os.path.getsize(temp_file)
         except FileNotFoundError:
@@ -244,7 +229,7 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     import sys
 
-    key = ['api', 'url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
+    key = ['url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
     _info = {}
     cfg = login_info_parser()
     info = cfg.get_token()

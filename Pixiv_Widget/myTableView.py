@@ -7,6 +7,7 @@ import sys
 import os
 
 from Pixiv_Thread.My_Thread import base_thread
+from Pixiv_Api.My_Api import my_api
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -20,6 +21,7 @@ class Operate_Button(QItemDelegate):
     """docstring for Operate_Button"""
     def __init__(self, parent=None, info={}):
         super(Operate_Button, self).__init__(parent)
+        self.api = my_api()
 
     def button_callback(self, index):
         file = index.model().item(index.row(), 0).info['file']
@@ -42,7 +44,10 @@ class Operate_Button(QItemDelegate):
         file = item.info['file']
         image_size = item.info['image_size']
 
-        had_downloaded_size = os.path.getsize(file)
+        try:
+            had_downloaded_size = os.path.getsize(file)
+        except FileNotFoundError:
+            had_downloaded_size = 0
 
         # 下载尚未结束，防止重新下载
         if timer_box[d_timer_id].isActive():
@@ -63,8 +68,8 @@ class Operate_Button(QItemDelegate):
 
         # self.create_download_progress(info=info)
 
-        root.getImageSizeThreads[d_timer_id] = base_thread(root, root.api.get_image_size,
-                                                                       url=url, Range=f"bytes={had_downloaded_size+1}-",
+        root.getImageSizeThreads[d_timer_id] = base_thread(root, self.api.get_image_size,
+                                                                       url=url, Range=f"bytes={had_downloaded_size}-",
                                                                        info=info)
         root.getImageSizeThreads[d_timer_id].finish.connect(self.write_pic_into_file)
         root.getImageSizeThreads[d_timer_id].wait()
@@ -98,7 +103,7 @@ class Operate_Button(QItemDelegate):
         response = info['response']
         output_file = info['save_file']
         info.pop('isSuccess', None)
-        root.downloadThreads[d_timer_id] = base_thread(root, root.api.download_has_size_pic, response=response, output_file=output_file, info=info)
+        root.downloadThreads[d_timer_id] = base_thread(root, self.api.download_has_size_pic, response=response, output_file=output_file, info=info)
         root.downloadThreads[d_timer_id].finish.connect(root.table.set_download_final_status)
         root.downloadThreads[d_timer_id].wait()
         root.downloadThreads[d_timer_id].start()

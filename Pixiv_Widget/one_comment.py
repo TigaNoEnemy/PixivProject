@@ -14,7 +14,7 @@ from qtcreatorFile.oneComment import Ui_oneComment
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class One_Comment(QFrame, Ui_oneComment):
-    """info包含整个comment（dict）、api、temp_path"""
+    """info包含整个comment（dict）"""
     def __init__(self, parent, info, *args, **kwargs):
         super(One_Comment, self).__init__(parent, *args, **kwargs)
         self.info = info
@@ -49,57 +49,10 @@ class One_Comment(QFrame, Ui_oneComment):
     def download_user_pic(self):
         user_head_url = self.info['user']['profile_image_urls']['medium']
         uid = self.info['user']['id']
-        api = self.info['api']
-        temp_path = self.info['temp_path']
 
-        self.user_pic_label.info = {'url': user_head_url, 'temp_path': temp_path, 'user_id': uid, 'api': api}
+        self.user_pic_label.info = {'url': user_head_url, 'user_id': uid}
         self.user_pic_label.set_is_loading(True)
         self.user_pic_label.get_head()
-
-    #     user_head_url = self.info['user']['profile_image_urls']['medium']
-    #     uid = self.info['user']['id']
-    #     api = self.info['api']
-    #     temp_path = self.info['temp_path']
-
-    #     file_name = f"user_{uid}_pic"
-    #     if os.path.exists(f"{temp_path}/{file_name}"):
-    #         self.load_user_head(info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-
-    #     else:
-    #         self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
-    #                                            path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-    #         self.load_user_head_thread.finish.connect(self.load_user_head)
-    #         self.load_user_head_thread.wait()
-    #         self.load_user_head_thread.start()
-
-    # def load_user_head(self, info):
-    #     api = self.info['api']
-
-    #     user_head_url = info['url']
-    #     file_name = info['file_name']
-    #     temp_path = info['temp_path']
-
-    #     file = f"{temp_path}/{file_name}"
-
-    #     user_head = QPixmap(file)
-    #     if user_head.isNull():
-    #         try:
-    #             os.remove(file)
-    #         except:
-    #             pass
-    #         self.load_user_head_thread = base_thread(self, api.cache_pic, url=user_head_url, file_name=file_name,
-    #                                        path=temp_path, info={'file_name': file_name, 'url': user_head_url, 'temp_path': temp_path})
-    #         self.load_user_head_thread.finish.connect(self.load_user_head)
-    #         self.load_user_head_thread.wait()
-    #         self.load_user_head_thread.start()
-
-    #     else:
-    #         user_head = user_head.scaled(self.user_pic_label.width(), self.user_pic_label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-
-    #         self.user_pic_label.setPixmap(user_head)
-
-
-        
 
 if __name__ == '__main__':
     from utils.Process_Token import login_info_parser

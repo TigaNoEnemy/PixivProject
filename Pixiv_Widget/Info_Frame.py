@@ -9,7 +9,6 @@ import sys
 sys.path.append('.')
 from qtcreatorFile import info_frame_1
 from Pixiv_Widget.My_Label import my_label
-#from Pixiv_Widget.My_Widget import Show_Head_Label
 from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
@@ -71,9 +70,6 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
 
         import os
 
-        temp_path = self.info['temp_path']
-
-        api = info['api']
         illust = info['illust']
 
         right_label_w = 481  # 右边的作品详情，关于时间之类的
@@ -171,7 +167,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.text_scroll.clear()
         self.text_scroll.setText(illust['caption'])
 
-        self.user_pic_label.info = {'user_id': illust['user']['id'],'url': illust['user']['profile_image_urls']['medium'], 'api': api, 'temp_path': temp_path}
+        self.user_pic_label.info = {'user_id': illust['user']['id'],'url': illust['user']['profile_image_urls']['medium']}
         self.user_pic_label.get_head()
 
     def hide_illust_detail(self):

@@ -25,6 +25,10 @@ class base_thread(QObject):
         self.args = args
         self.info = info
 
+    @staticmethod
+    def close_thread():
+        THREAD_POOL.shutdown(wait=False)
+
     def start(self):
         future = THREAD_POOL.submit(self.method, **self.args)
         future.add_done_callback(self.emit_signal)

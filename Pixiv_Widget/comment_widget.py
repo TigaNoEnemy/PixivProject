@@ -9,11 +9,13 @@ from PyQt5.QtCore import Qt, pyqtSignal, QRect, QTimer
 from qtcreatorFile.commentWidget import Ui_commentWidget
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.one_comment import One_Comment
+from Pixiv_Api.My_Api import my_api
+from utils.Project_Setting import setting
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class Comment_Widget(QFrame, Ui_commentWidget):
-    """info需要api, temp_path, illust"""
+    """info需要illust"""
     #edit_comment_frame_h_diff = 210    # 编辑评论的frame动画高度差
     loading_timer_start_num = 5
     white_circle_radius = 20
@@ -24,6 +26,8 @@ class Comment_Widget(QFrame, Ui_commentWidget):
         self.setupUi(self)
         self.comment_num = 0    # 评论数
         self.info = info
+        self.cfg = setting()
+        self.api = my_api()
         self.get_comment()
 
         # 下载评论列表时的动作所需的配置
@@ -70,16 +74,15 @@ class Comment_Widget(QFrame, Ui_commentWidget):
         self.update()
 
     def get_comment(self, **next_url_args):
-        api = self.info['api']
         illust = self.info['illust']
 
         self.is_loading = True
 
         if not next_url_args:
-            self.get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust)
+            self.get_comment_thread = base_thread(self, self.api.illust_comments, info={}, illust_id=illust)
         else:
             next_url_args.pop('illust_id', None)
-            self.get_comment_thread = base_thread(self, api.illust_comments, info={}, illust_id=illust, **next_url_args)
+            self.get_comment_thread = base_thread(self, self.api.illust_comments, info={}, illust_id=illust, **next_url_args)
 
         self.get_comment_thread.finish.connect(self.load_comments_widget)
         self.get_comment_thread.wait()
@@ -94,8 +97,6 @@ class Comment_Widget(QFrame, Ui_commentWidget):
 
         else:
             comments = info['comments']
-            api = self.info['api']
-            temp_path = self.info['temp_path']
 
             try:
                 self.comment_scrollArea.verticalScrollBar().valueChanged.disconnect(self.slide_down)
@@ -106,8 +107,6 @@ class Comment_Widget(QFrame, Ui_commentWidget):
 
             if comments:
                 for i in comments:
-                    i['api'] = api
-                    i['temp_path'] = temp_path
                     p = One_Comment(self.comments_scroll, info=i)
                     p.move(0, self.comment_num * p.height())
                     self.comments_scroll.resize(self.comments_scroll.width(), (self.comment_num+1) * p.height())
@@ -140,7 +139,7 @@ class Comment_Widget(QFrame, Ui_commentWidget):
         if m - new_value <= 250 and self.next_url and not self.is_loading:
             self.comments_scroll.resize(338, self.comments_scroll.height()+50)
             self.loading_timer.start(self.loading_timer_start_num)
-            next_url_args = self.info['api'].parse_qs(self.next_url)
+            next_url_args = self.api.parse_qs(self.next_url)
             self.get_comment(**next_url_args)
 
     def resizeEvent(self, qevent):

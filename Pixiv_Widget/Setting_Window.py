@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtGui import QIcon, QPixmap
 
 from qtcreatorFile import settings_window
+from utils.Project_Setting import setting
 
 
 import cgitb
@@ -21,6 +22,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         self.setupUi(self)
         
         self.info = info
+        self.cfg = setting()
         self.check_info()
         self.myset()    # 读取配置
         self.setFixedSize(self.width(), self.height())
@@ -42,17 +44,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         self.move(x+parent_x, y+parent_y)
 
     def check_info(self):
-        key = ['big_pic_size', 'per_row_pic_num', 'temp_path', 'save_path','has_r18', 'every_time_show_pic_num']
-        need_key = []
-        need_not_key = []
-        for i in self.info:
-            if i not in key:
-                need_not_key.append(i)
-        for i in key:
-            if i not in self.info:
-                need_key.append(i)
-        if need_key or need_not_key:
-            raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
+        key = []
 
     # 链接按钮与操作
     def action_to_command(self):
@@ -63,17 +55,9 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
 
     # 重置按钮执行重置配置操作
     def set_settings_default(self):
-        from utils.Project_Setting import setting
-
-        cfg = setting()
-        cfg.set_settings_default()
-        cfg.get_setting()
-        self.info['big_pic_size'] = cfg.big_pic_size
-        self.info['per_row_pic_num'] = cfg.per_row_pic_num
-        self.info['temp_path'] = cfg.temp_path
-        self.info['save_path'] = cfg.save_path
-        self.info['has_r18'] = cfg.has_r18
-        self.info['every_time_show_pic_num'] = cfg.every_time_show_pic_num
+        self.cfg = setting()
+        self.cfg.set_settings_default()
+        self.cfg.get_setting()
         self.myset()
 
     # 修改缓存文件或保存文件的路径
@@ -86,33 +70,26 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
 
     # 读取配置信息并显示
     def myset(self):
-        big_pic_size = self.info['big_pic_size']
-        per_row_pic_num = self.info['per_row_pic_num']
-        temp_path = self.info['temp_path']
-        save_path = self.info['save_path']
-        has_r18 = self.info['has_r18']
-        every_time_show_pic_num = self.info['every_time_show_pic_num']
-
         self.cache_lineEdit.setReadOnly(False)
-        self.cache_lineEdit.setText(temp_path)
+        self.cache_lineEdit.setText(self.cfg.temp_path)
         self.cache_lineEdit.setReadOnly(True)
         self.save_lineEdit.setReadOnly(False)
-        self.save_lineEdit.setText(save_path)
+        self.save_lineEdit.setText(self.cfg.save_path)
         self.save_lineEdit.setReadOnly(True)
-        if big_pic_size == 'large':
+        if self.cfg.big_pic_size == 'large':
             self.big_radioButton.setChecked(True)
-        elif big_pic_size == 'medium':
+        elif self.cfg.big_pic_size == 'medium':
             self.middle_radioButton.setChecked(True)
-        elif big_pic_size == 'square_medium':
+        elif self.cfg.big_pic_size == 'square_medium':
             self.small_radioButton.setChecked(True)
-        if has_r18:
+        if self.cfg.has_r18:
             self.r18_checkBox.setChecked(True)
         else:
             self.r18_checkBox.setChecked(False)
         for i in range(3, 8):
             self.everyRowPicNumComboBox.addItem(str(i))
-        self.everyRowPicNumComboBox.setCurrentText(str(per_row_pic_num))
-        self.every_time_show_pic_num_lineEdit.setText(str(every_time_show_pic_num))
+        self.everyRowPicNumComboBox.setCurrentText(str(self.cfg.per_row_pic_num))
+        self.every_time_show_pic_num_lineEdit.setText(str(self.cfg.every_time_show_pic_num))
 
         self.update()
 
@@ -120,10 +97,10 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
     def set_user_settings(self):
         temp_path = self.cache_lineEdit.text().strip()
         if not temp_path:
-            temp_path = self.info['temp_path']
+            temp_path = self.cfg.temp_path
         save_path = self.save_lineEdit.text().strip()
         if not save_path:
-            save_path = self.info['save_path']
+            save_path = self.cfg.save_path
 
         per_row_pic_num = self.everyRowPicNumComboBox.currentText()
         if self.r18_checkBox.isChecked():
@@ -139,12 +116,12 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
 
         every_time_show_pic_num = self.every_time_show_pic_num_lineEdit.text()
         
-        self._setting['temp_path'] = temp_path
         self._setting['save_path'] = save_path
         self._setting['per_row_pic_num'] = int(per_row_pic_num)
         self._setting['has_r18'] = has_r18
         self._setting['big_pic_size'] = big_pic_size
         self._setting['every_time_show_pic_num'] = every_time_show_pic_num
+        self._setting['temp_path'] = temp_path
 
 
     def closeEvent(self, qevent):

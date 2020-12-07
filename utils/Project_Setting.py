@@ -30,7 +30,6 @@ class setting(ConfigParser):
         except:
             self.set_settings_default()
             self.get_setting()
-        self.check_file()
 
     def get_setting(self):
         # 获取配置信息 

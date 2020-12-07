@@ -11,6 +11,8 @@ from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.My_Label import Largable_Label
 from Pixiv_Widget.My_Label import Loading_Label
 from Pixiv_Widget.Clickable_Label import clickable_label
+from utils.Project_Setting import setting   
+from Pixiv_Api.My_Api import my_api
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -97,6 +99,8 @@ class Show_Head_Label(QLabel):
     def __init__(self, parent=None, info={}, *args, **kwargs):
         super(Show_Head_Label, self).__init__(parent)
         self.info = info
+        self.api = my_api()
+        self.cfg = setting()
         self.is_loading = True
         self.rotate = 90
         self.timer = QTimer()
@@ -130,16 +134,14 @@ class Show_Head_Label(QLabel):
 
     def get_head(self):
         url = self.info['url']
-        temp_path = self.info['temp_path']
-        api = self.info['api']
         file_name = f"user_{self.info['user_id']}_pic"
 
-        file = f"{temp_path}/{file_name}"
+        file = f"{self.cfg.temp_path}/{file_name}"
         if os.path.exists(file):
             self.load_head({'file_name': file_name})
 
         else:
-            self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file_name': file_name})
+            self.get_head_thread = base_thread(self, self.api.cache_pic, url=url, path=self.cfg.temp_path, file_name=file_name, info={'file_name': file_name})
             self.get_head_thread.finish.connect(self.load_head)
             self.get_head_thread.wait()
             self.get_head_thread.start()
@@ -149,12 +151,10 @@ class Show_Head_Label(QLabel):
             self.get_head()
             return
         url = self.info['url']
-        temp_path = self.info['temp_path']
-        api = self.info['api']
 
         file_name = info['file_name']
 
-        file = f"{temp_path}/{file_name}"
+        file = f"{self.cfg.temp_path}/{file_name}"
         self.picture = QPixmap(file)
         if self.picture.isNull():
             self.load_times += 1
@@ -163,12 +163,24 @@ class Show_Head_Label(QLabel):
             except Exception as e:
                 print(e)
             if self.load_times <= self.allow_load_times:
-                self.get_head()
-        
-        else:
-            self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.setPixmap(self.picture)
-            self.is_loading = False
+                try:
+                    self.no_recurse_ref_timer.deleteLater()
+                    sip.delete(self.no_recurse_ref_timer)
+                except:
+                    pass
+
+                self.no_recurse_ref_timer = QTimer()
+                self.no_recurse_ref_timer.timeout.connect(self.get_head)
+                self.no_recurse_ref_timer.timeout.connect(self.no_recurse_ref_timer.stop)
+                self.no_recurse_ref_timer.start(100)    # 0.1s后重新获取头像
+                return
+
+            cfg = setting()
+            self.picture = QPixmap(cfg.timeout_pic)
+
+        self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.setPixmap(self.picture)
+        self.is_loading = False
 
     def paintEvent(self,qevent):
         from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
@@ -202,25 +214,21 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
     click = pyqtSignal(dict)
     def get_relate_pic(self):
         url = self.info['url']
-        temp_path = self.info['temp_path']
-        api = self.info['api']
         file_name = self.info['illust_id']
-        no_h = self.info['no_h']
-        has_r18 = self.info['has_r18']
         tags = self.info['illust']
 
-        if not has_r18 and 'R-18' in str(tags):
-            self.file = file = no_h
+        if not self.cfg.has_r18 and 'R-18' in str(tags):
+            self.file = file = self.cfg.no_h
         elif 'R-18' in str(tags):
             file_name = f'{file_name}_r18'
-            self.file = file = f"{temp_path}/{file_name}"
+            self.file = file = f"{self.cfg.temp_path}/{file_name}"
         else:
-            self.file = file = f"{temp_path}/{file_name}"
+            self.file = file = f"{self.cfg.temp_path}/{file_name}"
         if os.path.exists(file):
             self.load_relate_pic({'file': file})
 
         else:
-            self.get_head_thread = base_thread(self, api.cache_pic, url=url, path=temp_path, file_name=file_name, info={'file': file})
+            self.get_head_thread = base_thread(self, self.api.cache_pic, url=url, path=self.cfg.temp_path, file_name=file_name, info={'file': file})
             self.get_head_thread.finish.connect(self.load_relate_pic)
             self.get_head_thread.wait()
             self.get_head_thread.start()
@@ -241,13 +249,26 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
                 os.remove(file)
             except:
                 pass
-            self.get_relate_pic()
-        else:
-            self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.setPixmap(self.picture)
-            self.is_loading = False
+            self.load_times += 1
+            if self.load_times <= self.allow_load_times:
+                try:
+                    self.no_recurse_ref_timer.deleteLater()
+                    sip.delete(self.no_recurse_ref_timer)
+                except:
+                    pass
 
-            #self.set_original_geometry(self.x(), self.y(), self.width(), self.height())
+                self.no_recurse_ref_timer = QTimer()
+                self.no_recurse_ref_timer.timeout.connect(self.get_relate_pic)
+                self.no_recurse_ref_timer.timeout.connect(self.no_recurse_ref_timer.stop)
+                self.no_recurse_ref_timer.start(100)    # 0.1s后重新过去头像
+                return
+
+            cfg = setting()
+            self.picture = QPixmap(cfg.timeout_pic)
+
+        self.picture = self.picture.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.setPixmap(self.picture)
+        self.is_loading = False
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1 and not self.is_loading:

@@ -6,7 +6,10 @@ from PyQt5.QtGui import QMovie, QPixmap, QPainter, QPen, QFont, QColor, QBrush
 import os
 
 from Pixiv_Thread.My_Thread import base_thread
-from .Clickable_Label import clickable_label
+from Pixiv_Widget.Clickable_Label import clickable_label
+from Pixiv_Api.My_Api import my_api
+from utils.Project_Setting import setting
+
 
 
 import cgitb
@@ -19,6 +22,8 @@ class original_pic(QMainWindow):
     def __init__(self, parent=None, info={}):
         super(original_pic, self).__init__()
         self.info = info
+        self.cfg = setting()
+        self.api = my_api()
         self._parent = parent
         self.is_loading = True
         self.original_pic_size = 1
@@ -40,17 +45,7 @@ class original_pic(QMainWindow):
         self.move(x + parent_x, y + parent_y)
 
     def check_info(self):
-        key = ['url', 'temp_path', 'temp_file_name', 'api', 'title', 'timeout_pic']
-        need_key = []
-        need_not_key = []
-        for i in self.info:
-            if i not in key:
-                need_not_key.append(i)
-        for i in key:
-            if i not in self.info:
-                need_key.append(i)
-        if need_key or need_not_key:
-            raise KeyError(f"small_pic_frame doesn't need {need_not_key} and need {need_key}")
+        key = ['url', 'temp_file_name', 'title', 'timeout_pic']
 
     def setupUi(self):
         title = self.info['title']
@@ -68,12 +63,9 @@ class original_pic(QMainWindow):
 
     def create_get_img_size_thread(self):
         url = self.info['url']
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
-        api = self.info['api']
-        timeout_pic = self.info['timeout_pic']
 
-        file = f"{temp_path}/{temp_file_name}"
+        file = f"{self.cfg.temp_path}/{temp_file_name}"
         self.is_loading = True
         self.sub_label.resize(0, 0)
         try:
@@ -84,9 +76,9 @@ class original_pic(QMainWindow):
         self.sub_label.setPixmap(QPixmap(''))
         
         print(file)
-        info = {'file': file, 'url': url, 'timeout_pic': timeout_pic}
+        info = {'file': file, 'url': url}
         if not os.path.exists(file):
-            self.get_img_size_thread = base_thread(self, api.get_image_size, info=info, url=url, timeout=self.timeout)
+            self.get_img_size_thread = base_thread(self, self.api.get_image_size, info=info, url=url, timeout=self.timeout)
             self.get_img_size_thread.finish.connect(self.create_download_thread)
             self.get_img_size_thread.wait()
             self.get_img_size_thread.start()
@@ -100,37 +92,32 @@ class original_pic(QMainWindow):
             return
 
         url = self.info['url']
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
 
-        file = f"{temp_path}/{temp_file_name}"
-
-        api = self.info['api']
+        file = f"{self.cfg.temp_path}/{temp_file_name}"
 
         response = info['response']
 
         self.original_pic_size = info['image_size']
 
-        self.show_original_threads = base_thread(self, api.download_has_size_pic, response=response, output_file=file)
+        self.show_original_threads = base_thread(self, self.api.download_has_size_pic, response=response, output_file=file)
         self.show_original_threads.finish.connect(self.load_original_pic)
         self.show_original_threads.start()
 
     def load_original_pic(self, info):
         is_success = info['isSuccess']
         temp_file_name = self.info['temp_file_name']
-        temp_path = self.info['temp_path']
-        timeout_pic = self.info['timeout_pic']
 
-        temp_file = f"{temp_path}/{temp_file_name}"
+        temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         self.is_loading = False
         if is_success:
             file = temp_file
         else:
-            file = timeout_pic
+            file = self.cfg.timeout_pic
         
         self.picture = QPixmap(file)
         temp_file_size = os.path.getsize(temp_file)
-        if self.picture.isNull() or file == timeout_pic or temp_file_size < self.original_pic_size:
+        if self.picture.isNull() or file == self.cfg.timeout_pic or temp_file_size < self.original_pic_size:
             self.sub_label.double_click.connect(self.create_get_img_size_thread)
             try:
                 os.remove(temp_file)
@@ -164,10 +151,9 @@ class original_pic(QMainWindow):
             self.sub_label.setGeometry(QRect(sub_label_x, sub_label_y, sub_label_w, sub_label_h))
 
     def paintEvent(self, qevent):
-        temp_path = self.info['temp_path']
         temp_file_name = self.info['temp_file_name']
 
-        temp_file = f"{temp_path}/{temp_file_name}"
+        temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         try:
             file_size = os.path.getsize(temp_file)
         except FileNotFoundError:

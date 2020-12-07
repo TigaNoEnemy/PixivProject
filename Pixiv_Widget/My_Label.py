@@ -131,7 +131,6 @@ class Largable_Label(QLabel):
         super(Largable_Label, self).resizeEvent(qevent)
         width = self.width()
         height = self.height()
-        temp_path = self.info['temp_path']
         illust_id = self.info['illust_id']
         file = self.file
         pic = QPixmap(file)
