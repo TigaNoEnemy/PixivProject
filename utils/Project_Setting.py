@@ -5,18 +5,12 @@ from configparser import ConfigParser
 import configparser
 import sys
 
+from meta_class.meta_class import My_Meta_Class
+
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
-class setting(ConfigParser):
-    _instance = None
-
-    # 单例模式
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
-
+class setting(ConfigParser, metaclass=My_Meta_Class):
     def __init__(self):
         super(setting, self).__init__()
         if sys.platform == 'linux':

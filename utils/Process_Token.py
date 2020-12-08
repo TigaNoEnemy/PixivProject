@@ -11,19 +11,12 @@ from datetime import datetime
 import os
 import sys
 
+from meta_class.meta_class import My_Meta_Class
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
-class login_info_parser:
-    _instance = None
-
-    # 单例模式
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
+class login_info_parser(metaclass=My_Meta_Class):
     def __init__(self):
         dir_md5 = hashlib.md5('Pixiv'.encode())
         dir_hex = dir_md5.hexdigest()
