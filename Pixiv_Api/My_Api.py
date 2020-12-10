@@ -6,7 +6,9 @@ import shutil
 from pixivpy3.utils import PixivError
 import requests
 
-from meta_class.meta_class import My_Meta_Class
+import sys
+sys.path.append('.')
+from utils.Single_Instance import single_instance
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
@@ -15,10 +17,12 @@ basestring = str
 
 TIMEOUT = 5
 
-class my_api(ByPassSniApi, metaclass=My_Meta_Class):
+@single_instance
+class my_api(ByPassSniApi):
     """docstring for PixivApi"""
+    _instance = None
     def __init__(self):
-        super(my_api, self).__init__()
+        super().__init__()
 
 
     def _requests_call(self, method, url, timeout, headers={}, params=None, data=None, stream=False):
@@ -166,4 +170,8 @@ class my_api(ByPassSniApi, metaclass=My_Meta_Class):
 
 
 if __name__ == '__main__':
-    pass
+    c = set()
+    for i in range(100):
+        c.add(my_api())
+
+    print(c)

@@ -5,14 +5,17 @@ from configparser import ConfigParser
 import configparser
 import sys
 
-from meta_class.meta_class import My_Meta_Class
+sys.path.append('.')
+from utils.Single_Instance import single_instance
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
-class setting(ConfigParser, metaclass=My_Meta_Class):
+@single_instance
+class setting(ConfigParser):
+    _instance = None
     def __init__(self):
-        super(setting, self).__init__()
+        super().__init__()
         if sys.platform == 'linux':
             self.setting_file = 'settings.cfg'
             self.wrap_split = '\n'
@@ -165,9 +168,4 @@ def print_setting(cfg):
     f.close()
 
 if __name__ == '__main__':
-    cfg = setting()
-    cfg.set_settings_default()
-    print_setting(cfg)
-    #cfg.set_user_setting(_setting={'temp_path': '/home/k', 'save_path': '/home/j'})
-    print_setting(cfg)
-    print(dir(cfg))
+    pass
