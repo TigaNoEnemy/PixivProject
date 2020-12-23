@@ -70,6 +70,7 @@ class setting(ConfigParser):
             v = str(v).replace('\\', '/')
             self.set('RES', k, str(v))
         self.write(open(self.setting_file, 'w', encoding='utf-8'))
+        self.get_setting()
 
     #重置配置信息
     def set_settings_default(self):

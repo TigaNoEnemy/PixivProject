@@ -35,7 +35,8 @@ class base_thread(QObject):
 
     def emit_signal(self, future):
         if future.exception():
-            result = {'ERROR': True}
+            result = {'ERROR': True, 'isSuccess': False}
+            print(future.exception())
         else:
             result = future.result()
         result.update(self.info)

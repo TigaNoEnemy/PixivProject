@@ -1384,13 +1384,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.setting_window = setting_window(self, info=info)
         self.setting_window.setWindowTitle("设置")
+        self.setting_window.setWindowIcon(QIcon(self.app_icon))
         self.setting_window._closed.connect(self.set_user_setting)
+
         self.setting_window.show()
 
-    def set_user_setting(self, _setting):
+    def set_user_setting(self, _):
         from utils.Project_Setting import setting
-        cfg = setting()
-        cfg.set_user_setting(_setting)
         self.get_setting()
         self.R18Button.setVisible(self.has_r18)
         self.ajust_cate_widget_size()

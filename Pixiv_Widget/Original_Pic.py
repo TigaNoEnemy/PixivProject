@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QLabel, QMainWindow
 from PyQt5.QtCore import QRect, pyqtSignal, Qt, QRectF
 from PyQt5.QtGui import QMovie, QPixmap, QPainter, QPen, QFont, QColor, QBrush
 import os
+import sys
+sys.path.append('.')
 
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.Clickable_Label import clickable_label
@@ -215,19 +217,20 @@ class original_pic(QMainWindow):
         del self
 
 if __name__ == '__main__':
-    import sys
     from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWidgets import QDesktopWidget
     app = QApplication(sys.argv)
     info = {
             'url': 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2020/06/02/11/35/05/82036476_p0_master1200.jpg',
             'temp_path': './Pixiv',
-            'temp_file_name': 'お好みの彼女をどうぞ/お好みの彼女をどうぞ_1.jpg',
+            'temp_file_name': 'お好みの彼女をどうぞ_1.jpg',
             'api': '',
             'loading_gif': './RES/loading_large.gif',
             'title': 'お好みの彼女をどうぞ',
             'timeout_pic': './RES/TIMEOUT.png',
         }
-    a = original_pic(info=info)
+    b = QDesktopWidget()
+    a = original_pic(info=info, parent=b)
     a.show()
 
     sys.exit(app.exec_())

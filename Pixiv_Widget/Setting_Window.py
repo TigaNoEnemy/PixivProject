@@ -82,10 +82,9 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
             self.middle_radioButton.setChecked(True)
         elif self.cfg.big_pic_size == 'square_medium':
             self.small_radioButton.setChecked(True)
-        if self.cfg.has_r18:
-            self.r18_checkBox.setChecked(True)
-        else:
-            self.r18_checkBox.setChecked(False)
+
+        self.r18_checkBox.setChecked(self.cfg.has_r18)
+
         for i in range(3, 8):
             self.everyRowPicNumComboBox.addItem(str(i))
         self.everyRowPicNumComboBox.setCurrentText(str(self.cfg.per_row_pic_num))
@@ -130,6 +129,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         h = self._parent.height()
         self._parent.resize(240*per_row_pic_num+135, h)
         setting = self._setting
+        self.cfg.set_user_setting(setting)
         self._closed.emit(setting)
 
     def paintEvent(self, qevent):
