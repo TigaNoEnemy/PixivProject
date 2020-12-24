@@ -25,55 +25,55 @@ class my_api(ByPassSniApi):
         super().__init__()
 
 
-    def _requests_call(self, method, url, timeout, headers={}, params=None, data=None, stream=False):
-        """ requests http/https call for Pixiv API """
-        headers.update(self.additional_headers)
+    # def _requests_call(self, method, url, timeout, headers={}, params=None, data=None, stream=False):
+    #     """ requests http/https call for Pixiv API """
+    #     headers.update(self.additional_headers)
 
-        try:
-            if (method == 'GET'):
-                return self.requests.get(url, params=params, headers=headers, stream=stream, timeout=timeout, **self.requests_kwargs)
-            elif (method == 'POST'):
-                return self.requests.post(url, params=params, data=data, headers=headers, stream=stream, timeout=timeout, 
-                                          **self.requests_kwargs)
-            elif (method == 'DELETE'):
-                return self.requests.delete(url, params=params, data=data, headers=headers, stream=stream, timeout=timeout, 
-                                            **self.requests_kwargs)
-        except requests.exceptions.Timeout:
-            return
+    #     try:
+    #         if (method == 'GET'):
+    #             return self.requests.get(url, params=params, headers=headers, stream=stream, timeout=timeout, **self.requests_kwargs)
+    #         elif (method == 'POST'):
+    #             return self.requests.post(url, params=params, data=data, headers=headers, stream=stream, timeout=timeout, 
+    #                                       **self.requests_kwargs)
+    #         elif (method == 'DELETE'):
+    #             return self.requests.delete(url, params=params, data=data, headers=headers, stream=stream, timeout=timeout, 
+    #                                         **self.requests_kwargs)
+    #     except requests.exceptions.Timeout:
+    #         return
 
-        except Exception as e:
-            return
+    #     except Exception as e:
+    #         return
 
-        raise PixivError('Unknow method: %s' % method)
+    #     raise PixivError('Unknow method: %s' % method)
 
-    def _download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
-                 referer='https://app-api.pixiv.net/', timeout=TIMEOUT):
-        """Download image to file (use 6.0 app-api)"""
-        if fname is None and name is None:
-            name = os.path.basename(url)
-        elif isinstance(fname, basestring):
-            name = fname
+    # def _download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
+    #              referer='https://app-api.pixiv.net/', timeout=TIMEOUT):
+    #     """Download image to file (use 6.0 app-api)"""
+    #     if fname is None and name is None:
+    #         name = os.path.basename(url)
+    #     elif isinstance(fname, basestring):
+    #         name = fname
 
-        if name:
-            name = prefix + name
-            img_path = os.path.join(path, name)
+    #     if name:
+    #         name = prefix + name
+    #         img_path = os.path.join(path, name)
 
-            if os.path.exists(img_path) and not replace:
-                return True
+    #         if os.path.exists(img_path) and not replace:
+    #             return True
 
-        response = self._requests_call('GET', url, headers={'Referer': referer}, stream=True, timeout=timeout)
-        if not response:
-            return False
-        if name:
-            with open(img_path, 'wb') as out_file:
-                try:
-                    shutil.copyfileobj(response.raw, out_file)
-                except:
-                    return False
-        else:
-            shutil.copyfileobj(response.raw, fname)
-        del response
-        return True
+    #     response = self._requests_call('GET', url, headers={'Referer': referer}, stream=True, timeout=timeout)
+    #     if not response:
+    #         return False
+    #     if name:
+    #         with open(img_path, 'wb') as out_file:
+    #             try:
+    #                 shutil.copyfileobj(response.raw, out_file)
+    #             except:
+    #                 return False
+    #     else:
+    #         shutil.copyfileobj(response.raw, fname)
+    #     del response
+    #     return True
 
     def follow_user(self, user_id, publicity='public'):
         url = f'{self.public_api}/v1/me/favorite-users.json'
@@ -132,7 +132,7 @@ class my_api(ByPassSniApi):
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
         # 缓存图片
         print(url)
-        isSuccess = self._download(url=url, path=path, name=str(file_name), replace=replace, timeout=timeout)
+        isSuccess = self.download(url=url, path=path, name=str(file_name), replace=replace)#, timeout=timeout)
         return {'isSuccess': isSuccess}
 
     def get_image_size(self, url, Range=None, timeout=TIMEOUT):

@@ -73,8 +73,14 @@ class search_frame(QFrame, search_frame.Ui_Frame):
 
         def change_search_frame_status():
             self.searchFrameIsShow = False
-            self.main.searchButton.disconnect()
-            self.main.searchButton.clicked.connect(self.show_search_frame)
+            try:
+                self.main.searchButton.disconnect()
+            except:
+                # 由paintEvent调用，有可能发生错误
+                pass
+            else:
+                self.main.searchButton.clicked.connect(self.show_search_frame)
+
             self.search_frame_animation.deleteLater()
             sip.delete(self.search_frame_animation)
             del self.search_frame_animation
@@ -105,6 +111,10 @@ class search_frame(QFrame, search_frame.Ui_Frame):
         self.searchComboBox.move(width - 231, searchComboBox_y)
         self.searchButton.move(width - 151, searchComboBox_y)
         self.cancelSearchButton.move(width - 81, searchComboBox_y)
+
+    def paintEvent(self, qevent):
+        if not self.main.tabWidget.isVisible() and self.height() == 120:
+            self.hide_search_frame()
 
 
 if __name__ == '__main__':

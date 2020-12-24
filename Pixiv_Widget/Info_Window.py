@@ -13,7 +13,7 @@ class _info_window(QMainWindow, info_window_1.Ui_InfoWindow):
     """docstring for _info_window"""
     closed = pyqtSignal()
     def __init__(self, parent=None):
-        super(_info_window, self).__init__(parent)
+        super(_info_window, self).__init__()
         self._parent = parent
         self.setupUi(self)
         self.setFixedSize(self.width(), self.height())

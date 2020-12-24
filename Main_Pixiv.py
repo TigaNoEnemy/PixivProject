@@ -54,18 +54,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.tabWidget.removeTab(0)
         ###
         tab_h = self.tabWidget.height()
-        infoFrame_h = smallFrame_h - tab_h
-        self.infoFrame = info_frame(self.SmallFrame, main=self, info={})
-        self.infoFrame.setGeometry(QRect(0, 730, 1041, infoFrame_h))
+        infoFrame_h = self.height() - self.SmallFrame.height()
+        self.infoFrame = info_frame(self, main=self, info={})
+        self.infoFrame.setGeometry(QRect(self.SmallFrame.x(), 732, 1041, infoFrame_h))
+        self.infoFrame.set_original_height(infoFrame_h)
+
         self.searchFrame = search_frame(self.SmallFrame, main=self)
         self.searchFrame.setGeometry(QRect(0, -120, 1041, 120))
 
         self.setWindowIcon(QIcon(self.app_icon))
         self.setWindowTitle('Pixiv')
         self.tab = {}
-        # self.tabWidget.setStyleSheet(
-        #     "QTabWidget:pane{background-color: transparent;border:none;}\nQTabBar:tab{color:rgb(255, 255, 255); background-color: rgba(102, 206, 255, 128)}\nQTabBar:tab:selected{background-color: rgba(102, 206, 255, 255)}")
-        #self.tabWidget.setTabsClosable(True)
+   
         self.tabWidget.tabCloseRequested.connect(self.close_tab)
         self.tabWidget.currentChanged['int'].connect(self.change_tab)
 
@@ -79,13 +79,23 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         ###
 
         file_name = f"user_{user_id}_pic"
-        self.user_pic_thread = base_thread(self, self.api.cache_pic, url=user_pic_link, file_name=file_name,
-                                           path=self.temp_path, info={'file_name': file_name, 'url': user_pic_link,
-                                                                      'label': 'self.login_user_pic_label', 'row': 53})
-        self.user_pic_thread.finish.connect(self.load_user_head)
-        # self.user_pic_thread.finish.connect(self.user_pic_thread.disconnect)
-        self.user_pic_thread.wait()
-        self.user_pic_thread.start()
+        info = {
+            'file_name': file_name, 
+            'url': user_pic_link, 
+            'label': 'self.login_user_pic_label', 
+            'row': 53
+            }
+        if os.path.exists(f"{self.temp_path}/{file_name}"):
+            info.update({'isSuccess': True, 'path': self.temp_path})
+            self.load_user_head(info)
+
+        else:
+            self.user_pic_thread = base_thread(self, self.api.cache_pic, url=user_pic_link, file_name=file_name,
+                                               path=self.temp_path, info=info)
+            self.user_pic_thread.finish.connect(self.load_user_head)
+            # self.user_pic_thread.finish.connect(self.user_pic_thread.disconnect)
+            self.user_pic_thread.wait()
+            self.user_pic_thread.start()
 
 
         # desktop = QApplication.desktop()
@@ -136,8 +146,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.scrollAreas = {}
         self.scrollAreaWidgetContents = {}
-        # width = 240 * self.per_row_pic_num + 135
-        # self.resize(width, int(height * 0.75))
 
         self.move_self_to_center()  # 移动窗口到中央
         self.show()
@@ -173,16 +181,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def show_info(self):
         from Pixiv_Widget.Info_Window import _info_window
         def del_info_window():
-            del self.info_window
+            self.info_window.deleteLater()
+            sip.delete(self.info_window)
 
-        if hasattr(self, 'info_window'):
-            self.info_window.show()
-        else:
-            self.info_window = _info_window(parent=self)
-            self.info_window.closed.connect(del_info_window)
-            self.info_window.setWindowTitle('哟！')
-            self.info_window.setWindowIcon(QIcon(self.app_icon))
-            self.info_window.show()
+        self.info_window = _info_window(parent=self)
+        self.info_window.closed.connect(del_info_window)
+        self.info_window.setWindowTitle('哟！')
+        self.info_window.setWindowIcon(QIcon(self.app_icon))
+        self.info_window.show()
 
     def get_setting(self):
         cfg = setting()
@@ -1255,8 +1261,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         height = self.height()  # 原始809
         width = self.width()
 
-        # self.resize(event.oldSize().width(), height)
-
         # 修改左侧按钮
         frame_h = self.frame.height()
         cate_scrollArea_w = self.cate_scrollArea.width()
@@ -1271,16 +1275,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         # 修改右侧控件尺寸及按钮位置
         # smallFrame_width = width #self.SmallFrame.width()
-        self.SmallFrame.resize(width - 117, height)
+        self.SmallFrame.resize(width - 117, height-self.infoFrame.original_height)
 
         smallFrame_w = self.SmallFrame.width()
         smallFrame_h = self.SmallFrame.height()
 
-        # downloadPageScroll_width = self.SmallFrame.width() #self.table.width()
         infoFrame_h = self.infoFrame.height()
         self.table.resize(smallFrame_w, height - infoFrame_h)
 
-        self.bigPicScrollArea.resize(smallFrame_w-340, height - 80)
+        self.bigPicScrollArea.resize(smallFrame_w-340, smallFrame_h)
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height())
         for i in self.scrollAreaWidgetContents_3.children():
             bigFrame_x = (self.scrollAreaWidgetContents_3.width() - i.width()) // 2

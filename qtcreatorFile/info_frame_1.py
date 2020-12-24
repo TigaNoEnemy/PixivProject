@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Frame(object):
     def setupUi(self, Frame):
-        Frame.setObjectName("Frame")
+        Frame.setObjectName("infoFrame")
         Frame.resize(1041, 82)
         #Frame.setStyleSheet("background-color: rgb(29, 23, 31);")
         self.user_pic_label = Show_Head_Label(Frame)

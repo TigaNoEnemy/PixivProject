@@ -106,13 +106,13 @@ QFrame clickable_label#picLabel{
 }
 
 /*显示作品详细信息的frame*/
-QFrame info_frame#Frame{
-	background-color: rgb(29, 23, 31);
+#infoFrame{
+	background-color: rgb(73, 75, 69);	/*== rgba(112, 112, 112, 100)*/
 }
 
 /*搜索框外层frame*/
-QFrame search_frame#Frame{
-	background-color: rgb(25, 25, 25);
+#searchFrame{
+	background-color: rgb(73, 75, 69);
 }
 
 /*tabWidget 的子控件widget*/
@@ -185,26 +185,22 @@ QWidget QFrame#SmallFrame{
 	background-color: rgba(112, 112, 112, 100);
 }
 
-
+/*用户信息*/
 QWidget QFrame#frame{
 	background-color: rgba(112, 112, 112, 100);
+	border: none;
 }
 
 /*装载左下角的功能按钮的frame*/
 QWidget QFrame#function_frame{
 	background-color: rgba(112, 112, 112, 100);
+	border: none;
 }
 
 
 QWidget QLabel#bigPicLabel{
 	background-color: rgb(255, 255, 255);
 }
-
-/*装载每日、新人、每月等按钮的frame*/
-QWidget QScrollArea#cate_scrollArea{
-	background-color: rgba(122, 122, 122, 50);
-}
-
 
 QWidget QWidget#comments_scroll{
 	background-color: rgba(64, 64, 64, 0);
@@ -347,7 +343,7 @@ search_frame QPushButton:pressed{
 
 
 TableView QHeaderView::section{
-	background-color:rgba(0, 0, 0, 0);
+	background-color:rgb(73, 75, 69);
 	font:13pt '宋体';
 	color: white;
 }
@@ -386,13 +382,14 @@ show_users_frame QPushButton:pressed{
 
 /*包裹左边侧栏的分类按钮的QScrollArea*/
 #cate_scrollArea{
-	background-color: rgba(122, 122, 122, 0);
+	background-color: rgba(122, 122, 122, 90);
 	border: none;
 }
 
 /*包裹左边侧栏的分类按钮的QScrollArea里的widget*/
 #cate_widget{
-	background-color: rgba(0, 0, 0, 0);
+	background-color: rgba(122, 122, 122, 0);
+	border: none;
 }
 
 /*包裹左下角功能按钮的frame*/

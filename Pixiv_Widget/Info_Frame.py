@@ -14,6 +14,7 @@ from Pixiv_Thread.My_Thread import base_thread
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 class info_frame(QFrame, info_frame_1.Ui_Frame):
+    infoFrame_h_differ = 200    # 隐藏作品详情和展示时infoFrame之间的高度差
     def __init__(self, parent=None, main=None, info={}):
         super(info_frame, self).__init__(parent)
         self.showDetail = False
@@ -31,11 +32,10 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         # print(self.text_scroll.pos(), self.text_scroll.size())
         self.text_scroll.click.connect(self.mouseReleaseEvent)
         # self.setStyleSheet('background-color: rgb(32,32, 34)')
+        self.original_height = 0
 
     def show_illust_detail(self):
         from PyQt5.Qt import QPropertyAnimation
-
-        infoFrame_h_differ = 200  # 隐藏作品详情和展示时infoFrame之间的高度差
         if hasattr(self, 'animation'):
             if self.animation_start:
                 return
@@ -57,7 +57,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.animation.setPropertyName(b'geometry')
         self.animation.setTargetObject(self)
         self.animation.setStartValue(QRect(infoFrame_x, infoFrame_y, infoFrame_w, infoFrame_h))
-        self.animation.setEndValue(QRect(infoFrame_x, infoFrame_y - infoFrame_h_differ, infoFrame_w, infoFrame_h + infoFrame_h_differ))
+        self.animation.setEndValue(QRect(infoFrame_x, infoFrame_y - self.infoFrame_h_differ, infoFrame_w, infoFrame_h + self.infoFrame_h_differ))
         self.animation.setDuration(200)
         self.animation.finished.connect(change_animation_status)
         self.animation.start()
@@ -171,7 +171,6 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.user_pic_label.get_head()
 
     def hide_illust_detail(self):
-        infoFrame_h_differ = 200
         if hasattr(self, 'animation'):
             if self.animation_start:
                 return
@@ -194,7 +193,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.animation.setTargetObject(self)
         self.animation.setStartValue(QRect(infoFrame_x, infoFrame_y, infoFrame_w, infoFrame_h))
         self.animation.setEndValue(
-            QRect(infoFrame_x, infoFrame_y + infoFrame_h_differ, infoFrame_w, infoFrame_h - infoFrame_h_differ))
+            QRect(infoFrame_x, infoFrame_y + self.infoFrame_h_differ, infoFrame_w, infoFrame_h - self.infoFrame_h_differ))
         self.animation.setDuration(200)
         self.animation.finished.connect(change_animation_status)
         self.animation.start()
@@ -210,6 +209,9 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
 
     def detail_is_show(self):
         return self.showDetail
+
+    def set_original_height(self, v):
+        self.original_height = v
 
     def resizeEvent(self, qevent):
         width = self.width()

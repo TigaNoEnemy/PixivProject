@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Frame(object):
     def setupUi(self, Frame):
-        Frame.setObjectName("Frame")
+        Frame.setObjectName("searchFrame")
         Frame.resize(1041, 120)
         #Frame.setStyleSheet("background-color: rgb(25, 25, 25);")
         self.searchLineEdit = QtWidgets.QLineEdit(Frame)
