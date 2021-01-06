@@ -83,7 +83,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         elif self.cfg.big_pic_size == 'square_medium':
             self.small_radioButton.setChecked(True)
 
-        self.r18_checkBox.setChecked(self.cfg.has_r18)
+        
 
         for i in range(3, 8):
             self.everyRowPicNumComboBox.addItem(str(i))
@@ -102,10 +102,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
             save_path = self.cfg.save_path
 
         per_row_pic_num = self.everyRowPicNumComboBox.currentText()
-        if self.r18_checkBox.isChecked():
-            has_r18 = 'True'
-        else:
-            has_r18 = 'False'
+       
         if self.big_radioButton.isChecked():
             big_pic_size = 'large'
         elif self.middle_radioButton.isChecked():
@@ -117,7 +114,7 @@ class setting_window(QMainWindow, settings_window.Ui_SettingWindow):
         
         self._setting['save_path'] = save_path
         self._setting['per_row_pic_num'] = int(per_row_pic_num)
-        self._setting['has_r18'] = has_r18
+        
         self._setting['big_pic_size'] = big_pic_size
         self._setting['every_time_show_pic_num'] = every_time_show_pic_num
         self._setting['temp_path'] = temp_path

@@ -46,7 +46,7 @@ class setting(ConfigParser):
         self.app_icon = self.get('RES', 'app_icon') # 应用图标
         # self.loading_big_gif = self.get('RES', 'loading_big_gif') # 加载大图时的GIF
         self.login_gif = self.get('RES', 'login_gif') # 登录时显示的GIF
-        self.has_r18 = eval(self.get('RES', 'has_r18')) # 是否显示R18图片
+     
         every_time_show_pic_num = int(self.get('RES', 'every_time_show_pic_num'))  
         if every_time_show_pic_num >= 30:
             every_time_show_pic_num = 30
@@ -61,7 +61,6 @@ class setting(ConfigParser):
             per_row_pic_num = 7
         self.per_row_pic_num = per_row_pic_num  # 预览图片时一行多少张
         self.timeout = float(self.get('RES', 'timeout')) # 网络请求的超时时间
-        self.no_h = self.get('RES', 'no_h') # 禁止显示r18图片时，代替r18图片的图片
 
     # 设置配置信息
     def set_user_setting(self, _setting):
@@ -140,11 +139,9 @@ every_time_show_pic_num = 20
 # 登录动图
 login_gif = ./RES/login_gif
 
-has_r18 = False
 
 # 加载图片的超时时间
-timeout = 5
-no_h = ./RES/no_h'''.replace('\n', self.wrap_split)
+timeout = 5'''.replace('\n', self.wrap_split)
 
         f = open(self.setting_file, 'w', encoding='utf-8')
         f.write(default)

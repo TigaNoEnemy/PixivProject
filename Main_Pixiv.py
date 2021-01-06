@@ -136,7 +136,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.downloadThreads = {}
         self.cache_item_box = {}
         #self.add_background()
-        self.R18Button.setVisible(self.has_r18)
+        
         self.create_download_view()
         self.progressThreads = {}
         self.tab_title = ''
@@ -206,12 +206,10 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.app_icon = cfg.app_icon
         # self.loading_big_gif = cfg.loading_big_gif
         self.login_gif = cfg.login_gif
-        self.has_r18 = cfg.has_r18
         self.every_time_show_pic_num = cfg.every_time_show_pic_num
         self.tips_dot = cfg.tips_dot
         self.per_row_pic_num = cfg.per_row_pic_num
         self.timeout = cfg.timeout
-        self.no_h = cfg.no_h
 
     def show_action(self, info):
         from PyQt5.QtWidgets import QMenu
@@ -596,9 +594,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.weekOriginalButton.clicked.connect(
             lambda: self.show_pic(f'illust_ranking{"+" * 7}', {'mode': 'week_original'}, title='周排行榜：原创',
                                   isMoreButton=False, flag='排行榜'))
-        self.R18Button.clicked.connect(
-            lambda: self.show_pic(f'illust_ranking{"+" * 8}', {'mode': 'day_r18'}, title='日R18', isMoreButton=False,
-                                  flag='排行榜'))
+
         self.settingsButton.clicked.connect(self.Setting_page)
         # self.returnButton.clicked.connect(self.returnSmallPic)
         self.showDownloadButton.clicked.connect(self.show_download_detail)
@@ -1395,7 +1391,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def set_user_setting(self, _):
         from utils.Project_Setting import setting
         self.get_setting()
-        self.R18Button.setVisible(self.has_r18)
         self.ajust_cate_widget_size()
 
     def test(self, info=None):

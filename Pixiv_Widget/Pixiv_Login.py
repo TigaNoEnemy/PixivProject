@@ -141,12 +141,12 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.app_icon = self.cfg.app_icon
         # self.loading_big_gif = self.cfg.loading_big_gif
         self.login_gif = self.cfg.login_gif
-        self.has_r18 = self.cfg.has_r18
+        
         self.every_time_show_pic_num = self.cfg.every_time_show_pic_num
         self.tips_dot = self.cfg.tips_dot
         self.per_row_pic_num = self.cfg.per_row_pic_num
         self.timeout = self.cfg.timeout
-        self.no_h = self.cfg.no_h
+        
 
     def require_appapi_hosts(self):
         import time

@@ -73,9 +73,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             self.likeButton.setText('いやです')
             self.likeButton.clicked.connect(self.del_favor)
 
-        if not self.cfg.has_r18 and 'R-18' in str(tags):
-            file = self.cfg.no_h
-        elif 'R-18' in str(tags):
+        if 'R-18' in str(tags):
             file_name = f'{illust_id}_r18'
             file = f"{self.cfg.temp_path}/{file_name}"
         else:

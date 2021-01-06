@@ -123,11 +123,6 @@ QStackedWidget my_widget#tab{
 }
 
 
-QWidget QCommandLinkButton#R18Button{
-	color:rgb(255, 255, 255);
-	font: 12pt "Noto Sans CJK SC";
-}
-
 
 QWidget QCommandLinkButton#RankButton{
 	color:rgb(255, 255, 255);

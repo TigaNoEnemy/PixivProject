@@ -217,9 +217,7 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
         file_name = self.info['illust_id']
         tags = self.info['illust']
 
-        if not self.cfg.has_r18 and 'R-18' in str(tags):
-            self.file = file = self.cfg.no_h
-        elif 'R-18' in str(tags):
+        if 'R-18' in str(tags):
             file_name = f'{file_name}_r18'
             self.file = file = f"{self.cfg.temp_path}/{file_name}"
         else:

@@ -178,7 +178,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../RES/注销-p.png</normaloff>../RES/注销-p.png</iconset>
+       <normaloff>RES/注销-p.png</normaloff>RES/注销-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="showDownloadButton">
@@ -195,7 +195,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../RES/下载-p.png</normaloff>../RES/下载-p.png</iconset>
+       <normaloff>RES/下载-p.png</normaloff>RES/下载-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="settingsButton">
@@ -212,7 +212,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../RES/设置-p.png</normaloff>../RES/设置-p.png</iconset>
+       <normaloff>RES/设置-p.png</normaloff>RES/设置-p.png</iconset>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="searchButton">
@@ -229,7 +229,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../RES/搜索-p.png</normaloff>../RES/搜索-p.png</iconset>
+       <normaloff>RES/搜索-p.png</normaloff>RES/搜索-p.png</iconset>
      </property>
     </widget>
     <widget class="QLabel" name="downloadTipsLabel">
@@ -259,7 +259,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../RES/关于.png</normaloff>../RES/关于.png</iconset>
+       <normaloff>RES/关于.png</normaloff>RES/关于.png</iconset>
      </property>
     </widget>
     <zorder>aboutButton</zorder>
@@ -310,7 +310,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="recommendButton">
@@ -327,7 +327,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayMangaButton">
@@ -344,7 +344,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayFemaleButton">
@@ -361,7 +361,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayRookieButton">
@@ -378,7 +378,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="monthButton">
@@ -395,24 +395,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
-      </property>
-     </widget>
-     <widget class="QCommandLinkButton" name="R18Button">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>369</y>
-        <width>121</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>R18</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="dayMaleButton">
@@ -429,7 +412,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="RankButton">
@@ -446,7 +429,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
      <widget class="QCommandLinkButton" name="weekButton">
@@ -463,7 +446,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
+        <normaloff>RES/正常-p.png</normaloff>RES/正常-p.png</iconset>
       </property>
      </widget>
     </widget>

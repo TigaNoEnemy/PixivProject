@@ -3,8 +3,9 @@ from pixivpy3 import ByPassSniApi
 import pixivpy3
 import os
 import shutil
-from pixivpy3.utils import PixivError
+from pixivpy3.utils import PixivError, JsonDict
 import requests
+import json
 
 import sys
 sys.path.append('.')
@@ -167,6 +168,18 @@ class my_api(ByPassSniApi):
             except:
                 return {'isSuccess': False}
         return {'isSuccess': True}
+
+    def parse_json(self, json_str):
+        data = json.loads(json_str, object_hook=JsonDict)
+
+        if 'illusts' in data:
+            data['illusts'] = [i for i in data['illusts'] if 'R-18' not in str(i['tags'])]
+
+        elif 'user_previews' in data:
+            for i in range(len(data['user_previews'])):
+                data["user_previews"][i]['illusts'] = [j for j in data["user_previews"][i]['illusts'] if 'R-18' not in str(j['tags'])]
+
+        return data
 
 
 if __name__ == '__main__':
