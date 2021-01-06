@@ -583,9 +583,9 @@ LOGIN_STYLE = """app_login QWidget{
 }"""
 
 def reset_login_style():
-	with open('Login_Style.qss', 'w') as f:
+	with open('Login_Style.qss', 'w', encoding='utf-8') as f:
 		f.write(LOGIN_STYLE)
 
 def reset_main_style():
-	with open('Main_Style.qss', 'w') as f:
+	with open('Main_Style.qss', 'w', encoding='utf-8') as f:
 		f.write(MAIN_STYLE)
