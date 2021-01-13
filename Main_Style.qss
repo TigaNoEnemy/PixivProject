@@ -61,7 +61,8 @@ QFrame QLabel#textLabel{
 
 /*评论时间Label*/
 QFrame QLabel#time_label{
-	color: rgb(209, 209, 209);
+	color: rgb(150, 150, 150);
+	font: 8pt "MicroSoft YaHei";
 }
 
 /*评论用户名Label*/
@@ -429,8 +430,9 @@ QCommandLinkButton QIcon{
 /*展示评论的QTextBrowser*/
 QFrame QTextBrowser#comment_text{
 	color: rgb(255, 255, 255);
-	background-color: rgb(48, 51, 41);
+	background-color: rgb(73, 75, 69);
 	border: none;
+	font: 14pt "MicroSoft YaHei";
 }
 
 

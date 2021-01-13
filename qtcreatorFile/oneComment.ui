@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>340</width>
-    <height>200</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(48, 51, 41);
+    <string notr="true">
 </string>
    </property>
    <property name="frameShape">
@@ -42,7 +42,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -58,8 +58,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-color: rgb(255, 255, 255);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -75,9 +74,7 @@ color: rgb(255, 255, 255);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(48, 51, 41);
-border: none;</string>
+     <string notr="true"/>
     </property>
     <property name="horizontalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -96,8 +93,7 @@ border: none;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(209, 209, 209);
-color: rgb(147, 147, 147);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>

@@ -28,7 +28,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
     progress = pyqtSignal(dict)     # 用于通知app创建download_progress
     pic_click = pyqtSignal(dict)
     timeout = 3
-    def __init__(self, parent, info={}, test=False):
+    def __init__(self, parent, info={}):
         super(small_pic_frame, self).__init__(parent)
         self.info = info    # info共有七个键illust、start_row(创建进度条需要)、
         self.rotate = 90
@@ -44,10 +44,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.api = my_api()
         self.cfg = setting()
         self.picLabel.double_click_time = 1
-        if not test:
-            self.my_set()
-        else:
-            self.timer.start(10)
+        self.my_set()
 
     def change_rotate(self):
         self.rotate += 1
@@ -107,8 +104,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
     def add_favor(self):
         illust_id = self.info['illust']['id']
-
-        self.likeButton.setText('いやです')
+      
         self.likeButton.setEnabled(False)
         self.baseThread = base_thread(self, self.api.illust_bookmark_add, illust_id=illust_id, info={'mode': 'add'})
         self.baseThread.finish.connect(self.change_like_button)
@@ -119,15 +115,16 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.likeButton.disconnect()
         if info['mode'] == 'add':
             self.likeButton.clicked.connect(self.del_favor)
+            self.likeButton.setText('いやです')
         elif info['mode'] == 'delete':
             self.likeButton.clicked.connect(self.add_favor)
+            self.likeButton.setText('好き')
 
         self.likeButton.setEnabled(True)
 
     def del_favor(self):
         illust_id = self.info['illust']['id']
-
-        self.likeButton.setText('好き')
+        
         self.likeButton.setEnabled(False)
         self.baseThread = base_thread(self, self.api.illust_bookmark_delete, illust_id=illust_id, info={'mode': 'delete'})
         self.baseThread.finish.connect(self.change_like_button)
@@ -224,15 +221,30 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
-    import sys
+    from PyQt5.QtWidgets import QApplication, QMainWindow
+    from utils.Process_Token import login_info_parser
+    from Pixiv_Api.My_Api import my_api
+    from pixivpy3 import ByPassSniApi
+    from utils.Project_Setting import setting
 
+    cfg = login_info_parser()
+    info = cfg.get_token()
+    ppp = setting()
+    api = my_api()
+    api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
+    api.auth(refresh_token=info['token'])
+
+    key = ['illust', 'start_row', 'main']
+    start_row = 0
     f =['test']
     f = {j: i for i, j in enumerate(f)}
     app = QApplication(sys.argv)
-    a = small_pic_frame(parent=None, info=f, test=True)
-    a.textLabel.setText('Test')
-    a.authLabel.setText('Test')
+    main = None
+    illust = {'id': 74536659, 'title': 'Bloodborne-Doll', 'type': 'illust', 'image_urls': {'square_medium': 'https://i.pximg.net/c/540x540_10_webp/img-master/img/2019/05/05/21/06/25/74536659_p0_square1200.jpg', 'medium': 'https://i.pximg.net/c/540x540_70/img-master/img/2019/05/05/21/06/25/74536659_p0_master1200.jpg', 'large': 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2019/05/05/21/06/25/74536659_p0_master1200.jpg'}, 'caption': '', 'restrict': 0, 'user': {'id': 5435812, 'name': 'Vittorio Veneto', 'account': 'fayuuka', 'profile_image_urls': {'medium': 'https://i.pximg.net/user-profile/img/2019/03/11/22/48/45/15510276_e3b1036f8dc5a8c3364f7716991893db_170.jpg'}, 'is_followed': False}, 'tags': [{'name': 'Bloodborne', 'translated_name': None}, {'name': '人形', 'translated_name': '人偶'}, {'name': 'ブラッドボーン', 'translated_name': '血源诅咒'}], 'tools': ['SAI', 'Photoshop'], 'create_date': '2019-05-03T19:32:26+09:00', 'page_count': 2, 'width': 907, 'height': 1615, 'sanity_level': 2, 'x_restrict': 0, 'series': None, 'meta_single_page': {}, 'meta_pages': [{'image_urls': {'square_medium': 'https://i.pximg.net/c/360x360_10_webp/img-master/img/2019/05/05/21/06/25/74536659_p0_square1200.jpg', 'medium': 'https://i.pximg.net/c/540x540_70/img-master/img/2019/05/05/21/06/25/74536659_p0_master1200.jpg', 'large': 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2019/05/05/21/06/25/74536659_p0_master1200.jpg', 'original': 'https://i.pximg.net/img-original/img/2019/05/05/21/06/25/74536659_p0.jpg'}}, {'image_urls': {'square_medium': 'https://i.pximg.net/c/360x360_10_webp/img-master/img/2019/05/05/21/06/25/74536659_p1_square1200.jpg', 'medium': 'https://i.pximg.net/c/540x540_70/img-master/img/2019/05/05/21/06/25/74536659_p1_master1200.jpg', 'large': 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2019/05/05/21/06/25/74536659_p1_master1200.jpg', 'original': 'https://i.pximg.net/img-original/img/2019/05/05/21/06/25/74536659_p1.jpg'}}], 'total_view': 1151, 'total_bookmarks': 100, 'is_bookmarked': False, 'visible': True, 'is_muted': False}  
+    f = {'illust': illust, 'main': main, 'start_row': start_row}
+    a = small_pic_frame(parent=None, info=f)
+    # a.textLabel.setText('Test')
+    # a.authLabel.setText('Test')
 
     a.show()
     sys.exit(app.exec_())
