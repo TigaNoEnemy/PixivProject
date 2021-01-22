@@ -80,7 +80,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
         ###
 
-        self.trag = False
+        self.drag = False
 
         print(time.time() - start, '>'*90)
 
