@@ -142,6 +142,10 @@ class my_api(ByPassSniApi):
             headers['Range'] = Range
 
         self.requests_kwargs.update({"timeout": timeout})
+        if hasattr(self, 'pximg'):
+            headers['host'] = 'i.pximg.net'
+            url = url.replace('https://i.pximg.net', self.pximg)
+
         print(f"image_size: {url}")
         try:
             response = self.requests_call('GET', url, headers=headers, stream=True)
