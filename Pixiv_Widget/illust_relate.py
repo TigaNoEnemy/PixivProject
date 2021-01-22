@@ -152,7 +152,10 @@ if __name__ == '__main__':
     info = cfg.get_token()
     ppp = setting()
     api = my_api()
+    
+    api.pximg = api.require_appapi_hosts('i.pximg.net')
     api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
+
     api.auth(refresh_token=info['token'])
 
     _info = {'api': api, 'temp_path': ppp.temp_path, 'illust_id': 63639917, 'has_r18': False, 'no_h': './RES/no_h'}

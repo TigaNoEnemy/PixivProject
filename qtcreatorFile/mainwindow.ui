@@ -466,6 +466,74 @@
         <normaloff>../RES/正常-p.png</normaloff>../RES/正常-p.png</iconset>
       </property>
      </widget>
+     <widget class="QCommandLinkButton" name="R18Button_male">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>411</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R18男</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="R18Button_female">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>452</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R18女</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="R18Button_week">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>493</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R18周</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
+      </property>
+     </widget>
+     <widget class="QCommandLinkButton" name="R18Button_week_G">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>534</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R18重</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../RES/男女-p.png</normaloff>../RES/男女-p.png</iconset>
+      </property>
+     </widget>
     </widget>
    </widget>
    <zorder>frame</zorder>

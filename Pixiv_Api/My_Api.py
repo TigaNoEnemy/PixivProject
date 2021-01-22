@@ -46,34 +46,31 @@ class my_api(ByPassSniApi):
 
     #     raise PixivError('Unknow method: %s' % method)
 
-    # def _download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
-    #              referer='https://app-api.pixiv.net/', timeout=TIMEOUT):
-    #     """Download image to file (use 6.0 app-api)"""
-    #     if fname is None and name is None:
-    #         name = os.path.basename(url)
-    #     elif isinstance(fname, basestring):
-    #         name = fname
+    def download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
+                 referer='https://app-api.pixiv.net/'):
+        """Download image to file (use 6.0 app-api)"""
+        if fname is None and name is None:
+            name = os.path.basename(url)
+        elif isinstance(fname, basestring):
+            name = fname
 
-    #     if name:
-    #         name = prefix + name
-    #         img_path = os.path.join(path, name)
+        if name:
+            name = prefix + name
+            img_path = os.path.join(path, name)
 
-    #         if os.path.exists(img_path) and not replace:
-    #             return True
-
-    #     response = self._requests_call('GET', url, headers={'Referer': referer}, stream=True, timeout=timeout)
-    #     if not response:
-    #         return False
-    #     if name:
-    #         with open(img_path, 'wb') as out_file:
-    #             try:
-    #                 shutil.copyfileobj(response.raw, out_file)
-    #             except:
-    #                 return False
-    #     else:
-    #         shutil.copyfileobj(response.raw, fname)
-    #     del response
-    #     return True
+            if os.path.exists(img_path) and not replace:
+                return False
+        if hasattr(self, 'pximg'):
+            response = self.requests_call('GET', url, headers={'Referer': referer, 'host': 'i.pximg.net'}, stream=True)
+        else:
+            response = self.requests_call('GET', url, headers={'Referer': referer}, stream=True)
+        if name:
+            with open(img_path, 'wb') as out_file:
+                shutil.copyfileobj(response.raw, out_file)
+        else:
+            shutil.copyfileobj(response.raw, fname)
+        del response
+        return True
 
     def follow_user(self, user_id, publicity='public'):
         url = f'{self.public_api}/v1/me/favorite-users.json'
@@ -131,6 +128,7 @@ class my_api(ByPassSniApi):
     # 自定义
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
         # 缓存图片
+        url = url.replace('https://i.pximg.net', self.pximg)
         print(url)
         isSuccess = self.download(url=url, path=path, name=str(file_name), replace=replace)#, timeout=timeout)
         return {'isSuccess': isSuccess}

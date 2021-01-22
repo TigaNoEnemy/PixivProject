@@ -136,7 +136,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.downloadThreads = {}
         self.cache_item_box = {}
         #self.add_background()
+
         self.R18Button.setVisible(self.has_r18)
+        self.R18Button_male.setVisible(self.has_r18)
+        self.R18Button_female.setVisible(self.has_r18)
+        self.R18Button_week.setVisible(self.has_r18)
+        self.R18Button_week_G.setVisible(self.has_r18)
+
         self.create_download_view()
         self.progressThreads = {}
         self.tab_title = ''
@@ -599,6 +605,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.R18Button.clicked.connect(
             lambda: self.show_pic(f'illust_ranking{"+" * 8}', {'mode': 'day_r18'}, title='日R18', isMoreButton=False,
                                   flag='排行榜'))
+        self.R18Button_male.clicked.connect(
+            lambda: self.show_pic(f'illust_ranking{"+" * 9}', {'mode': 'day_male_r18'}, title='R18男', isMoreButton=False,
+                                  flag='排行榜'))
+        self.R18Button_female.clicked.connect(
+            lambda: self.show_pic(f'illust_ranking{"+" * 10}', {'mode': 'day_female_r18'}, title='R18女', isMoreButton=False,
+                                  flag='排行榜'))
+        self.R18Button_week.clicked.connect(
+            lambda: self.show_pic(f'illust_ranking{"+" * 11}', {'mode': 'week_r18'}, title='周R18', isMoreButton=False,
+                                  flag='排行榜'))
+        self.R18Button_week_G.clicked.connect(
+            lambda: self.show_pic(f'illust_ranking{"+" * 12}', {'mode': 'week_r18g'}, title='周R18重', isMoreButton=False,
+                                  flag='排行榜'))
+
         self.settingsButton.clicked.connect(self.Setting_page)
         # self.returnButton.clicked.connect(self.returnSmallPic)
         self.showDownloadButton.clicked.connect(self.show_download_detail)
@@ -1396,6 +1415,11 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         from utils.Project_Setting import setting
         self.get_setting()
         self.R18Button.setVisible(self.has_r18)
+        self.R18Button_male.setVisible(self.has_r18)
+        self.R18Button_female.setVisible(self.has_r18)
+        self.R18Button_week.setVisible(self.has_r18)
+        self.R18Button_week_G.setVisible(self.has_r18)
+        
         self.ajust_cate_widget_size()
 
     def test(self, info=None):
