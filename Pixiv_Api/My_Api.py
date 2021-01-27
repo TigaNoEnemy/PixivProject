@@ -61,10 +61,7 @@ class my_api(ByPassSniApi):
 
             if os.path.exists(img_path) and not replace:
                 return False
-        if hasattr(self, 'pximg'):
-            response = self.requests_call('GET', url, headers={'Referer': referer, 'host': 'i.pximg.net'}, stream=True)
-        else:
-            response = self.requests_call('GET', url, headers={'Referer': referer}, stream=True)
+        response = self.requests_call('GET', url, headers={'Referer': referer, 'host': 'i.pximg.net'}, stream=True)
         if name:
             with open(img_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
@@ -74,7 +71,7 @@ class my_api(ByPassSniApi):
         return True
 
     def follow_user(self, user_id, publicity='public'):
-        url = f'{self.public_api}/v1/me/favorite-users.json'
+        url = f'{self.hosts}/v1/me/favorite-users.json'
         params = {
             'target_user_id': user_id,
             'publicity': publicity
@@ -83,8 +80,8 @@ class my_api(ByPassSniApi):
         return self.parse_result(r)
 
     def disfollow_user(self, user_id, publicity='public'):
-        url = f'{self.public_api}/v1/me/favorite-users.json'
-        if type(user_id) == list:
+        url = f'{self.hosts}/v1/me/favorite-users.json'
+        if isinstance(user_id, list): #type(user_id) == list:
             params = {'delete_ids': ",".join(map(str, user_id)), 'publicity': publicity}
         else:
             params = {'delete_ids': user_id, 'publicity': publicity}
@@ -92,9 +89,7 @@ class my_api(ByPassSniApi):
         return self.parse_result(r)
 
     def auth_requests_call(self, method, url, headers={}, params=None, data=None):
-        self.require_auth()
-        if hasattr(self, 'public_api'):
-            headers['host'] = 'public-api.secure.pixiv.net'
+        headers['host'] = 'public-api.secure.pixiv.net'
         headers['Referer'] = 'http://spapi.pixiv.net/'
         headers['User-Agent'] = 'PixivIOSApp/5.8.7'
         headers['Authorization'] = 'Bearer %s' % self.access_token
@@ -123,8 +118,8 @@ class my_api(ByPassSniApi):
             response = requests.get(url, params=params, timeout=timeout)
 
         # 返回第一个解析到的IP
-        self.hosts = "https://" + response.json()['Answer'][0]['data']
-        return self.hosts
+        hosts = "https://" + response.json()['Answer'][0]['data']
+        return hosts
 
     # 自定义
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
@@ -136,7 +131,8 @@ class my_api(ByPassSniApi):
 
     def get_image_size(self, url, Range=None, timeout=TIMEOUT):
         referer='https://app-api.pixiv.net/'
-        headers = {'Referer': referer}
+        headers = {'Referer': referer, 'host': 'i.pximg.net'}
+        url = url.replace('https://i.pximg.net', self.pximg)
 
         #断点续传， range指定下载范围
         if Range:
@@ -181,8 +177,6 @@ class my_api(ByPassSniApi):
 
 
 if __name__ == '__main__':
-    c = set()
-    for i in range(100):
-        c.add(my_api())
-
-    print(c)
+    a = my_api()
+    r = a.require_appapi_hosts("public-api.secure.pixiv.net")
+    print(r)

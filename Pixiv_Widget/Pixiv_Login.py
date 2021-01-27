@@ -50,7 +50,6 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         #self.add_background()
         self.lineEdit.setPlaceholderText('请输入账号')
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
-        self.api = my_api()
 
         self.prepared_num = 0
 
@@ -80,7 +79,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
         ###
 
-        self.trag = False
+        self.drag = False
 
         print(time.time() - start, '>'*90)
 
@@ -155,8 +154,9 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         while _time <= 6:
             try:
                 self.api.pximg = self.api.require_appapi_hosts("i.pximg.net")
-                self.api.public_api = self.api.hosts = self.api.require_appapi_hosts("public-api.secure.pixiv.net")
-            except:
+                self.api.hosts = self.api.require_appapi_hosts("public-api.secure.pixiv.net")
+            except Exception as e:
+                err = str(e)
                 _time += 1
             else:
                 print('Complete: require_appapi_hosts')
@@ -164,7 +164,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
             time.sleep(1)
         
-        return {'is_success': False}
+        return {'is_success': False, 'err_info': err}
 
     def pre_initUi(self, result):
         self.prepared_num += 1
@@ -174,7 +174,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
             self.username = result['login_account']
             self.lineEdit.setText(self.username)
         elif 'is_success' in result and not result['is_success']:
-            self.EXIT = app_logout(self, main=lambda: print(0), isLogout=False)
+            self.EXIT = app_logout(self, main=lambda x: result['err_info'], isLogout=False)
             self.EXIT.show()
             return
         if self.prepared_num >= 3:
@@ -260,7 +260,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
             self.timer.start(500)
 
     def sub_login(self):
-        self.login_time_counter.start(self.login_timeout)
+        self.login_time_counter.start(self.login_timeout)   # 登录时间计时器重新计时
         self.loginText.setText('登录中...')
         self.login = base_thread(self, self._login)
         self.login.finish.connect(self.isLoginSuccess)
@@ -355,9 +355,13 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
         except Exception as e:
             print(e)
 
-        self._parent.close()
+        self._parent.close()    # 关闭主程序窗口
         self.close()
-        self.main(_parent)
+        err = self.main(self._parent) # 重启登录程序
+
+        # require_appapi_hosts失败时，会返回错误信息(此处“错误”为名词)
+        if err:
+            print(f'程序初始化失败：{err}')
         
     def disagree(self):
         self.close()
