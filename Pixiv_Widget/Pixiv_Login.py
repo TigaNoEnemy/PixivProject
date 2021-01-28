@@ -52,6 +52,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
 
         self.prepared_num = 0
+        self.loginToken = None
 
         self.initThread = base_thread(parent=self, method=self.require_appapi_hosts)
         self.initThread.finish.connect(self.pre_initUi)

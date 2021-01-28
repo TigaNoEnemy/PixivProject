@@ -1403,7 +1403,7 @@ def login_success(info):
     username = info['USER']
     user_pic_link = info['user_head']
     AppUi = main_pixiv(user_id, username, user_pic_link)
-    AppUi.setWindowState(Qt.WindowMinimized)
+    # AppUi.setWindowState(Qt.WindowMinimized)
 
     login.deleteLater()
     sip.delete(login)
@@ -1417,7 +1417,7 @@ def main(AppUi=None):
     login = app_login(login_success)
     login.login_signal.connect(login_success)
     login.show()
-    login.setWindowState(Qt.WindowMinimized)
+    # login.setWindowState(Qt.WindowMinimized)
     # login.move(2000, 1000)
     # login.showMinimized()
 
