@@ -231,7 +231,7 @@ info_frame QLabel{
 }*/
 
 /*作品详情中的画师名称Label*/
-info_frame my_label#authText{
+info_frame Username_Label#authText{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
 }

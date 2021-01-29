@@ -122,13 +122,14 @@ class my_api(ByPassSniApi):
             response = requests.get(url, params=params, timeout=timeout)
 
         # 返回第一个解析到的IP
-        self.hosts = "https://" + response.json()['Answer'][0]['data']
-        return self.hosts
+        hosts = "https://" + response.json()['Answer'][0]['data']
+        return hosts
 
     # 自定义
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
         # 缓存图片
         url = url.replace('https://i.pximg.net', self.pximg)
+        url = url.replace('https://s.pximg.net', self.default_head)
         print(url)
         isSuccess = self.download(url=url, path=path, name=str(file_name), replace=replace)#, timeout=timeout)
         return {'isSuccess': isSuccess}
@@ -142,9 +143,8 @@ class my_api(ByPassSniApi):
             headers['Range'] = Range
 
         self.requests_kwargs.update({"timeout": timeout})
-        if hasattr(self, 'pximg'):
-            headers['host'] = 'i.pximg.net'
-            url = url.replace('https://i.pximg.net', self.pximg)
+        headers['host'] = 'i.pximg.net'
+        url = url.replace('https://i.pximg.net', self.pximg)
 
         print(f"image_size: {url}")
         try:

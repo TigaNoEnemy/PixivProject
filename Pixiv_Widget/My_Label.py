@@ -2,7 +2,7 @@
 import sys
 sys.path.append('.')
 from PyQt5.QtWidgets import QLabel, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtGui import QPixmap, QColor, QFont, QFontMetrics
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QPropertyAnimation, QTimer
 
 
@@ -178,6 +178,34 @@ class Loading_Label(QLabel):
                 self.loading_timer.stop()
 
         self.update()
+
+class Auto_Text_Label(QLabel):
+    """
+    用于显示文字的label，在使用setText方法时会自动调整字体大小以求尽量显示完全
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def setText(self, s):
+        super().setText(s)
+        init_font_size = 20
+        self.setFont(QFont("Microsoft YaHei", init_font_size))
+        font = self.font()
+        fm = QFontMetrics(font)
+        rec = fm.boundingRect(self.text())
+
+        while (rec.width() > self.width() or rec.height() > self.height()) and init_font_size > 1:
+            init_font_size -= 1
+            self.setFont(QFont("Microsoft YaHei", init_font_size))
+            font = self.font()
+            fm = QFontMetrics(font)
+            rec = fm.boundingRect(self.text())
+
+class Username_Label(my_label, Auto_Text_Label):
+    """
+    用于显示用户名，可点击，自动调整字体大小
+    """
+    pass
         
 
 if __name__ == '__main__':

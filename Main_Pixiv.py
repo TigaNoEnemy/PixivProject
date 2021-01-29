@@ -18,7 +18,7 @@ from qtcreatorFile import pixiv_main_window
 
 # 导入自定义模块
 from Pixiv_Widget.Info_Frame import info_frame
-from Pixiv_Widget.My_Label import my_label
+from Pixiv_Widget.My_Label import Username_Label
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.Original_Pic import original_pic
 from Pixiv_Widget.Setting_Window import setting_window
@@ -43,7 +43,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         base_thread.root = self
         self.api = my_api()
         self.get_setting()
-        self.setMinimumSize(917, 660 - 52)
+        #self.setMinimumSize(1136, 660 - 52)
         #self.setMinimumSize(1257, 811)
         self.setupUi(self)
         self.set_style()
@@ -70,11 +70,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.tabWidget.currentChanged['int'].connect(self.change_tab)
 
         ### 设置用户名
-        self.usernameLabel = my_label(self.frame, {'tag': user_id, 'text': username})  # 左上角用户名
+        self.usernameLabel.info = {'tag': user_id, 'text': username}  # 左上角用户名
         self.usernameLabel.clicked.connect(self.show_action)
-        self.usernameLabel.setGeometry(QRect(2, 50, len(username) * 20, 41))
-        # self.usernameLabel.setWordWrap(True)
-        self.usernameLabel.setObjectName("usernameLabel")
         self.usernameLabel.setText(username)
         ###
 

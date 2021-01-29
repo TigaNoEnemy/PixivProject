@@ -76,7 +76,7 @@ QFrame QLabel#user_name_label{
 QFrame QLabel#usernameLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
-	font: 12pt "MicroSoft YaHei";
+	/*font: 12pt "MicroSoft YaHei";*/
 }
 
 /*小图浏览"だいすき"按钮*/
