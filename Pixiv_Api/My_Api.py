@@ -5,6 +5,7 @@ import os
 import shutil
 from pixivpy3.utils import PixivError
 import requests
+from urllib.parse import urlparse
 
 import sys
 sys.path.append('.')
@@ -49,6 +50,11 @@ class my_api(ByPassSniApi):
     def download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
                  referer='https://app-api.pixiv.net/'):
         """Download image to file (use 6.0 app-api)"""
+        host_ip = {
+            'i.pximg.net': self.pximg,
+            's.pximg.net': self.default_head,
+            }
+
         if fname is None and name is None:
             name = os.path.basename(url)
         elif isinstance(fname, basestring):
@@ -60,10 +66,11 @@ class my_api(ByPassSniApi):
 
             if os.path.exists(img_path) and not replace:
                 return False
-        if hasattr(self, 'pximg'):
-            response = self.requests_call('GET', url, headers={'Referer': referer, 'host': 'i.pximg.net'}, stream=True)
-        else:
-            response = self.requests_call('GET', url, headers={'Referer': referer}, stream=True)
+
+        url_result = urlparse(url)
+        host = url_result.netloc
+        url = url.replace(f"https://{host}", host_ip[host])
+        response = self.requests_call('GET', url, headers={'Referer': referer, 'Host': host}, stream=True)
         if name:
             with open(img_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
@@ -128,9 +135,7 @@ class my_api(ByPassSniApi):
     # 自定义
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
         # 缓存图片
-        url = url.replace('https://i.pximg.net', self.pximg)
-        url = url.replace('https://s.pximg.net', self.default_head)
-        print(url)
+        print(f"缓存：{url}")
         isSuccess = self.download(url=url, path=path, name=str(file_name), replace=replace)#, timeout=timeout)
         return {'isSuccess': isSuccess}
 
@@ -172,8 +177,19 @@ class my_api(ByPassSniApi):
 
 
 if __name__ == '__main__':
-    c = set()
-    for i in range(100):
-        c.add(my_api())
+    from utils.Process_Token import login_info_parser
 
-    print(c)
+    cfg = login_info_parser()
+    info = cfg.get_token()
+
+    l = my_api()
+    l.pximg = l.require_appapi_hosts("i.pximg.net")
+    l.hosts = l.require_appapi_hosts("public-api.secure.pixiv.net")
+    l.default_head = l.require_appapi_hosts("s.pximg.net")
+    #print(l.default_head)
+    res = l.auth(refresh_token=info['token'])
+    print(res)
+    print('down')
+    l.cache_pic('https://i.pximg.net/c/600x1200_90_webp/img-master/img/2016/04/07/07/36/15/56232434_p0_master1200.jpg', path='.', file_name='test')
+
+    print('complete')

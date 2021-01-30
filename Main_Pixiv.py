@@ -43,7 +43,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         base_thread.root = self
         self.api = my_api()
         self.get_setting()
-        #self.setMinimumSize(1136, 660 - 52)
+        self.setMinimumSize(1136, 660 - 52)
         #self.setMinimumSize(1257, 811)
         self.setupUi(self)
         self.set_style()
@@ -82,6 +82,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'label': 'self.login_user_pic_label', 
             'row': 53
             }
+
+        self.baseThread = {}
+
         if os.path.exists(f"{self.temp_path}/{file_name}"):
             info.update({'isSuccess': True, 'path': self.temp_path})
             self.load_user_head(info)
@@ -125,7 +128,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.mode = ''  # 该属性已名存实亡
 
         self.now_per_row_pic_num = self.per_row_pic_num
-        self.baseThread = {}
         self.now_page = 'show_pic'
         #self.downloadNum = 0  # 下载数，用于下载页面的排版（待增加下载页）
         self.downloadTimer = {}
@@ -992,8 +994,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             if picture.isNull():
                 try:
                     os.remove(file)
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
                 self.baseThread[file_name] = base_thread(self, self.api.cache_pic, url=url, path=self.temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'row': 1062})
@@ -1030,6 +1032,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.bigFrames[file_name].image_load_completly.connect(self.scrollAreaWidgetContents_3.adjust_size)
 
         self.bigFrames[file_name].double_click.connect(self.show_original_pic)
+        self.bigFrames[file_name].download_single_pic_signal.connect(self.saveOriginalPic)
 
         self.bigFrames[file_name].show()
         smallFrame_w = self.SmallFrame.width()
@@ -1439,7 +1442,7 @@ def main(AppUi=None):
         AppUi.deleteLater()
         sip.delete(AppUi)
 
-    login = app_login(login_success)
+    login = app_login()
     login.login_signal.connect(login_success)
     login.show()
     # login.move(2000, 1000)

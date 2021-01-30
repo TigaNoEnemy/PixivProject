@@ -24,10 +24,9 @@ cgitb.enable(format='text', logdir='log_file')
 class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
     login_signal = pyqtSignal(dict)
-    def __init__(self, login_success):
+    def __init__(self):
         super(app_login, self).__init__()
         start = time.time()
-        self.login_success = login_success
         self.cfg = setting()
         self.get_setting()
         self.login_info_parser = login_info_parser()
@@ -370,7 +369,7 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    a = app_login(login_success=lambda x,y,z,j: print(''))
+    a = app_login()
     a.lineEdit.setReadOnly(True)
     a.lineEdit_2.setReadOnly(True)
     a.move(2000, 1000)

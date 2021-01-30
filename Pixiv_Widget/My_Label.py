@@ -188,6 +188,8 @@ class Auto_Text_Label(QLabel):
 
     def setText(self, s):
         super().setText(s)
+        if '</' in s:
+            return
         init_font_size = 20
         self.setFont(QFont("Microsoft YaHei", init_font_size))
         font = self.font()

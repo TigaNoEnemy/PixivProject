@@ -242,6 +242,10 @@ info_frame my_label{
 	color: white
 }
 
+info_frame Username_Label{
+    background-color: rgba(255, 255, 255, 0);
+    color: white
+}
 
 info_frame text_scroll#text_scroll{
 	background-color: rgba(255, 255, 255, 0);

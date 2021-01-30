@@ -13,7 +13,7 @@ from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class info_frame(QFrame, info_frame_1.Ui_Frame):
+class info_frame(QFrame, info_frame_1.Ui_infoFrame):
     infoFrame_h_differ = 200    # 隐藏作品详情和展示时infoFrame之间的高度差
     def __init__(self, parent=None, main=None, info={}):
         super(info_frame, self).__init__(parent)
