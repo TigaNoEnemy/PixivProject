@@ -16,7 +16,7 @@ cgitb.enable(format='text', logdir='log_file')
 
 basestring = str
 
-TIMEOUT = 5
+TIMEOUT = 10
 
 @single_instance
 class my_api(ByPassSniApi):
@@ -154,7 +154,8 @@ class my_api(ByPassSniApi):
         print(f"image_size: {url}")
         try:
             response = self.requests_call('GET', url, headers=headers, stream=True)
-        except pixivpy3.utils.PixivError:
+        except pixivpy3.utils.PixivError as e:
+            print(f'My_Api: {e}')
             return {'isSuccess': False}
 
         self.requests_kwargs.pop('timeout', None)
@@ -164,7 +165,7 @@ class my_api(ByPassSniApi):
         image_size4 = dict(response.headers).get('content-Length', -1)
 
         image_size = max(map(int, [image_size1, image_size2, image_size3, image_size4]))
-    
+        print(image_size)
         return {'image_size': int(image_size), 'isSuccess': True, 'response': response}
 
     def download_has_size_pic(self, response, output_file):

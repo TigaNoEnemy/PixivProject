@@ -39,7 +39,9 @@ class base_thread(QObject):
             print(future.exception())
         else:
             result = future.result()
+        result.update({"info": self.info})
         result.update(self.info)
+        result.update({'args': self.args})
         result.update(self.args)
         self.finish.emit(result)
 

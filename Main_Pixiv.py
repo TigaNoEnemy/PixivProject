@@ -934,14 +934,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
             self.create_big_pic_panel(url=illust['image_urls'][self.big_pic_size],
                                       original_url=illust['meta_single_page']['original_image_url'],
-                                      file_name=file_name, title=f"{illust['title']}", tags=tags, illust_id=illust_id)
+                                      file_name=file_name, title=f"{illust['title']}", tags=tags, illust_id=illust_id, pic_no=n)
 
         else:
             for j in illust['meta_pages']:
                 file_name = f"{illust_id}_{n}"
                 self.create_big_pic_panel(url=j['image_urls'][self.big_pic_size],
                                           original_url=j['image_urls']['original'], file_name=file_name,
-                                          title=f"{illust['title']}_{n}p", tags=tags, illust_id=illust_id)
+                                          title=f"{illust['title']}", tags=tags, illust_id=illust_id, pic_no=n)
                 n += 1
         # 为了滑到最底时有空白
         w = self.scrollAreaWidgetContents_3.width()
@@ -1016,7 +1016,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.searchFrame.searchComboBox.setCurrentText(currentText)
 
     #@profile
-    def create_big_pic_panel(self, url, original_url, file_name, title, tags, illust_id):
+    def create_big_pic_panel(self, url, original_url, file_name, title, tags, illust_id, pic_no):
         from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
         info = {
@@ -1025,7 +1025,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'title': title,
             'original_pic_url': original_url,
             'tags': tags,
-            'illust_id': illust_id
+            'illust_id': illust_id,
+            'pic_no': pic_no    # 该作品第pic_no张图
         }
 
         self.bigFrames[file_name] = big_pic_frame(self.scrollAreaWidgetContents_3, info=info)
@@ -1071,28 +1072,29 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         title = illust['title']
         titlePath = re.sub(r'[?/\*<>:|]', '_', title)
         file_name = re.sub(r'[?/\*<>:|]', '_', title)
-        n = 1
+        pic_no = illust.get('pic_no', '1')  # 当pic_no存在则表明此次调用是Big_Pic_Frame.download_single_pic调用
         if illust['meta_single_page']:
-            self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"] = base_thread(self, self.api.get_image_size,
                                                                        url=illust['meta_single_page'][
                                                                            'original_image_url'],
-                                                                       info={'n': n, 'illust_id': illust_id,
+                                                                       info={'n': pic_no, 'illust_id': illust_id,
                                                                              'url': illust['meta_single_page'][
                                                                                  'original_image_url'], 'title': title})
-            self.getImageSizeThreads[f"{illust_id}_{n}"].finish.connect(self.download_or_not)
-            self.getImageSizeThreads[f"{illust_id}_{n}"].wait()
-            self.getImageSizeThreads[f"{illust_id}_{n}"].start()
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].finish.connect(self.download_or_not)
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].wait()
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].start()
 
-            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
+            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{pic_no}.jpg"
             info = {
                 'image_size': None, 
                 'save_file': file, 
-                'download_timer_id': f"{illust_id}_{n}", 
-                "n": n,
+                'download_timer_id': f"{illust_id}_{pic_no}",
+                "n": pic_no,
                 'url': illust['meta_single_page']['original_image_url']
                 }
             self.create_download_progress(info=info)
 
+        n = 1
         for j in illust['meta_pages']:
             self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
                                                                        url=j['image_urls']['original'],

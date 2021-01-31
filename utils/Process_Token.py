@@ -18,6 +18,7 @@ import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
 TOKEN_VERSION = '1.0'
+FILE = '\033[31mProcess_Token\033[0m'
 
 @single_instance
 class login_info_parser:
@@ -83,11 +84,12 @@ class login_info_parser:
         token = None
         auto = False
         login_account = ""
+        REMOVE_TOKEN_FILE = False
 
         try:
             user_box = cur.execute(f"select * from USER where id=1;")
-        except:
-            pass
+        except Exception as e:
+            print(f"{FILE}: {e}")
         else:
             try:
                 user_info = user_box.__next__()
@@ -95,7 +97,7 @@ class login_info_parser:
                 pass
             else:
                 if user_info[-1] != TOKEN_VERSION:
-                    os.remove(self.login_token_file)
+                    REMOVE_TOKEN_FILE = True
                 else:
                     auto = user_info[5]
                     login_account = user_info[2]
@@ -104,6 +106,9 @@ class login_info_parser:
         cur.close()
         conn.commit()
         conn.close()
+        if REMOVE_TOKEN_FILE:
+            os.remove(self.login_token_file)
+
         if token:
             try:
                 token = des_obj.decrypt(a2b_hex(token), padmode=PAD_PKCS5).decode('utf-8')
