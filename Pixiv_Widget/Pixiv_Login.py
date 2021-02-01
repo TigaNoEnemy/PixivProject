@@ -21,6 +21,8 @@ import time
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
+
+FILE = '\033[31mPixiv_Login\033[0m'
 class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     login_timeout = 5000 #登录时长超过这个数之后显示退出按钮
     login_signal = pyqtSignal(dict)
@@ -277,6 +279,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         try:
             response = self.api.login(username=self.username, password=password)
         except pixivpy3.utils.PixivError as e:
+            print(f"{FILE}: {e}")
             return {'failed_text': '账号或密码错误！', 'login': False}
         else:
             response['login'] = True
