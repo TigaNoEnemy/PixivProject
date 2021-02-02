@@ -199,6 +199,7 @@ class Auto_Text_Label(QLabel):
         while (rec.width() > self.width() or rec.height() > self.height()) and init_font_size > 1:
             init_font_size -= 1
             self.setFont(QFont("Microsoft YaHei", init_font_size))
+            print(f"\033[31mfont_size\033[0m:{init_font_size}")
             font = self.font()
             fm = QFontMetrics(font)
             rec = fm.boundingRect(self.text())
@@ -211,17 +212,27 @@ class Username_Label(my_label, Auto_Text_Label):
         
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication, QMainWindow
+    def gen_string(p):
+        import random
+        m = random.randint(2, 15)
+        s = 's'*m
+        p.setText(s)
+
+    from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
     app = QApplication(sys.argv)
     m = QMainWindow()
-    m.resize(150, 150)
+    m.resize(150, 200)
     info = {'temp_path': '/home/minming/Desktop/人像', 'illust_id': '7.png'}
     
-    a = Loading_Label(m)
+    a = Auto_Text_Label(m)
     a.resize(100, 100)
-    a.move((m.width()-a.width())/2, (m.height()-a.height())/2)
+    a.move((m.width()-a.width())/2, 0)
     #a.set_original_geometry(a.x(), a.y(), a.width(), a.height())
     #pic = pic.scaled(a.width(), a.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-    m.move(2000, 1000)
+
+    b = QPushButton(m)
+    b.move((m.width()-b.width())/2, 100)
+    b.clicked.connect(lambda : gen_string(a))
+    
     m.show()
     sys.exit(app.exec_())

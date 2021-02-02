@@ -23,7 +23,7 @@ class my_api(ByPassSniApi):
     """docstring for PixivApi"""
     _instance = None
     def __init__(self):
-        super().__init__(verify=False)
+        super().__init__()
 
 
     # def _requests_call(self, method, url, timeout, headers={}, params=None, data=None, stream=False):
