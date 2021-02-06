@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from PyQt5.QtWidgets import QLabel, QMainWindow
-from PyQt5.QtCore import QRect, pyqtSignal, Qt, QRectF
+from PyQt5.QtCore import QRect, pyqtSignal, Qt, QRectF, QTimer
 from PyQt5.QtGui import QMovie, QPixmap, QPainter, QPen, QFont, QColor, QBrush
 import os
 import sys
@@ -28,11 +28,17 @@ class original_pic(QMainWindow):
         self.api = my_api()
         self._parent = parent
         self.is_loading = True
-        self.original_pic_size = 1
+        self.original_pic_size = -1
+        self.rotate = 90
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.add_rotate)
         self.check_info()
         self.setupUi()
         #self.setStyleSheet('background-color: rgb(230, 230, 230)')
         self.move_self_to_center()
+
+    def add_rotate(self):
+        self.rotate += 1
 
     def move_self_to_center(self):
         parent_x = self._parent.x()
@@ -52,7 +58,6 @@ class original_pic(QMainWindow):
     def setupUi(self):
         title = self.info['title']
 
-        self.myclosed.connect(self._close)
         self.setWindowTitle(title)
 
         self.sub_label = clickable_label(self)
@@ -139,6 +144,8 @@ class original_pic(QMainWindow):
             sub_label_x = (width - sub_label_w)//2
             sub_label_y = (height - sub_label_h)//2
             self.sub_label.setGeometry(QRect(sub_label_x, sub_label_y, sub_label_w, sub_label_h))
+        if self.timer.isActive():
+            self.timer.stop()
 
     def resizeEvent(self, qevent):
         if not self.is_loading:
@@ -212,9 +219,6 @@ class original_pic(QMainWindow):
 
     def closeEvent(self, qevent):
         self.myclosed.emit(self.info)
-
-    def _close(self, _):
-        del self
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication

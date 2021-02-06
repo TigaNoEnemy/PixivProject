@@ -1044,11 +1044,20 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.big_pic += 1
 
     def show_original_pic(self, info):
-        def try_pop(url):
+        def delete_time_start(url):
+            if not hasattr(self, 'delete_timer'):
+                self.delete_timer = QTimer()
+                self.delete_timer.timeout.connect(lambda: pop_url(url))
+            self.delete_timer.start(2000)
+
+        def pop_url(url):
             try:
+                self.sub_windows[url].deleteLater()
+                sip.delete(self.sub_windows[url])
                 self.sub_windows.pop(url)
             except:
                 pass
+            self.delete_timer.stop()
 
         url = info['original_pic_url']
         title = info['title']
@@ -1062,7 +1071,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'title': title,
         }
         self.sub_windows[url] = original_pic(parent=self, info=info)
-        self.sub_windows[url].myclosed.connect(lambda: try_pop(url))
+        self.sub_windows[url].myclosed.connect(lambda: delete_time_start(url))
         self.sub_windows[url].setWindowTitle(title)
 
     def saveOriginalPic(self, illust):
