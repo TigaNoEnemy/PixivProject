@@ -34,13 +34,13 @@ from Pixiv_Api.My_Api import my_api
 
 
 cgitb.enable(format='text', logdir='log_file')
-
+FILE = '\033[31mMain_Pixiv\033[0m'
 
 class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def __init__(self, user_id, username, user_pic_link):
         super(main_pixiv, self).__init__()
         #self.setStyleSheet("QToolTip{background-color: #000000; color: #FFFFFF; border: none}")
-        base_thread.root = self
+        #base_thread.root = self
         self.api = my_api()
         self.get_setting()
         self.setMinimumSize(1136, 660 - 52)
@@ -60,6 +60,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.set_original_height(infoFrame_h)
 
         self.searchFrame = search_frame(self.SmallFrame, main=self)
+        self.searchFrame.had_hidden_signal.connect(self.search_frame_is_hidden)
+        self.searchFrame.had_showed_signal.connect(self.search_frame_is_showed)
+
         self.searchFrame.setGeometry(QRect(0, -120, 1041, 120))
 
         self.setWindowIcon(QIcon(self.app_icon))
@@ -157,6 +160,16 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
+
+    def search_frame_is_showed(self):
+        self.searchButton.disconnect()
+        self.searchButton.clicked.connect(self.searchFrame.hide_search_frame)
+        print(f'{FILE}: showed')
+
+    def search_frame_is_hidden(self):
+        self.searchButton.disconnect()
+        self.searchButton.clicked.connect(self.searchFrame.show_search_frame)
+        print(f'{FILE}: hided')
 
     def move_self_to_center(self):
         from PyQt5.QtWidgets import QDesktopWidget
@@ -268,7 +281,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         myBlackList = self.qmenu.addAction('我的黑名单')
         myBlackList.triggered.connect(
-            lambda x: print("待搞定")
+            lambda x: print(f"{FILE}: 待搞定")
         )
 
         self.qmenu.exec(QCursor.pos())
@@ -444,7 +457,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             # 标签
             elif flag == '标签作品':
                 word = _mode['word']
-                print(word)
+                print(f"{FILE}: {word}")
                 search_target = _mode.get("search_target", 'partial_match_for_tags')
                 sort = _mode.get("sort", 'date_desc')
                 duration = _mode.get("duration", None)
@@ -635,7 +648,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.infoFrame.moreButton.setText('没有更多了')
             return
         word = self.searchFrame.searchLineEdit.text()
-        print(word)
+        print(f"{FILE}: {word}")
         if not word and not isMoreButton:  # 没有关键字又不是moreButton，是空关键字搜索，不允许
             self.searchFrame.searchLineEdit.setPlaceholderText("不允许空搜索")
             return
@@ -661,7 +674,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             target = self.searchFrame.searchComboBox.currentText()
 
         title = f"{target}:{word}"
-        print(title)
+        print(f"{FILE}: {title}")
         if target == '标签':
             mode = {
                 'word': word,
@@ -686,7 +699,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             try:
                 illust_id = int(word)
             except ValueError:
-                print(f"int 不应该传入{word}")
+                print(f"{FILE}: int 不应该传入{word}")
                 return
             mode = {
                 'illust_id': illust_id
@@ -849,15 +862,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def _logout(self):
         from Pixiv_Widget.Pixiv_Login import app_logout
-        def del_p():
+        def del_p(info):
             self.p.deleteLater()
             sip.delete(self.p)
             del self.p
+            if info['LOGOUT']:
+                self.close()
+                main(self)
 
         if hasattr(self, 'p'):
             self.p.show()
             return True
-        self.p = app_logout(self, main=main)
+        self.p = app_logout(self)
         self.p.closed.connect(del_p)
         self.p.show()
         return True
@@ -872,7 +888,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 os.remove(_file)
 
         # 关闭线程池
-        base_thread.close_thread()
+        # base_thread.close_thread()
 
     #@profile
     def show_big_pic(self, info):
@@ -988,14 +1004,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             file = f"{self.temp_path}/{file_name}"
         else:
             file = self.timeout_pic
-        print(file)
+        print(f"{FILE}: {file}")
         try:
             picture = QPixmap(file).scaled(label.width(), label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             if picture.isNull():
                 try:
                     os.remove(file)
                 except Exception as e:
-                    print(e)
+                    print(f"{FILE}: {e}")
                 self.baseThread[file_name] = base_thread(self, self.api.cache_pic, url=url, path=self.temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'row': 1062})
@@ -1008,7 +1024,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             pass
 
     def simulateSearch(self, word):
-        print(word)
+        print(f"{FILE}: {word}")
         currentText = self.searchFrame.searchComboBox.currentText()
         self.searchFrame.searchLineEdit.setText(word['tag'])
         self.searchFrame.searchComboBox.setCurrentText('画师')
@@ -1142,7 +1158,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if not result['isSuccess']:
             # 网络错误重新下载
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
-            print(result)
+            print(f"{FILE}: {result}")
             return 
 
         response = result['response']
@@ -1160,13 +1176,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
         path = f"{self.save_path}/{titlePath}_{illust_id}"
         if not self.remove_imperfect_image(file, image_size):
-            print('You have the same.')
+            print(f'{FILE}: You have the same.')
             dontDownload = 1
         elif not self.remove_imperfect_image(tempFile, image_size):
             try:
                 shutil.copyfile(tempFile, file)
             except Exception as e:
-                print(e, 'e' * 90)
+                print(f"{FILE}: {e}")
             else:
                 dontDownload = 1
 
@@ -1197,7 +1213,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 try:
                     os.remove(file)
                 except Exception as e:
-                    print(e)
+                    print(f"{FILE}: {e}")
                     return False
                 return True
             return False
@@ -1385,9 +1401,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         info_h = self.infoFrame.height()
         self.infoFrame.setGeometry(QRect(info_x, height - info_h, smallFrame_w, info_h))
 
+    def paintEvent(self, qevent):
+        if not self.tabWidget.isVisible() and self.searchFrame.height() == 120:
+            self.searchFrame.hide_search_frame()
+
     def keyPressEvent(self, qevent):
         if qevent.key() == 16777216: # Esc
             self.searchFrame.hide_search_frame()
+            self.setFocus()
+
         elif qevent.key() == 16777220:    # Enter
             self._search(isMoreButton=False)
             self.searchFrame.show_search_frame()
@@ -1397,6 +1419,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         elif qevent.key() == Qt.Key_S:
             self.set_style()
+
+        elif qevent.key() == Qt.Key_Space:
+            self.searchFrame.show_search_frame()
 
     def set_style(self):
         try:

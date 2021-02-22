@@ -11,6 +11,8 @@ from utils.Single_Instance import single_instance
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
+FILE = '\033[31mProject_Setting\033[0m'
+
 @single_instance
 class setting(ConfigParser):
     _instance = None
@@ -159,7 +161,7 @@ no_h = ./RES/no_h'''.replace('\n', self.wrap_split)
             os.mkdir(self.save_path)
         if not os.path.exists('log_file'):
             os.mkdir('log_file')
-        print('Complete: check_file')
+        print(f'{FILE}: Completely check_file')
         return {'isSucess': True}
 
 def print_setting(cfg):

@@ -58,11 +58,11 @@ class login_info_parser:
                 )''')
             
         except Exception as e:
-            print(f"creat error <{e}>")
+            print(f"{FILE}: creat error <{e}>")
         try:
             cur.execute(f'insert into USER(id, pixiv_id, login_account, user, access_token, next_time_auto_login, login_time, token_vesion) values(1, 0, "0", "0", "0", 0, "{_datetime}", {TOKEN_VERSION})')
         except Exception as e:
-            print(f"insert error <{e}>")
+            print(f"{FILE}: insert error <{e}>")
 
         if login_account:
             # 登录
@@ -70,7 +70,6 @@ class login_info_parser:
         else:
             # 注销
             query = f'update USER set access_token="{access_token}", next_time_auto_login={next_time_auto_login}, login_time="{_datetime}", user="{user}", pixiv_id={pixiv_id} where id=1'
-        print(query)
         cur.execute(query)
         cur.close()
         conn.commit()
@@ -116,7 +115,7 @@ class login_info_parser:
                 if os.path.exists(self.login_token_file):
                     os.remove(self.login_token_file)
                 token = None
-        print('Complete: get_token')
+        print(f'{FILE}: Completely get_token')
         return {'token': token, 'auto': auto, 'login_account': login_account}
 
     def check_file(self):

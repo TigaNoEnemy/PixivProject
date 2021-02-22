@@ -148,16 +148,6 @@ class Comment_Widget(QFrame, Ui_commentWidget):
 
         self.comment_scrollArea.resize(w, h)
 
-    def keyPressEvent(self, qevent):
-        if qevent.key() == Qt.Key_S:
-            print('set')
-            f = open('Main_Style.qss', encoding='utf-8')
-            style = f.read()
-            f.close()
-            self.parent().setStyleSheet(style)
-
-
-
 if __name__ == '__main__':
     from utils.Process_Token import login_info_parser
     from Pixiv_Api.My_Api import my_api

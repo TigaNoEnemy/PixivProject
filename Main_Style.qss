@@ -539,3 +539,9 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 	color: rgb(255, 255, 255);
 	font:12pt "MicroSoft YaHei";
 }
+
+/*注销窗口label*/
+#logout_label{
+	font: 20pt "Noto Sans CJK SC";
+	color: rgb(255, 255, 255);
+}
