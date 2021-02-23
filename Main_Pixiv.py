@@ -1447,8 +1447,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.setting_window.show()
 
-    def set_user_setting(self, _):
+    def set_user_setting(self, setting_):
         from utils.Project_Setting import setting
+
+        # 在最大化时关闭设置窗口会引发崩溃，
+        # 因此需要判断
+        if self.isMaximized():
+            self.setWindowState(Qt.WindowNoState)
+
+        per_row_pic_num = setting_['per_row_pic_num']
+        h = self.height()
+        self.resize(240*per_row_pic_num+135, h)
+        self.move_self_to_center()
+
         self.get_setting()
         self.R18Button.setVisible(self.has_r18)
         self.R18Button_male.setVisible(self.has_r18)

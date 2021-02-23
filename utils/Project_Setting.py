@@ -129,7 +129,7 @@ timeout_pic = ./RES/timeout_pic
 # font = 12pt "Noto Sans CJK SC";
 
 # 软件图标
-app_icon = ./RES/pixiv.ico
+app_icon = ./RES/pixiv.png
 
 # 加载大图时显示的动图(已废弃)
 # loading_big_gif = ./RES/loading_large.gif

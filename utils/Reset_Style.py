@@ -4,7 +4,7 @@ MAIN_STYLE = """#MainWindow{
 	background-color: rgb(48, 51, 41);
 }
 
-/*评论是否还有更多的label*/
+/*评论区是否还有更多的label*/
 #no_more_comment_label{
 	color: rgb(255, 255, 255);
 	font:12pt "MicroSoft YaHei";
@@ -63,7 +63,8 @@ QFrame QLabel#textLabel{
 
 /*评论时间Label*/
 QFrame QLabel#time_label{
-	color: rgb(209, 209, 209);
+	color: rgb(150, 150, 150);
+	font: 8pt "MicroSoft YaHei";
 }
 
 /*评论用户名Label*/
@@ -77,7 +78,7 @@ QFrame QLabel#user_name_label{
 QFrame QLabel#usernameLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
-	font: 12pt "MicroSoft YaHei";
+	/*font: 12pt "MicroSoft YaHei";*/
 }
 
 /*小图浏览"だいすき"按钮*/
@@ -108,13 +109,13 @@ QFrame clickable_label#picLabel{
 }
 
 /*显示作品详细信息的frame*/
-QFrame info_frame#Frame{
-	background-color: rgb(29, 23, 31);
+#infoFrame{
+	background-color: rgb(73, 75, 69);	/*== rgba(112, 112, 112, 100)*/
 }
 
 /*搜索框外层frame*/
-QFrame search_frame#Frame{
-	background-color: rgb(25, 25, 25);
+#searchFrame{
+	background-color: rgb(73, 75, 69);
 }
 
 /*tabWidget 的子控件widget*/
@@ -187,26 +188,22 @@ QWidget QFrame#SmallFrame{
 	background-color: rgba(112, 112, 112, 100);
 }
 
-
+/*用户信息*/
 QWidget QFrame#frame{
 	background-color: rgba(112, 112, 112, 100);
+	border: none;
 }
 
 /*装载左下角的功能按钮的frame*/
 QWidget QFrame#function_frame{
 	background-color: rgba(112, 112, 112, 100);
+	border: none;
 }
 
 
 QWidget QLabel#bigPicLabel{
 	background-color: rgb(255, 255, 255);
 }
-
-/*装载每日、新人、每月等按钮的frame*/
-QWidget QScrollArea#cate_scrollArea{
-	background-color: rgba(122, 122, 122, 50);
-}
-
 
 QWidget QWidget#comments_scroll{
 	background-color: rgba(64, 64, 64, 0);
@@ -231,7 +228,7 @@ info_frame QLabel{
 }*/
 
 /*作品详情中的画师名称Label*/
-info_frame Username_Label#authText{
+info_frame my_label#authText{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
 }
@@ -242,10 +239,6 @@ info_frame my_label{
 	color: white
 }
 
-info_frame Username_Label{
-    background-color: rgba(255, 255, 255, 0);
-    color: white
-}
 
 info_frame text_scroll#text_scroll{
 	background-color: rgba(255, 255, 255, 0);
@@ -353,7 +346,7 @@ search_frame QPushButton:pressed{
 
 
 TableView QHeaderView::section{
-	background-color:rgba(0, 0, 0, 0);
+	background-color:rgb(73, 75, 69);
 	font:13pt '宋体';
 	color: white;
 }
@@ -392,13 +385,14 @@ show_users_frame QPushButton:pressed{
 
 /*包裹左边侧栏的分类按钮的QScrollArea*/
 #cate_scrollArea{
-	background-color: rgba(122, 122, 122, 0);
+	background-color: rgba(122, 122, 122, 90);
 	border: none;
 }
 
 /*包裹左边侧栏的分类按钮的QScrollArea里的widget*/
 #cate_widget{
-	background-color: rgba(0, 0, 0, 0);
+	background-color: rgba(122, 122, 122, 0);
+	border: none;
 }
 
 /*包裹左下角功能按钮的frame*/
@@ -438,8 +432,9 @@ QCommandLinkButton QIcon{
 /*展示评论的QTextBrowser*/
 QFrame QTextBrowser#comment_text{
 	color: rgb(255, 255, 255);
-	background-color: rgb(48, 51, 41);
+	background-color: rgb(73, 75, 69);
 	border: none;
+	font: 14pt "MicroSoft YaHei";
 }
 
 
@@ -539,6 +534,18 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 #pic_title_label, #file_title_label{
 	font: 18pt;
 	color: rgb(0,0,0);
+}
+
+/*当没有相关图时显示的提示的样式*/
+#no_related_pic_label{
+	color: rgb(255, 255, 255);
+	font:12pt "MicroSoft YaHei";
+}
+
+/*注销窗口label*/
+#logout_label{
+	font: 20pt "Noto Sans CJK SC";
+	color: rgb(255, 255, 255);
 }
 """
 
