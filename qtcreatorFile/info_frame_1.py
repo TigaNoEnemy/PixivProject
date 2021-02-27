@@ -21,7 +21,6 @@ class Ui_infoFrame(object):
         self.authText = Username_Label(infoFrame)
         self.authText.setGeometry(QtCore.QRect(80, 49, 171, 31))
         self.authText.setText("")
-        self.authText.setWordWrap(True)
         self.authText.setObjectName("authText")
         self.moreButton = QtWidgets.QPushButton(infoFrame)
         self.moreButton.setGeometry(QtCore.QRect(950, 40, 80, 31))

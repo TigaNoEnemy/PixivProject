@@ -54,18 +54,25 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
         self.prepared_num = 0
 
+        # 指示获取hosts成功的数量
+        self.require_hosts_num = 0
+
+        # 当获取hosts成功的数量为3，表示所有hosts以获取成功，
+        # 此时为True
+        self._require_hosts_complete = False
+
         self.initThread1 = base_thread(parent=self, method=self.require_appapi_hosts, attr="pximg", url='i.pximg.net')
-        self.initThread1.finish.connect(self.pre_initUi)
+        self.initThread1.finish.connect(self.require_hosts_complete)
         self.initThread1.start()
         self.GIF.start()
 
         self.initThread2 = base_thread(parent=self, method=self.require_appapi_hosts, attr="hosts", url='public-api.secure.pixiv.net')
-        self.initThread2.finish.connect(self.pre_initUi)
+        self.initThread2.finish.connect(self.require_hosts_complete)
         self.initThread2.start()
         self.GIF.start()
 
         self.initThread3 = base_thread(parent=self, method=self.require_appapi_hosts, attr="default_head", url='s.pximg.net')
-        self.initThread3.finish.connect(self.pre_initUi)
+        self.initThread3.finish.connect(self.require_hosts_complete)
         self.initThread3.start()
         self.GIF.start()
 
@@ -171,7 +178,18 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
 
             time.sleep(1)
         
-        return {'is_success': False}
+        return {'is_success': False, 'check_url': url}
+
+    def require_hosts_complete(self, result):
+        if not result['is_success']:
+            self.EXIT = app_logout(self, isLogout=False)
+            self.EXIT.show()
+            print(f"{File}: require {result['check_url']} failed.")
+            return
+            
+        self.require_hosts_num += 1
+        if self.require_hosts_num >= 3:
+            self._require_hosts_complete = True
 
     def pre_initUi(self, result):
         self.prepared_num += 1
@@ -180,11 +198,8 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
             self.auto = result['auto']
             self.username = result['login_account']
             self.lineEdit.setText(self.username)
-        elif 'is_success' in result and not result['is_success']:
-            self.EXIT = app_logout(self, isLogout=False)
-            self.EXIT.show()
-            return
-        if self.prepared_num >= 5:
+
+        if self.prepared_num >= 2:
             self.initUi()
 
     def initUi(self):
@@ -197,16 +212,6 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         else:
             self.autoLogin_2.setVisible(False)
 
-    # def add_background(self):
-    #     import os
-    #     if os.path.exists(self.login_background):
-    #         window_pale = QPalette()
-    #         window_pale.setBrush(self.backgroundRole(), QBrush(QPixmap(self.login_background)))
-    #         self.setPalette(window_pale)
-    #     else:
-    #         #self.setStyleSheet('background-color: rgb(86, 86, 86)')
-    #         pass
-
     def action_to_command(self):
         self.pushButton.clicked.connect(self.sub_login)
         self.pushButton.clicked.connect(self.startGIF)
@@ -214,20 +219,10 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     def auto_login(self):
         self.login_time_counter.start(self.login_timeout)
         self.loginText.setText('自动登录...')
-        self.autoThread = base_thread(self, self.sub_auto_login)
+        self.autoThread = base_thread(self, self._login, token_login=True)
         self.autoThread.finish.connect(self.isLoginSuccess)
         self.autoThread.wait()
         self.autoThread.start()
-
-    def sub_auto_login(self):
-        try:
-            response = self.api.auth(refresh_token=self.loginToken)
-        except pixivpy3.utils.PixivError:
-            self.autoLoginSuccess = False
-            return {'failed_text': '自动登录失败', 'login': False}
-        else:
-            response['login'] = True
-            return response
 
     def isLoginSuccess(self, response):
         if self.not_to_login:
@@ -268,7 +263,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
     def sub_login(self):
         self.login_time_counter.start(self.login_timeout)
         self.loginText.setText('登录中...')
-        self.login = base_thread(self, self._login)
+        self.login = base_thread(self, self._login, password_login=True)
         self.login.finish.connect(self.isLoginSuccess)
         self.login.wait()
         self.login.start()
@@ -277,17 +272,22 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         self.autoLogin_2.setVisible(True)
         self.GIF.start()
 
-    def _login(self):
-        self.username = self.lineEdit.text()
-        password = self.lineEdit_2.text()
-        try:
-            response = self.api.login(username=self.username, password=password)
-        except pixivpy3.utils.PixivError as e:
-            print(f"{FILE}: {e}")
-            return {'failed_text': '账号或密码错误！', 'login': False}
-        else:
-            response['login'] = True
-            return response
+    def _login(self, password_login=False, token_login=False):
+        while 1:
+            if self._require_hosts_complete:
+                self.username = self.lineEdit.text() if password_login else None
+                password = self.lineEdit_2.text() if password_login else None
+                refresh_token = self.loginToken if token_login else None
+                try:
+                    response = self.api.auth(username=self.username, password=password, refresh_token=refresh_token)
+                except pixivpy3.utils.PixivError as e:
+                    print(f"{FILE}: {e}")
+                    return {'failed_text': '账号或密码错误！', 'login': False}
+                else:
+                    response['login'] = True
+                    return response
+            else:
+                time.sleep(0.5)
 
     def keyPressEvent(self, qevent):
         if qevent.key() in [16777221, 16777220]:  # Enter
@@ -379,8 +379,8 @@ class app_logout(QMainWindow, Pixiv_Logout.Ui_MainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     a = app_login()
-    a.lineEdit.setReadOnly(True)
-    a.lineEdit_2.setReadOnly(True)
+    # a.lineEdit.setReadOnly(True)
+    # a.lineEdit_2.setReadOnly(True)
     a.move(2000, 1000)
     a.show()
     sys.exit(app.exec_())

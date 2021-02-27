@@ -38,9 +38,6 @@
    <property name="text">
     <string/>
    </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
   </widget>
   <widget class="QPushButton" name="moreButton">
    <property name="geometry">

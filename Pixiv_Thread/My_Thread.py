@@ -3,13 +3,13 @@
 
 from PyQt5.QtCore import pyqtSignal, QObject
 from concurrent.futures import ThreadPoolExecutor
-import pixivpy3
 import time
 
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
+FILE = f'\033[31mMy_Thread\033[0m'
 
 THREAD_POOL = ThreadPoolExecutor(max_workers=10)
 
@@ -36,7 +36,7 @@ class base_thread(QObject):
     def emit_signal(self, future):
         if future.exception():
             result = {'ERROR': True, 'isSuccess': False, 'method': self.method}
-            print(future.exception())
+            print(f"{FILE}: {future.exception()}")
         else:
             result = future.result()
         result.update({"info": self.info})
