@@ -930,8 +930,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         sip.delete(self.scrollAreaWidgetContents_3)
         ###
         ### 重建scrollArea里的QWidget
+        _info={'illust_id': illust['id']}
         self.scrollAreaWidgetContents_3 = Scroll_Widget()
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+
+        try:self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
+        except (TypeError, AttributeError): pass
+
+        self.show_related_frame_slot = lambda x: self.create_related_illust_frame(x, info=_info)
+        self.bigPicScrollArea.verticalScrollBar().valueChanged.connect(self.show_related_frame_slot)
         self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
 
 
@@ -978,19 +985,34 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.comment_widget.show()
         self.infoFrame.raise_()
 
+    def create_related_illust_frame(self, x, info):
+        m = self.bigPicScrollArea.verticalScrollBar().maximum()
+        if m - x >= 10:
+            return
         # 创建作品相关区
-        info = {'illust_id': illust['id']}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
         # illust_related_frame_w = self.illust_related_frame.width()
         self.illust_related_frame.move(
-            (smallFrame_w - 360 - 644) // 2, self.scrollAreaWidgetContents_3.height())  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744 + 24) # 为相关图放大后可以完全显示而加上24（计算好的结果）
+            (self.scrollAreaWidgetContents_3.width() - self.illust_related_frame.width()) // 2, 
+            self.scrollAreaWidgetContents_3.height()
+        )  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
+        self.scrollAreaWidgetContents_3.resize(
+            self.scrollAreaWidgetContents_3.width(), 
+            self.scrollAreaWidgetContents_3.height() + self.illust_related_frame.height()
+            )
+        fn = lambda: self.scrollAreaWidgetContents_3.resize(
+                self.scrollAreaWidgetContents_3.width(), 
+                self.scrollAreaWidgetContents_3.height() + self.illust_related_frame.height()
+                )
+        self.illust_related_frame.pic_info_gotten.connect(fn)
         self.illust_related_frame.one_label_is_clicked.connect(self.show_big_pic)
-        #self.illust_related_frame.setStyleSheet('background-color: rgb(231, 195, 188)')
         self.illust_related_frame.pic_info_gotten.connect(self.scrollAreaWidgetContents_3.adjust_size)
         self.illust_related_frame.show()
         ###
+
+        self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
+        self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
 
 
     #@profile
