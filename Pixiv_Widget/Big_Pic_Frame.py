@@ -114,7 +114,6 @@ class big_pic_frame(QFrame):
         self.download_single_pic_signal.emit(illust)
 
     def create_get_pic_size_thread(self, info, is_reload=False):
-        self.pic_size = -1
         temp_file_name = info['temp_file_name']
         url = info['url']
         if is_reload:
@@ -132,9 +131,9 @@ class big_pic_frame(QFrame):
         self.bigPicLabel.setPixmap(self.picture)
         file = f"{self.cfg.temp_path}/{temp_file_name}"
         try:
-            had_downloaded_size = str(os.path.getsize(file))
+            had_downloaded_size = os.path.getsize(file)
         except FileNotFoundError:
-            had_downloaded_size = "0"
+            had_downloaded_size = 0
         size = f"bytes={had_downloaded_size}-"
         self.thread = base_thread(None, method=self.api.get_image_size, url=url, Range=size, info=info)
         self.thread.finish.connect(self.create_download_thread)
@@ -273,10 +272,15 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     import sys
 
+    
     key = ['url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
     _info = {}
     cfg = login_info_parser()
     info = cfg.get_token()
+    proxies = {
+        'http': '127.0.0.1:8888',
+        'https': '127.0.0.1:8888',
+    }
     api = my_api()
     print('翻墙')
     api.pximg = api.require_appapi_hosts("i.pximg.net")
@@ -287,7 +291,7 @@ if __name__ == '__main__':
     api.auth(refresh_token=info['token'])
     print('登陆成功')
     _info['api'] = api
-    _info['url'] = 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2021/01/28/00/00/05/87347821_p0_master1200.jpg'
+    _info['url'] = 'https://210.140.92.140/c/600x1200_90_webp/img-master/img/2019/04/06/15/37/40/74069608_p1_master1200.jpg'
     _info['temp_path'] = 'pixivTmp'
     _info['temp_file_name'] = 'test'
     _info['title'] = 'test'
