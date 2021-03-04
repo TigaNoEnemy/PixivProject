@@ -71,6 +71,7 @@ class info_frame(QFrame, info_frame_1.Ui_infoFrame):
         import os
 
         illust = info['illust']
+        illust_order = info["illust_order"]
 
         right_label_w = 481  # 右边的作品详情，关于时间之类的
         label_h = 24
@@ -139,7 +140,7 @@ class info_frame(QFrame, info_frame_1.Ui_infoFrame):
         self.detail_labels['total_bookmarks'].setGeometry(QRect(right_label_x, 100 + 3 * 30, right_label_w, label_h))
 
         self.detail_labels['illust_id'] = QLabel(self)
-        self.detail_labels['illust_id'].setText(f"illust_id: {illust['id']}")
+        self.detail_labels['illust_id'].setText(f"illust_id: {illust['id']}_{illust_order}")
         self.detail_labels['illust_id'].setGeometry(QRect(right_label_x, 100 + 4 * 30, right_label_w, label_h))
 
         for k in self.detail_labels:

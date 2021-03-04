@@ -519,6 +519,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         else:
             self.parse_pic_info({"title": title, 'load_cache': True})
 
+        self.get_illust_info_now = True
+
     def parse_pic_info(self, ranking={}):
         from PyQt5.QtCore import QRect
         if 'ERROR' in ranking or 'error' in ranking:    # 网络错误, 重新请求
@@ -536,11 +538,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.scrollAreaWidgetContents[title].add_load_time(1)
 
             return
-
+        self.get_illust_info_now = False
         if 'next_url' not in ranking and not ranking.get('load_cache', False):       # 搜索作品id时没有next_url, 因此需判断
             ranking = self.add_key_to_result(ranking)
 
         title = ranking['title']  # tab_title
+        if title not in self.illusts_box:
+            self.illusts_box[title] = []
 
         # 获取图片信息时，就把当前窗口关闭会引发KeyError异常，因此需要判断
         if title not in self.cache_item_box:
@@ -553,7 +557,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         if not self.cache_item_box[title]:
             try:        # 获取图片信息时触发网络错误会导致ranking没有illusts键
-                self.illusts_box[title] = self.cache_item_box[title] = ranking['illusts']
+                self.cache_item_box[title] = ranking['illusts']
             except KeyError:
                 return
             self.next_url_s[title] = self.api.parse_qs(ranking['next_url'])
@@ -591,6 +595,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 self.scrollAreaWidgetContents[title].resize(self.now_per_row_pic_num * 240,  
                     (self.rank_pic_s[title] // self.now_per_row_pic_num + 1) * 411)
             self.rank_pic_s[title] += 1
+            self.illusts_box[title].append(i)
 
             self.cache_item_box[title].pop(self.cache_item_box[title].index(i))
         self.test()
@@ -940,7 +945,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         sip.delete(self.scrollAreaWidgetContents_3)
         ###
         ### 重建scrollArea里的QWidget
-        _info={'illust_id': illust['id']}
+        _info={'illust_id': illust['id'], 'illust_order': illust_order}
         self.scrollAreaWidgetContents_3 = Scroll_Widget()
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
 
@@ -958,7 +963,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         # del self.bigFrames
         # self.bigFrames = {}
 
-        info = {"illust": illust}
+        info = {"illust": illust, "illust_order": illust_order}
         self.infoFrame.create_illust_detail_panel(info=info)
 
         n = 1
@@ -1075,7 +1080,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'title': title,
             'original_pic_url': original_url,
             'tags': tags,
-            'illust_id': illust_id,
+            'illust_id': {illust_id},
             'pic_no': pic_no,    # 该作品第pic_no张图
             'illust_order': illust_order
         }
@@ -1372,7 +1377,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             illust = self.illusts_box[title][illust_order]
         except IndexError as e:
             print(f"{FILE}: <show_next_big_pic> next_show_pic")
-            self.show_pic(self.method, self.next_url_s[title], title, flag=flag, next_illust_button=True)
+            if not self.get_illust_info_now:
+                self.show_pic(self.method, self.next_url_s[title], title, flag=flag, next_illust_button=True)
         else:
             self.show_big_pic({'illust': illust, 'illust_order': illust_order})
 

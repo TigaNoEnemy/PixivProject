@@ -101,6 +101,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         else:
             self.is_loading = False
             illusts = info['illusts']
+            illust_order = self.info['illust_order']
             
             if not len(illusts):
                 label = QLabel(self)
@@ -123,7 +124,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                     pic_num = len(self.relate_labels)
 
                     #['url', 'temp_path', 'user_id', 'api']
-                    info = {'url': url, 'title': title, 'illust_id': file_name, 'illust': i}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
+                    info = {'url': url, 'title': title, 'illust_id': file_name, 'illust': i, 'illust_order': illust_order}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
 
                     self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
                     self.relate_labels[file_name].resize(124, 124)
