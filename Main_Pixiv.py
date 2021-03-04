@@ -985,6 +985,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.comment_widget.show()
         self.infoFrame.raise_()
 
+        self.create_related_illust_frame(self.bigPicScrollArea.verticalScrollBar().value(), _info)
+
     def create_related_illust_frame(self, x, info):
         m = self.bigPicScrollArea.verticalScrollBar().maximum()
         if m - x >= 10:
