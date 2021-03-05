@@ -948,6 +948,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         _info={'illust_id': illust['id'], 'illust_order': illust_order}
         self.scrollAreaWidgetContents_3 = Scroll_Widget()
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+        self.scrollAreaWidgetContents_3.right_area_is_clicked.connect(self.show_next_big_pic)
+        self.scrollAreaWidgetContents_3.left_area_is_clicked.connect(self.show_next_big_pic)
 
         try:self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
         except (TypeError, AttributeError): pass

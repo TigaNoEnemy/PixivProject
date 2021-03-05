@@ -184,7 +184,7 @@ class app_login(QMainWindow, pixiv_login_1.Ui_LoginMainWindow):
         if not result['is_success']:
             self.EXIT = app_logout(self, isLogout=False)
             self.EXIT.show()
-            print(f"{File}: require {result['check_url']} failed.")
+            print(f"{FILE}: require {result['check_url']} failed.")
             return
             
         self.require_hosts_num += 1

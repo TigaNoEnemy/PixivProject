@@ -8,7 +8,7 @@ import os
 
 # 导入自定义模块
 try:
-    from Pixiv_Widget.Clickable_Label import clickable_label
+    from Pixiv_Widget.Clickable_Label import clickable_label, Big_Pic_Clickable_Label
     from Pixiv_Thread.My_Thread import base_thread
 except:
     import sys
@@ -63,7 +63,7 @@ class big_pic_frame(QFrame):
         temp_file_name = self.info['temp_file_name']
         title = self.info['title']
 
-        self.bigPicLabel = clickable_label(self, self.info)
+        self.bigPicLabel = Big_Pic_Clickable_Label(self, self.info)
         self.bigPicLabel.setGeometry(QRect(0, 0, 620, 611))
         # self.bigPicLabel.setObjectName("bigPicLabel")
         self.bigPicLabel.setObjectName("picLabel")
@@ -181,6 +181,7 @@ class big_pic_frame(QFrame):
         
         temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         self.picture = QPixmap(temp_file)
+        self.bigPicLabel.set_load_pic_seccess(True)
         if self.picture.isNull():
             # try:
             #     os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
@@ -188,6 +189,7 @@ class big_pic_frame(QFrame):
             #     pass
             self.bigPicLabel.click.connect(lambda x: self.create_get_pic_size_thread(x, is_reload=True))
             self.picture = QPixmap(self.cfg.timeout_pic)
+            self.bigPicLabel.set_load_pic_seccess(False)
 
         pic_width = self.picture.width()
         if pic_width > 620:

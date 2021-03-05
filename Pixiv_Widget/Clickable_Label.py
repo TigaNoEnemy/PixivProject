@@ -18,6 +18,7 @@ class clickable_label(QLabel):
         self.double_click_time = double_click_time
         self.clicked_timer = QTimer()
         self.clicked_timer.timeout.connect(self.emit_click)
+        self.load_pic_status = None
 
     def mouseReleaseEvent(self, qevent):
         if qevent.button() == 1:
@@ -30,12 +31,34 @@ class clickable_label(QLabel):
 
         elif qevent.button() == 2:
             self.right_click.emit(self.info)
-            print(0)
             qevent.accept()
+
+    def set_load_pic_seccess(self, value):
+        self.load_pic_status = value
+
+    def load_pic_seccess(self):
+        return self.load_pic_status
 
     def emit_click(self):
         self.clicked_timer.stop()
         self.click.emit(self.info)
+
+class Big_Pic_Clickable_Label(clickable_label):
+    def mouseReleaseEvent(self, qevent):
+        if qevent.button() == 1:
+            if self.load_pic_seccess():
+                qevent.ignore()
+            elif self.load_pic_seccess() == False:
+                if self.clicked_timer.isActive():
+                    self.clicked_timer.stop()
+                    self.double_click.emit(self.info)
+                else:
+                    self.clicked_timer.start(self.double_click_time)
+                qevent.accept()
+
+        elif qevent.button() == 2:
+            self.right_click.emit(self.info)
+            qevent.accept()
 
 
 if __name__ == '__main__':

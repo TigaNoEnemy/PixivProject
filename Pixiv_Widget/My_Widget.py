@@ -77,6 +77,8 @@ class my_widget(QWidget):
         super(my_widget, self).close()
 
 class Scroll_Widget(QWidget):
+    left_area_is_clicked = pyqtSignal(str)
+    right_area_is_clicked = pyqtSignal(str)
     """调整大图位置"""
     def adjust_size(self):
         height = 0
@@ -92,6 +94,21 @@ class Scroll_Widget(QWidget):
             height += 5
 
         self.resize(self.width(), height)
+
+    """
+    点击大图右边切换下一张，
+    点击大图左边切换上一张
+    """
+    def mouseReleaseEvent(self, qevent):
+        if qevent.button() == 1:
+            w = self.width()
+            h = self.height()
+            x = qevent.x()
+            y = qevent.y()
+            if x in range(0, w//2) and y in range(0, h):
+                self.left_area_is_clicked.emit("last")
+            elif x in range(w//2, w) and y in range(0, h):
+                self.right_area_is_clicked.emit("next")
 
 class Show_Head_Label(QLabel):
     load_times = 0      # 记录加载图片的次数
