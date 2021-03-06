@@ -547,6 +547,14 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 	font: 20pt "Noto Sans CJK SC";
 	color: rgb(255, 255, 255);
 }
+
+/*浏览大图的两侧按钮*/
+#next_big_pic_button, #last_big_pic_button{
+	background-color: rgba(0, 0, 0, 0);
+	border: none;
+	font: 20pt bold;
+	color: rgb(255, 255, 255);
+}
 """
 
 LOGIN_STYLE = """app_login QWidget{

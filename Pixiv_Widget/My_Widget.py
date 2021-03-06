@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtCore import QTimer, Qt, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QPixmap
 from PyQt5 import sip
 
@@ -294,6 +294,23 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
 class Show_User_Illust_Label(Illust_Relate_Pic_Label):
     """为搜索作者时显示的作品图片而做"""
     pass
+
+class Big_Pic_Button(QPushButton):
+    """docstring for big_pic_button"""
+    scroll_signal = pyqtSignal(QEvent)
+    direct_signal = pyqtSignal(str)
+
+    def __init__(self, parent, direct):
+        super().__init__(parent)
+        self.direct = direct
+        self.clicked.connect(self.direct_action)
+
+    def wheelEvent(self, qevent):
+        self.scroll_signal.emit(qevent)
+        qevent.ignore()
+
+    def direct_action(self):
+        self.direct_signal.emit(self.direct)
         
         
 if __name__ == '__main__':

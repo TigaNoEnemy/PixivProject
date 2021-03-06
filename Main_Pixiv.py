@@ -30,6 +30,7 @@ from Pixiv_Widget.comment_widget import Comment_Widget
 from Pixiv_Widget.illust_relate import Illust_Relate
 from Pixiv_Widget.My_Widget import Scroll_Widget
 from Pixiv_Widget.My_Widget import my_widget
+from Pixiv_Widget.My_Widget import Big_Pic_Button
 from Pixiv_Api.My_Api import my_api
 
 
@@ -46,6 +47,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.setMinimumSize(1136, 660 - 52)
         #self.setMinimumSize(1257, 811)
         self.setupUi(self)
+        self.create_big_pic_button()
+
         self.set_style()
         smallFrame_h = self.SmallFrame.height()
         # 为了得出tabbar的高度
@@ -163,6 +166,24 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
+
+    def create_big_pic_button(self):
+        self.next_big_pic_button = Big_Pic_Button(self.bigPicScrollArea, 'next')
+        self.next_big_pic_button.setObjectName('next_big_pic_button')
+        self.next_big_pic_button.resize(100, self.next_big_pic_button.parent().height())
+        next_big_pic_button_x = self.next_big_pic_button.parent().width() - self.next_big_pic_button.width() - self.next_big_pic_button.parent().verticalScrollBar().width()
+        self.next_big_pic_button.move(next_big_pic_button_x, 0)
+        self.next_big_pic_button.scroll_signal.connect(self.next_big_pic_button.parent().wheelEvent)
+        self.next_big_pic_button.direct_signal.connect(self.show_next_big_pic)
+        self.next_big_pic_button.setText('>')
+
+        self.last_big_pic_button = Big_Pic_Button(self.bigPicScrollArea, 'last')
+        self.last_big_pic_button.setObjectName('last_big_pic_button')
+        self.last_big_pic_button.resize(100, self.last_big_pic_button.parent().height())
+        self.last_big_pic_button.move(0, 0)
+        self.last_big_pic_button.scroll_signal.connect(self.last_big_pic_button.parent().wheelEvent)
+        self.last_big_pic_button.direct_signal.connect(self.show_next_big_pic)
+        self.last_big_pic_button.setText('<')
 
     def search_frame_is_showed(self):
         self.searchButton.disconnect()
@@ -1411,6 +1432,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.table.resize(smallFrame_w, height - infoFrame_h)
 
         self.bigPicScrollArea.resize(smallFrame_w-340, smallFrame_h)
+
+        self.next_big_pic_button.resize(100, self.next_big_pic_button.parent().height())
+        next_big_pic_button_x = self.next_big_pic_button.parent().width() - self.next_big_pic_button.width() - self.next_big_pic_button.parent().verticalScrollBar().width()
+        self.next_big_pic_button.move(next_big_pic_button_x, 0)
+        self.last_big_pic_button.resize(100, self.last_big_pic_button.parent().height())
+        self.last_big_pic_button.move(0, 0)
+
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height())
         for i in self.scrollAreaWidgetContents_3.children():
             bigFrame_x = (self.scrollAreaWidgetContents_3.width() - i.width()) // 2
