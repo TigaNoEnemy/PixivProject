@@ -27,7 +27,7 @@ FILE = '\033[34mBig_Pic_File\033[0m'
 
 class big_pic_frame(QFrame):
     double_click = pyqtSignal(dict)   # 双击显示原图
-    # timer = QTimer()
+    click = pyqtSignal(dict)
     image_load_completly = pyqtSignal()
     download_single_pic_signal = pyqtSignal(dict)   # 下载单张图片的信号
 
@@ -190,6 +190,8 @@ class big_pic_frame(QFrame):
             self.bigPicLabel.click.connect(lambda x: self.create_get_pic_size_thread(x, is_reload=True))
             self.picture = QPixmap(self.cfg.timeout_pic)
             self.bigPicLabel.set_load_pic_seccess(False)
+        else:
+            self.bigPicLabel.click.connect(self.click.emit)
 
         pic_width = self.picture.width()
         if pic_width > 620:

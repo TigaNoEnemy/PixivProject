@@ -45,9 +45,23 @@ class clickable_label(QLabel):
 
 class Big_Pic_Clickable_Label(clickable_label):
     def mouseReleaseEvent(self, qevent):
+        x = qevent.x()
+        w = self.width()
+        if x in range(0, w//2):
+            self.info['direct'] = 'last'
+        elif x in range(w//2, w):
+            self.info['direct'] = 'next'
+
         if qevent.button() == 1:
             if self.load_pic_seccess():
-                qevent.ignore()
+                if self.clicked_timer.isActive():
+                    self.clicked_timer.stop()
+                    self.double_click.emit(self.info)
+                    qevent.accept()
+                else:
+                    self.clicked_timer.start(self.double_click_time)
+                    qevent.accept()
+
             elif self.load_pic_seccess() == False:
                 if self.clicked_timer.isActive():
                     self.clicked_timer.stop()

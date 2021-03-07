@@ -32,6 +32,7 @@ from Pixiv_Widget.My_Widget import Scroll_Widget
 from Pixiv_Widget.My_Widget import my_widget
 from Pixiv_Widget.My_Widget import Big_Pic_Button
 from Pixiv_Api.My_Api import my_api
+from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
 
 cgitb.enable(format='text', logdir='log_file')
@@ -167,7 +168,12 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
 
+        print(self.bigPicScrollArea.width(), self.next_big_pic_button.x())
+
     def create_big_pic_button(self):
+        v_h = self.bigPicScrollArea.verticalScrollBar().height()
+        self.bigPicScrollArea.verticalScrollBar().resize(12, v_h)
+
         self.next_big_pic_button = Big_Pic_Button(self.bigPicScrollArea, 'next')
         self.next_big_pic_button.setObjectName('next_big_pic_button')
         self.next_big_pic_button.resize(100, self.next_big_pic_button.parent().height())
@@ -545,18 +551,21 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def parse_pic_info(self, ranking={}):
         from PyQt5.QtCore import QRect
         if 'ERROR' in ranking or 'error' in ranking:    # 网络错误, 重新请求
-            method = ranking['method']
-            args = ranking['args']
-            info = ranking['info']
-            self.baseThread['get_img_info'] = base_thread(self, method,
-                                                              info=info,
-                                                              **args,
-                                                              )
-            self.baseThread['get_img_info'].finish.connect(self.parse_pic_info)
-            self.baseThread['get_img_info'].wait()
-            self.baseThread['get_img_info'].start()
-            title = ranking['info']['title']
-            self.scrollAreaWidgetContents[title].add_load_time(1)
+            if self.scrollAreaWidgetContents[title].load_time <= 5:
+                method = ranking['method']
+                args = ranking['args']
+                info = ranking['info']
+                self.baseThread['get_img_info'] = base_thread(self, method,
+                                                                  info=info,
+                                                                  **args,
+                                                                  )
+                self.baseThread['get_img_info'].finish.connect(self.parse_pic_info)
+                self.baseThread['get_img_info'].wait()
+                self.baseThread['get_img_info'].start()
+                title = ranking['info']['title']
+                self.scrollAreaWidgetContents[title].add_load_time(1)
+            else:
+                self.scrollAreaWidgetContents[title].set_loading(False)
 
             return
         self.get_illust_info_now = False
@@ -619,7 +628,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.illusts_box[title].append(i)
 
             self.cache_item_box[title].pop(self.cache_item_box[title].index(i))
-        self.test()
+        if self.now_page == 'show_big_pic':
+            # show_next_big_pic引发的调用
+            self.show_next_big_pic('next')
 
     def action_to_command(self):
         # 链接操作与函数
@@ -1023,12 +1034,16 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.comment_widget.show()
         self.infoFrame.raise_()
 
-        self.create_related_illust_frame(self.bigPicScrollArea.verticalScrollBar().value(), _info)
+        self.scrollAreaWidgetContents_3.create_relate_illust_signal.connect(lambda: self.create_related_illust_frame(10, _info))
+        #self.create_related_illust_frame(self.bigPicScrollArea.verticalScrollBar().value(), _info)
 
     def create_related_illust_frame(self, x, info):
         m = self.bigPicScrollArea.verticalScrollBar().maximum()
-        if m - x >= 10:
+        if m - x > 0:
             return
+            
+        self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
+        self.scrollAreaWidgetContents_3.create_relate_illust_signal.disconnect()
         # 创建作品相关区
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
@@ -1050,10 +1065,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.illust_related_frame.pic_info_gotten.connect(self.scrollAreaWidgetContents_3.adjust_size)
         self.illust_related_frame.show()
         ###
-
-        self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
-        self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
-
 
     #@profile
     def load_user_head(self, info):
@@ -1110,6 +1121,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.bigFrames[file_name] = big_pic_frame(self.scrollAreaWidgetContents_3, info=info)
         self.bigFrames[file_name].image_load_completly.connect(self.scrollAreaWidgetContents_3.adjust_size)
+        self.bigFrames[file_name].click.connect(lambda x: self.show_next_big_pic(x['direct']))
 
         self.bigFrames[file_name].double_click.connect(self.show_original_pic)
         self.bigFrames[file_name].download_single_pic_signal.connect(self.saveOriginalPic)
@@ -1399,7 +1411,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         try:
             illust = self.illusts_box[title][illust_order]
         except IndexError as e:
-            print(f"{FILE}: <show_next_big_pic> next_show_pic")
+            print(f"{FILE}: <show_next_big_pic> {e}: illust_order={illust_order}, self.illusts_box[title].lenth={len(self.illusts_box[title])}")
             if not self.get_illust_info_now:
                 self.show_pic(self.method, self.next_url_s[title], title, flag=flag, next_illust_button=True)
         else:

@@ -79,6 +79,8 @@ class my_widget(QWidget):
 class Scroll_Widget(QWidget):
     left_area_is_clicked = pyqtSignal(str)
     right_area_is_clicked = pyqtSignal(str)
+    create_relate_illust_signal = pyqtSignal()
+
     """调整大图位置"""
     def adjust_size(self):
         height = 0
@@ -109,6 +111,12 @@ class Scroll_Widget(QWidget):
                 self.left_area_is_clicked.emit("last")
             elif x in range(w//2, w) and y in range(0, h):
                 self.right_area_is_clicked.emit("next")
+
+    def resizeEvent(self, qevent):
+        h = self.height()
+        p_h = self.parent().height()
+        if p_h - h >= 10:
+            self.create_relate_illust_signal.emit()
 
 class Show_Head_Label(QLabel):
     load_times = 0      # 记录加载图片的次数
