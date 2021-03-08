@@ -41,8 +41,8 @@ class big_pic_frame(QFrame):
         self.pic_size = -1
         self.rotate = 90
         self.setupUi()
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.change_rotate)
+        # self.timer = QTimer()
+        # self.timer.timeout.connect(self.change_rotate)
 
     def change_file_name(self):
         tags = self.info['tags']
@@ -222,51 +222,51 @@ class big_pic_frame(QFrame):
         self.double_click.emit(info)
 
     def paintEvent(self, qevent):
-        from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
-        from PyQt5.QtCore import QRectF
-        import os
+        # from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
+        # from PyQt5.QtCore import QRectF
+        # import os
 
-        temp_file_name = self.info['temp_file_name']
+        # temp_file_name = self.info['temp_file_name']
 
-        temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
-        try:
-            file_size = os.path.getsize(temp_file)
-        except FileNotFoundError:
-            file_size = 0
+        # temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
+        # try:
+        #     file_size = os.path.getsize(temp_file)
+        # except FileNotFoundError:
+        #     file_size = 0
 
-        if self.is_loading:
-            width = self.width()
-            height = self.height()
-            load_x = (width-50)//2
-            load_y = (height-50)//2
+        # if self.is_loading:
+        #     width = self.width()
+        #     height = self.height()
+        #     load_x = (width-50)//2
+        #     load_y = (height-50)//2
 
-            percent = file_size/self.pic_size
-            rotateAngle = 360*percent
-            painter = QPainter(self)
-            painter.setPen(Qt.NoPen)
-            painter.setRenderHints(QPainter.Antialiasing)
-            painter.setBrush(QBrush(QColor(255, 255, 255)))
-            painter.drawEllipse(load_x, load_y, 50, 50)
+        #     percent = file_size/self.pic_size
+        #     rotateAngle = 360*percent
+        #     painter = QPainter(self)
+        #     painter.setPen(Qt.NoPen)
+        #     painter.setRenderHints(QPainter.Antialiasing)
+        #     painter.setBrush(QBrush(QColor(255, 255, 255)))
+        #     painter.drawEllipse(load_x, load_y, 50, 50)
 
-            pen = QPen()
-            pen.setColor(QColor("#5481FF"))
-            pen.setWidth(3)
-            painter.setPen(pen)
-            if self.pic_size == -1:
-                if not self.timer.isActive():
-                    self.timer.start(10)
-                painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate*16, -90*16)
-            else:
-                painter.drawArc(QRectF(load_x, load_y, 50, 50), 90*16, -rotateAngle*16)#(0 - 0) * 0, -rotateAngle * 16)  # 画圆环, 进度条
-                font = QFont()
-                font.setFamily("微软雅黑")
-                font.setPointSize(11)
-                painter.setFont(font)
-                painter.setPen(QColor("#5481FF"))
-                painter.drawText(QRectF(load_x, load_y, 50, 50), Qt.AlignCenter, f"{int(percent*100)}%")  # 显示进度条当前进度
-        else:
-            if self.timer.isActive():
-                self.timer.stop()
+        #     pen = QPen()
+        #     pen.setColor(QColor("#5481FF"))
+        #     pen.setWidth(3)
+        #     painter.setPen(pen)
+        #     if self.pic_size == -1:
+        #         if not self.timer.isActive():
+        #             self.timer.start(10)
+        #         painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate*16, -90*16)
+        #     else:
+        #         painter.drawArc(QRectF(load_x, load_y, 50, 50), 90*16, -rotateAngle*16)#(0 - 0) * 0, -rotateAngle * 16)  # 画圆环, 进度条
+        #         font = QFont()
+        #         font.setFamily("微软雅黑")
+        #         font.setPointSize(11)
+        #         painter.setFont(font)
+        #         painter.setPen(QColor("#5481FF"))
+        #         painter.drawText(QRectF(load_x, load_y, 50, 50), Qt.AlignCenter, f"{int(percent*100)}%")  # 显示进度条当前进度
+        # else:
+        #     if self.timer.isActive():
+        #         self.timer.stop()
 
         self.update()
 

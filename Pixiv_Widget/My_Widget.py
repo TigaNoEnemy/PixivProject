@@ -128,9 +128,9 @@ class Show_Head_Label(QLabel):
         self.cfg = setting()
         self.is_loading = True
         self.rotate = 90
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.change_rotate)
-        self.timer.start(5)
+        # self.timer = QTimer()
+        # self.timer.timeout.connect(self.change_rotate)
+        # self.timer.start(5)
         self.setPixmap(QPixmap(''))
         self.setAlignment(Qt.AlignCenter)
 
@@ -151,8 +151,8 @@ class Show_Head_Label(QLabel):
     def set_is_loading(self, value):
         self.setPixmap(QPixmap(""))
         self.is_loading = value
-        if value and not self.timer.isActive():
-            self.timer.start(5)
+        # if value and not self.timer.isActive():
+        #     self.timer.start(5)
 
     def change_rotate(self):
         self.rotate += 1
@@ -208,30 +208,30 @@ class Show_Head_Label(QLabel):
         self.is_loading = False
 
     def paintEvent(self,qevent):
-        from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
-        from PyQt5.QtCore import QRectF, Qt
+        # from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
+        # from PyQt5.QtCore import QRectF, Qt
         super(Show_Head_Label, self).paintEvent(qevent)
 
-        if self.is_loading:
-            width = self.width()
-            height = self.height()
-            load_x = width/2//2
-            load_y = height/2//2
+        # if self.is_loading:
+        #     width = self.width()
+        #     height = self.height()
+        #     load_x = width/2//2
+        #     load_y = height/2//2
 
-            painter = QPainter(self)
-            painter.setPen(Qt.NoPen)
-            painter.setRenderHints(QPainter.Antialiasing)
-            painter.setBrush(QBrush(QColor(255, 255, 255)))
-            painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
+        #     painter = QPainter(self)
+        #     painter.setPen(Qt.NoPen)
+        #     painter.setRenderHints(QPainter.Antialiasing)
+        #     painter.setBrush(QBrush(QColor(255, 255, 255)))
+        #     painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
 
-            pen = QPen()
-            pen.setColor(QColor("#5481FF"))
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
-        else:
-            if self.timer.isActive():
-                self.timer.stop()
+        #     pen = QPen()
+        #     pen.setColor(QColor("#5481FF"))
+        #     pen.setWidth(3)
+        #     painter.setPen(pen)
+        #     painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
+        # else:
+        #     if self.timer.isActive():
+        #         self.timer.stop()
 
         self.update()
 

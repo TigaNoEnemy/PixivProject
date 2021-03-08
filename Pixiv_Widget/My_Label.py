@@ -139,43 +139,43 @@ class Largable_Label(QLabel):
             self.setPixmap(pic)
 
 class Loading_Label(QLabel):
-    """加载图片是转圈, 暂时无用"""
+    """加载图片是转圈"""
     def __init__(self, parent, *args, **kwargs):
         super(Loading_Label, self).__init__(parent, *args, **kwargs)
         self.is_loading = True
         self.rotate = 90
-        self.loading_timer = QTimer()
-        self.loading_timer.timeout.connect(self.change_rotate)
-        self.loading_timer.start(5)
+        # self.loading_timer = QTimer()
+        # self.loading_timer.timeout.connect(self.change_rotate)
+        # self.loading_timer.start(5)
 
     def change_rotate(self):
         self.rotate += 1
         
     def paintEvent(self,qevent):
-        from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
-        from PyQt5.QtCore import QRectF, Qt
-        super(Loading_Label, self).paintEvent(qevent)
+        # from PyQt5.QtGui import QPainter, QPen, QColor, QFont,QBrush
+        # from PyQt5.QtCore import QRectF, Qt
+        # super(Loading_Label, self).paintEvent(qevent)
 
-        if self.is_loading:
-            width = self.width()
-            height = self.height()
-            load_x = width/2//2
-            load_y = height/2//2
+        # if self.is_loading:
+        #     width = self.width()
+        #     height = self.height()
+        #     load_x = width/2//2
+        #     load_y = height/2//2
 
-            painter = QPainter(self)
-            painter.setPen(Qt.NoPen)
-            painter.setRenderHints(QPainter.Antialiasing)
-            painter.setBrush(QBrush(QColor(255, 255, 255)))
-            painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
+        #     painter = QPainter(self)
+        #     painter.setPen(Qt.NoPen)
+        #     painter.setRenderHints(QPainter.Antialiasing)
+        #     painter.setBrush(QBrush(QColor(255, 255, 255)))
+        #     painter.drawEllipse(load_x, load_y, width-width/2, height-height/2)
 
-            pen = QPen()
-            pen.setColor(QColor("#5481FF"))
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
-        else:
-            if self.loading_timer.isActive():
-                self.loading_timer.stop()
+        #     pen = QPen()
+        #     pen.setColor(QColor("#5481FF"))
+        #     pen.setWidth(3)
+        #     painter.setPen(pen)
+        #     painter.drawArc(QRectF(load_x, load_y, width-width/2, height-height/2), -self.rotate*16, -90*16)# 画圆环, 进度条
+        # else:
+        #     if self.loading_timer.isActive():
+        #         self.loading_timer.stop()
 
         self.update()
 

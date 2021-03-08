@@ -67,6 +67,8 @@ if __name__ == '__main__':
 
     api = my_api()
     api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
+    api.pximg = api.require_appapi_hosts('i.pximg.net')
+    api.default_head = api.require_appapi_hosts('s.pximg.net')
     api.auth(refresh_token=info['token'])
 
     data = api.illust_comments(85256262)
@@ -74,7 +76,7 @@ if __name__ == '__main__':
     temp_path = l_cfg.temp_path
 
     info = data['comments'][0]
-    info['comment'] = '\n'.join(info['comment'])
+    #info['comment'] = '\n'.join(info['comment'])
     info.update({'temp_path': temp_path, 'api': api})
 
     app = QApplication(sys.argv)

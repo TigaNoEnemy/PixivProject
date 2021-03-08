@@ -2,6 +2,7 @@
 
 from PyQt5.QtWidgets import QFrame, QLabel, QPushButton
 from PyQt5.QtCore import QRect, pyqtSignal, Qt, QTimer
+from PyQt5.Qt import QPropertyAnimation
 from PyQt5.QtGui import QPixmap
 from PyQt5 import sip
 import os
@@ -33,8 +34,8 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         self.info = info    # info共有七个键illust、start_row(创建进度条需要)、
         self.rotate = 90
         self.is_loding = True
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.change_rotate)
+        # self.timer = QTimer()
+        # self.timer.timeout.connect(self.change_rotate)
         self.check_info()
         self.setupUi(self)
 
@@ -87,7 +88,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
 
         self.s_saveButton.setText('刷新')
         self.is_loding = True
-        self.timer.start(16)
+        # self.timer.start(16)
 
         info={'file': file, 'self': 'small'}
         if not os.path.exists(file):
@@ -170,7 +171,7 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
         except:
             pass
         self.is_loding = True
-        self.timer.start(16)
+        # self.timer.start(16)
         self.picLabel.resize(0, 0)
         self.s_saveButton.disconnect()
         self.download_small_pic_thread = base_thread(self, self.api.cache_pic, info={'file': file}, url=url, file_name=file_name, path=self.cfg.temp_path, timeout=self.timeout)
@@ -195,27 +196,41 @@ class small_pic_frame(QFrame, Ui_small_pic_frame):
             return False
         return True
 
+    def start_animation(self):
+        self_x = self.info['self_x']
+        self_y = self.info['self_y']
+
+        self.animation = QPropertyAnimation(self)
+        self.animation.setPropertyName(b'geometry')
+        self.animation.setTargetObject(self)
+        self.animation.setStartValue(
+            QRect(self_x+(234//2), self_y+(405//2), 0, 0))
+        self.animation.setEndValue(
+            QRect(self_x, self_y, 234, 405))
+        self.animation.setDuration(200)
+        self.animation.start()
+
     def paintEvent(self, qevent):
-        from PyQt5.QtGui import QPainter, QPen, QBrush, QColor
-        from PyQt5.QtCore import QRectF
+        # from PyQt5.QtGui import QPainter, QPen, QBrush, QColor
+        # from PyQt5.QtCore import QRectF
 
-        if self.is_loding:
-            load_x = (234-50)//2
-            load_y = (234-50)//2
+        # if self.is_loding:
+        #     load_x = (234-50)//2
+        #     load_y = (234-50)//2
 
-            painter = QPainter(self)
-            painter.setPen(Qt.NoPen)
-            painter.setRenderHints(QPainter.Antialiasing)
-            painter.setBrush(QBrush(QColor(255, 255, 255)))
-            painter.drawEllipse(load_x, load_y, 50, 50)
+        #     painter = QPainter(self)
+        #     painter.setPen(Qt.NoPen)
+        #     painter.setRenderHints(QPainter.Antialiasing)
+        #     painter.setBrush(QBrush(QColor(255, 255, 255)))
+        #     painter.drawEllipse(load_x, load_y, 50, 50)
 
-            pen = QPen()
-            pen.setColor(QColor("#5481FF"))
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate * 16, -90 * 16)
-        else:
-            self.timer.stop()
+        #     pen = QPen()
+        #     pen.setColor(QColor("#5481FF"))
+        #     pen.setWidth(3)
+        #     painter.setPen(pen)
+        #     painter.drawArc(QRectF(load_x, load_y, 50, 50), -self.rotate * 16, -90 * 16)
+        # else:
+        #     self.timer.stop()
 
         self.update()
 

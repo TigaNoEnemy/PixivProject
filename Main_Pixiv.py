@@ -607,19 +607,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             small_pic_frame_x = x[self.rank_pic_s[title] % self.now_per_row_pic_num]
             small_pic_frame_y = ((self.rank_pic_s[title] // self.now_per_row_pic_num)) * 411
 
+            info['self_x'] = small_pic_frame_x
+            info['self_y'] = small_pic_frame_y
+
             self.frames[title][illust_id] = small_pic_frame(self.scrollAreaWidgetContents[title], info=info)
             self.frames[title][illust_id].progress.connect(self.create_download_progress)
             self.frames[title][illust_id].pic_click.connect(self.show_big_pic)
             self.frames[title][illust_id].show()
-            self.small_pic_frame_animation[title][illust_id] = QPropertyAnimation(self.scrollAreaWidgetContents[title])
-            self.small_pic_frame_animation[title][illust_id].setPropertyName(b'geometry')
-            self.small_pic_frame_animation[title][illust_id].setTargetObject(self.frames[title][illust_id])
-            self.small_pic_frame_animation[title][illust_id].setStartValue(
-                QRect(small_pic_frame_x, small_pic_frame_y, 0, 0))
-            self.small_pic_frame_animation[title][illust_id].setEndValue(
-                QRect(small_pic_frame_x, small_pic_frame_y, 234, 405))
-            self.small_pic_frame_animation[title][illust_id].setDuration(200)
-            self.small_pic_frame_animation[title][illust_id].start()
+            
+            self.frames[title][illust_id].start_animation()
 
             if (self.rank_pic_s[title] + 1) % self.now_per_row_pic_num == 1:
                 self.scrollAreaWidgetContents[title].resize(self.now_per_row_pic_num * 240,  
