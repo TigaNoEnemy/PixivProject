@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-from PyQt5.QtWidgets import QFrame
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QMenu
+from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QTimer
+
+import os
 
 
 # 导入自定义模块
 try:
-    from Pixiv_Widget.Clickable_Label import clickable_label
+    from Pixiv_Widget.Clickable_Label import clickable_label, Big_Pic_Clickable_Label
     from Pixiv_Thread.My_Thread import base_thread
 except:
     import sys
@@ -21,12 +23,13 @@ import cgitb
 
 cgitb.enable(format='text', logdir='log_file')
 
+FILE = '\033[34mBig_Pic_File\033[0m'
 
 class big_pic_frame(QFrame):
     double_click = pyqtSignal(dict)   # 双击显示原图
-    click = pyqtSignal()          # 单击重载图片
-    # timer = QTimer()
+    click = pyqtSignal(dict)
     image_load_completly = pyqtSignal()
+    download_single_pic_signal = pyqtSignal(dict)   # 下载单张图片的信号
 
     def __init__(self, parent, info):
         super(big_pic_frame, self).__init__(parent)
@@ -35,7 +38,7 @@ class big_pic_frame(QFrame):
         self.cfg = setting()
         self.check_info()
         self.change_file_name()
-        self.pic_size = 1
+        self.pic_size = -1
         self.rotate = 90
         self.setupUi()
         self.timer = QTimer()
@@ -53,47 +56,89 @@ class big_pic_frame(QFrame):
     #@profile
     def check_info(self):
         # illust_id 用于检测当前显示的作品
-        key = ['url', 'temp_file_name', 'title', 'original_pic_url', 'tags', 'illust_id']
+        key = ['url', 'temp_file_name', 'title', 'original_pic_url', 'tags', 'illust_id', 'pic_no']
 
     def setupUi(self):
         url = self.info['url']
         temp_file_name = self.info['temp_file_name']
         title = self.info['title']
 
-        self.bigPicLabel = clickable_label(self, self.info)
+        self.bigPicLabel = Big_Pic_Clickable_Label(self, self.info)
         self.bigPicLabel.setGeometry(QRect(0, 0, 620, 611))
-        self.bigPicLabel.setObjectName("bigPicLabel")
+        # self.bigPicLabel.setObjectName("bigPicLabel")
         self.bigPicLabel.setObjectName("picLabel")
-     
         self.bigPicLabel.setAlignment(Qt.AlignCenter)
+        self.bigPicLabel.right_click.connect(self.show_action)
 
         info = {'temp_file_name': temp_file_name, 'url': url, 'temp_path': self.cfg.temp_path, 'title': title, 'timeout_pic': self.cfg.timeout_pic, 'self': 'big'}
 
         self.create_get_pic_size_thread(info)
 
-    def create_get_pic_size_thread(self, info, is_reload=False):
-        import os
+    def show_action(self, info):
+        self.qmenu = QMenu()
+        force_reload = self.qmenu.addAction('强制重载')
+        download_pic = self.qmenu.addAction('保存原图')
 
+        if self.is_loading:
+            force_reload.setEnabled(False)
+            download_pic.setEnabled(False)
+        elif self.picture.isNull():
+            force_reload.triggered.connect(lambda x: self.force_reload(info))
+            download_pic.setEnabled(False)
+        else:
+            force_reload.triggered.connect(lambda x: self.force_reload(info))
+            download_pic.triggered.connect(lambda x: self.download_single_pic(info))
+
+        self.qmenu.exec(QCursor.pos())
+
+    def force_reload(self, info):
+        temp_file_name = info['temp_file_name']
+        file = f"{self.cfg.temp_path}/{temp_file_name}"
+        try:
+            os.remove(file)
+        except Exception as e:
+            print(f"{FILE}: {e}")
+        self.create_get_pic_size_thread(info, is_reload=True)
+
+    def download_single_pic(self, info):
+        # 伪造只有一张图片的作品
+        illust = {}
+        illust['title'] = info['title']
+        illust['id'] = info['illust_id']
+        illust['meta_single_page'] = {}
+        illust['meta_single_page']['original_image_url'] = info['original_pic_url']
+        illust['meta_pages'] = []
+        illust['pic_no'] = info['pic_no']
+        print(illust)
+        ###
+        self.download_single_pic_signal.emit(illust)
+
+    def create_get_pic_size_thread(self, info, is_reload=False):
         temp_file_name = info['temp_file_name']
         url = info['url']
         if is_reload:
             try:
-                os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
-            except:
-                pass
+                self.bigPicLabel.click.disconnect()
+            except Exception as e:
+                print(f"{FILE}: {e}")
+            # try:
+            #     os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
+            # except Exception as e:
+            #     print('='*60)
+            #     print(f"{FILE}: {e}")
         self.is_loading  = True
         self.picture = QPixmap('')
         self.bigPicLabel.setPixmap(self.picture)
-        if os.path.exists(f"{self.cfg.temp_path}/{temp_file_name}"):
-            print('Big file is exists.')
-            info['isSuccess'] = True
-            self.load_big_pic_complete(info)
-
-        else:
-            self.thread = base_thread(None, method=self.api.get_image_size, url=url, info=info)
-            self.thread.finish.connect(self.create_download_thread)
-            self.thread.wait()
-            self.thread.start()
+        file = f"{self.cfg.temp_path}/{temp_file_name}"
+        try:
+            had_downloaded_size = os.path.getsize(file)
+        except FileNotFoundError:
+            had_downloaded_size = 0
+        size = f"bytes={had_downloaded_size}-"
+        self.thread = base_thread(None, method=self.api.get_image_size, url=url, Range=size, info=info)
+        self.thread.finish.connect(self.create_download_thread)
+        self.thread.wait()
+        self.thread.start()
 
     def create_download_thread(self, info):
         try:
@@ -101,11 +146,9 @@ class big_pic_frame(QFrame):
         except AttributeError:
             pass
 
-
         if not info['isSuccess']:
             self.load_big_pic_complete(info=info)
             return
-        url = info['url']
         temp_file_name = info['temp_file_name']
         response = info['response']
         output_file = f"{self.cfg.temp_path}/{temp_file_name}"
@@ -118,9 +161,9 @@ class big_pic_frame(QFrame):
         self.thread.start()
 
         try:
-            self.bigPicLabel.disconnect()
-        except:
-            pass
+            self.bigPicLabel.double_click.disconnect(self.pic_label_is_double_clicked)
+        except Exception as e:
+            print(f'{FILE}: {e}')
 
         self.bigPicLabel.setPixmap(QPixmap(''))
 
@@ -138,13 +181,17 @@ class big_pic_frame(QFrame):
         
         temp_file = f"{self.cfg.temp_path}/{temp_file_name}"
         self.picture = QPixmap(temp_file)
+        self.bigPicLabel.set_load_pic_seccess(True)
         if self.picture.isNull():
-            try:
-                os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
-            except:
-                pass
+            # try:
+            #     os.remove(f"{self.cfg.temp_path}/{temp_file_name}")
+            # except:
+            #     pass
             self.bigPicLabel.click.connect(lambda x: self.create_get_pic_size_thread(x, is_reload=True))
             self.picture = QPixmap(self.cfg.timeout_pic)
+            self.bigPicLabel.set_load_pic_seccess(False)
+        else:
+            self.bigPicLabel.click.connect(self.click.emit)
 
         pic_width = self.picture.width()
         if pic_width > 620:
@@ -229,27 +276,37 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     import sys
 
+    
     key = ['url', 'temp_path', 'temp_file_name', 'title', 'timeout_pic', 'original_pic_url', 'tags', 'illust_id']
     _info = {}
     cfg = login_info_parser()
     info = cfg.get_token()
+    proxies = {
+        'http': '127.0.0.1:8888',
+        'https': '127.0.0.1:8888',
+    }
     api = my_api()
     print('翻墙')
-    api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
+    api.pximg = api.require_appapi_hosts("i.pximg.net")
+    api.hosts = api.require_appapi_hosts("public-api.secure.pixiv.net")
+    api.default_head = api.require_appapi_hosts("s.pximg.net")
     print('翻墙成功')
     print('登录')
     api.auth(refresh_token=info['token'])
     print('登陆成功')
     _info['api'] = api
-    _info['url'] = 'https://i.pximg.net/c/600x1200_90_webp/img-master/img/2017/07/01/00/00/23/63639917_p4_master1200.jpg'
+    _info['url'] = 'https://210.140.92.140/c/600x1200_90_webp/img-master/img/2019/04/06/15/37/40/74069608_p1_master1200.jpg'
     _info['temp_path'] = 'pixivTmp'
     _info['temp_file_name'] = 'test'
     _info['title'] = 'test'
     _info['timeout_pic'] = 'RES/TIMEOUT.png'
-    _info['original_pic_url'] = ''
+    _info['original_pic_url'] = 'I\'m original_pic_url'
     _info['tags'] = ''
     _info['illust_id'] = '85213770'
     app = QApplication(sys.argv)
     a = big_pic_frame(parent=None, info=_info)
+    # a.move(2000, 1000)
+    # a.resize(100, 50)
+    # a.setMaximumSize(100, 50)
     a.show()
     sys.exit(app.exec_())

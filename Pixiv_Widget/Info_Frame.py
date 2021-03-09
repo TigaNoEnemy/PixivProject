@@ -13,7 +13,7 @@ from Pixiv_Thread.My_Thread import base_thread
 
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
-class info_frame(QFrame, info_frame_1.Ui_Frame):
+class info_frame(QFrame, info_frame_1.Ui_infoFrame):
     infoFrame_h_differ = 200    # 隐藏作品详情和展示时infoFrame之间的高度差
     def __init__(self, parent=None, main=None, info={}):
         super(info_frame, self).__init__(parent)
@@ -71,6 +71,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         import os
 
         illust = info['illust']
+        illust_order = info["illust_order"]
 
         right_label_w = 481  # 右边的作品详情，关于时间之类的
         label_h = 24
@@ -139,7 +140,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         self.detail_labels['total_bookmarks'].setGeometry(QRect(right_label_x, 100 + 3 * 30, right_label_w, label_h))
 
         self.detail_labels['illust_id'] = QLabel(self)
-        self.detail_labels['illust_id'].setText(f"illust_id: {illust['id']}")
+        self.detail_labels['illust_id'].setText(f"illust_id: {illust['id']}_{illust_order}")
         self.detail_labels['illust_id'].setGeometry(QRect(right_label_x, 100 + 4 * 30, right_label_w, label_h))
 
         for k in self.detail_labels:
@@ -162,7 +163,7 @@ class info_frame(QFrame, info_frame_1.Ui_Frame):
         except:
             pass
         self.authText.clicked.connect(self.main.simulateSearch)
-        self.authText.adjustSize()
+        #self.authText.adjustSize()
 
         self.text_scroll.clear()
         self.text_scroll.setText(illust['caption'])

@@ -2,7 +2,7 @@
 import sys
 sys.path.append('.')
 from PyQt5.QtWidgets import QLabel, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtGui import QPixmap, QColor, QFont, QFontMetrics
 from PyQt5.QtCore import pyqtSignal, Qt, QRect, QPropertyAnimation, QTimer
 
 
@@ -178,20 +178,61 @@ class Loading_Label(QLabel):
                 self.loading_timer.stop()
 
         self.update()
+
+class Auto_Text_Label(QLabel):
+    """
+    用于显示文字的label，在使用setText方法时会自动调整字体大小以求尽量显示完全
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def setText(self, s):
+        super().setText(s)
+        if '</' in s:
+            return
+        init_font_size = 20
+        self.setFont(QFont("Microsoft YaHei", init_font_size))
+        font = self.font()
+        fm = QFontMetrics(font)
+        rec = fm.boundingRect(self.text())
+
+        while (rec.width() > self.width() or rec.height() > self.height()) and init_font_size > 1:
+            init_font_size -= 1
+            self.setFont(QFont("Microsoft YaHei", init_font_size))
+            print(f"\033[31mfont_size\033[0m:{init_font_size}")
+            font = self.font()
+            fm = QFontMetrics(font)
+            rec = fm.boundingRect(self.text())
+
+class Username_Label(my_label, Auto_Text_Label):
+    """
+    用于显示用户名，可点击，自动调整字体大小
+    """
+    pass
         
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication, QMainWindow
+    def gen_string(p):
+        import random
+        m = random.randint(2, 15)
+        s = 's'*m
+        p.setText(s)
+
+    from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
     app = QApplication(sys.argv)
     m = QMainWindow()
-    m.resize(150, 150)
+    m.resize(150, 200)
     info = {'temp_path': '/home/minming/Desktop/人像', 'illust_id': '7.png'}
     
-    a = Loading_Label(m)
+    a = Auto_Text_Label(m)
     a.resize(100, 100)
-    a.move((m.width()-a.width())/2, (m.height()-a.height())/2)
+    a.move((m.width()-a.width())/2, 0)
     #a.set_original_geometry(a.x(), a.y(), a.width(), a.height())
     #pic = pic.scaled(a.width(), a.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-    m.move(2000, 1000)
+
+    b = QPushButton(m)
+    b.move((m.width()-b.width())/2, 100)
+    b.clicked.connect(lambda : gen_string(a))
+    
     m.show()
     sys.exit(app.exec_())

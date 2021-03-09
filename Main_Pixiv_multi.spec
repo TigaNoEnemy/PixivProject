@@ -27,7 +27,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False,
-          icon='pixiv.ico' )
+          icon='./RES/pixiv.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

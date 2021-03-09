@@ -18,7 +18,7 @@ from qtcreatorFile import pixiv_main_window
 
 # 导入自定义模块
 from Pixiv_Widget.Info_Frame import info_frame
-from Pixiv_Widget.My_Label import my_label
+from Pixiv_Widget.My_Label import Username_Label
 from Pixiv_Thread.My_Thread import base_thread
 from Pixiv_Widget.Original_Pic import original_pic
 from Pixiv_Widget.Setting_Window import setting_window
@@ -30,11 +30,13 @@ from Pixiv_Widget.comment_widget import Comment_Widget
 from Pixiv_Widget.illust_relate import Illust_Relate
 from Pixiv_Widget.My_Widget import Scroll_Widget
 from Pixiv_Widget.My_Widget import my_widget
+from Pixiv_Widget.My_Widget import Big_Pic_Button
 from Pixiv_Api.My_Api import my_api
+from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
 
 cgitb.enable(format='text', logdir='log_file')
-
+FILE = '\033[31mMain_Pixiv\033[0m'
 
 class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
     def __init__(self, user_id, username, user_pic_link):
@@ -46,6 +48,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.setMinimumSize(1136, 660 - 52)
         #self.setMinimumSize(1257, 811)
         self.setupUi(self)
+        self.create_big_pic_button()
+
         self.set_style()
         smallFrame_h = self.SmallFrame.height()
         # 为了得出tabbar的高度
@@ -60,6 +64,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.infoFrame.set_original_height(infoFrame_h)
 
         self.searchFrame = search_frame(self.SmallFrame, main=self)
+        self.searchFrame.had_hidden_signal.connect(self.search_frame_is_hidden)
+        self.searchFrame.had_showed_signal.connect(self.search_frame_is_showed)
+
         self.searchFrame.setGeometry(QRect(0, -120, 1041, 120))
 
         self.setWindowIcon(QIcon(self.app_icon))
@@ -70,11 +77,8 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.tabWidget.currentChanged['int'].connect(self.change_tab)
 
         ### 设置用户名
-        self.usernameLabel = my_label(self.frame, {'tag': user_id, 'text': username})  # 左上角用户名
+        self.usernameLabel.info = {'tag': user_id, 'text': username}  # 左上角用户名
         self.usernameLabel.clicked.connect(self.show_action)
-        self.usernameLabel.setGeometry(QRect(2, 50, len(username) * 20, 41))
-        # self.usernameLabel.setWordWrap(True)
-        self.usernameLabel.setObjectName("usernameLabel")
         self.usernameLabel.setText(username)
         ###
 
@@ -85,6 +89,9 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'label': 'self.login_user_pic_label', 
             'row': 53
             }
+
+        self.baseThread = {}
+
         if os.path.exists(f"{self.temp_path}/{file_name}"):
             info.update({'isSuccess': True, 'path': self.temp_path})
             self.load_user_head(info)
@@ -128,7 +135,6 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.mode = ''  # 该属性已名存实亡
 
         self.now_per_row_pic_num = self.per_row_pic_num
-        self.baseThread = {}
         self.now_page = 'show_pic'
         #self.downloadNum = 0  # 下载数，用于下载页面的排版（待增加下载页）
         self.downloadTimer = {}
@@ -147,11 +153,45 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.scrollAreas = {}
         self.scrollAreaWidgetContents = {}
 
+        self.illusts_box = {} # 存放illlusts一共浏览大图时可以左右浏览下个illusts:{title:[], ...}
+        #self.illusts_indicator = {} # 指示当前大图为illusts的第几个作品：{title: int, ....}
+
         self.move_self_to_center()  # 移动窗口到中央
         self.show()
 
         self.ajust_cate_widget_size()  # 调整左侧类别按钮（推荐、每日...）的容器的大小
         self.show_pic('illust_recommended', title='推荐', isMoreButton=False, flag='推荐')
+
+    def create_big_pic_button(self):
+        v_h = self.bigPicScrollArea.verticalScrollBar().height()
+        self.bigPicScrollArea.verticalScrollBar().resize(12, v_h)
+
+        self.next_big_pic_button = Big_Pic_Button(self.bigPicScrollArea, 'next')
+        self.next_big_pic_button.setObjectName('next_big_pic_button')
+        self.next_big_pic_button.resize(100, self.next_big_pic_button.parent().height())
+        next_big_pic_button_x = self.next_big_pic_button.parent().width() - self.next_big_pic_button.width() - self.next_big_pic_button.parent().verticalScrollBar().width()
+        self.next_big_pic_button.move(next_big_pic_button_x, 0)
+        self.next_big_pic_button.scroll_signal.connect(self.next_big_pic_button.parent().wheelEvent)
+        self.next_big_pic_button.direct_signal.connect(self.show_next_big_pic)
+        self.next_big_pic_button.setText('>')
+
+        self.last_big_pic_button = Big_Pic_Button(self.bigPicScrollArea, 'last')
+        self.last_big_pic_button.setObjectName('last_big_pic_button')
+        self.last_big_pic_button.resize(100, self.last_big_pic_button.parent().height())
+        self.last_big_pic_button.move(0, 0)
+        self.last_big_pic_button.scroll_signal.connect(self.last_big_pic_button.parent().wheelEvent)
+        self.last_big_pic_button.direct_signal.connect(self.show_next_big_pic)
+        self.last_big_pic_button.setText('<')
+
+    def search_frame_is_showed(self):
+        self.searchButton.disconnect()
+        self.searchButton.clicked.connect(self.searchFrame.hide_search_frame)
+        print(f'{FILE}: showed')
+
+    def search_frame_is_hidden(self):
+        self.searchButton.disconnect()
+        self.searchButton.clicked.connect(self.searchFrame.show_search_frame)
+        print(f'{FILE}: hided')
 
     def move_self_to_center(self):
         from PyQt5.QtWidgets import QDesktopWidget
@@ -261,7 +301,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         myBlackList = self.qmenu.addAction('我的黑名单')
         myBlackList.triggered.connect(
-            lambda x: print("待搞定")
+            lambda x: print(f"{FILE}: 待搞定")
         )
 
         self.qmenu.exec(QCursor.pos())
@@ -289,6 +329,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         try_pop(self.rank_pic_s, title)
         try_pop(self.next_url_s, title)
         try_pop(self.frames, title)
+        try_pop(self.illusts_box, title)
 
     def change_tab(self, index):
         self.tab_title = title = self.tabWidget.tabText(index)
@@ -340,7 +381,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if m - x <= 411*1.5:
             self.infoFrame.moreButton.click()
 
-    def show_pic(self, method='', _mode={}, title=None, isMoreButton=True, flag=''):
+    def show_pic(self, method='', _mode={}, title=None, isMoreButton=True, flag='', next_illust_button=False):
         from Pixiv_Widget.My_Widget import my_widget
 
         if _mode == None:
@@ -352,10 +393,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.infoFrame.hide_illust_detail()
 
         ## 先返回图片浏览
-        self.escapeDownloadPage(self.now_page)
-        self.now_page = 'show_pic'
-        self.returnSmallPic()
-        self.searchFrame.hide_search_frame()
+        # 若next_illust_button为真，
+        # 则表明是在大图浏览里点击下一个图片所调用，
+        # 因此不需要返回小图浏览
+        if not next_illust_button:
+            self.escapeDownloadPage(self.now_page)
+            self.now_page = 'show_pic'
+            self.returnSmallPic()
+            self.searchFrame.hide_search_frame()
         ###
 
         # 点击左边按钮时，查找已存在的窗口并切换到该窗口
@@ -437,7 +482,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             # 标签
             elif flag == '标签作品':
                 word = _mode['word']
-                print(word)
+                print(f"{FILE}: {word}")
                 search_target = _mode.get("search_target", 'partial_match_for_tags')
                 sort = _mode.get("sort", 'date_desc')
                 duration = _mode.get("duration", None)
@@ -491,28 +536,35 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         else:
             self.parse_pic_info({"title": title, 'load_cache': True})
 
+        self.get_illust_info_now = True
+
     def parse_pic_info(self, ranking={}):
         from PyQt5.QtCore import QRect
         if 'ERROR' in ranking or 'error' in ranking:    # 网络错误, 重新请求
-            method = ranking['method']
-            args = ranking['args']
-            info = ranking['info']
-            self.baseThread['get_img_info'] = base_thread(self, method,
-                                                              info=info,
-                                                              **args,
-                                                              )
-            self.baseThread['get_img_info'].finish.connect(self.parse_pic_info)
-            self.baseThread['get_img_info'].wait()
-            self.baseThread['get_img_info'].start()
-            title = ranking['info']['title']
-            self.scrollAreaWidgetContents[title].add_load_time(1)
+            if self.scrollAreaWidgetContents[title].load_time <= 5:
+                method = ranking['method']
+                args = ranking['args']
+                info = ranking['info']
+                self.baseThread['get_img_info'] = base_thread(self, method,
+                                                                  info=info,
+                                                                  **args,
+                                                                  )
+                self.baseThread['get_img_info'].finish.connect(self.parse_pic_info)
+                self.baseThread['get_img_info'].wait()
+                self.baseThread['get_img_info'].start()
+                title = ranking['info']['title']
+                self.scrollAreaWidgetContents[title].add_load_time(1)
+            else:
+                self.scrollAreaWidgetContents[title].set_loading(False)
 
             return
-
+        self.get_illust_info_now = False
         if 'next_url' not in ranking and not ranking.get('load_cache', False):       # 搜索作品id时没有next_url, 因此需判断
             ranking = self.add_key_to_result(ranking)
 
         title = ranking['title']  # tab_title
+        if title not in self.illusts_box:
+            self.illusts_box[title] = []
 
         # 获取图片信息时，就把当前窗口关闭会引发KeyError异常，因此需要判断
         if title not in self.cache_item_box:
@@ -540,6 +592,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             #info['loading_gif'] = self.loading_gif
             info['start_row'] = int(self.table.model().rowCount() / self.per_row_pic_num)#int(self.downloadNum / self.per_row_pic_num)
             info['main'] = self
+            info['illust_order'] = self.rank_pic_s[title]
 
             small_pic_frame_x = x[self.rank_pic_s[title] % self.now_per_row_pic_num]
             small_pic_frame_y = ((self.rank_pic_s[title] // self.now_per_row_pic_num)) * 411
@@ -562,9 +615,12 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 self.scrollAreaWidgetContents[title].resize(self.now_per_row_pic_num * 240,  
                     (self.rank_pic_s[title] // self.now_per_row_pic_num + 1) * 411)
             self.rank_pic_s[title] += 1
+            self.illusts_box[title].append(i)
 
             self.cache_item_box[title].pop(self.cache_item_box[title].index(i))
-        self.test()
+        if self.now_page == 'show_big_pic':
+            # show_next_big_pic引发的调用
+            self.show_next_big_pic('next')
 
     def action_to_command(self):
         # 链接操作与函数
@@ -613,7 +669,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             self.infoFrame.moreButton.setText('没有更多了')
             return
         word = self.searchFrame.searchLineEdit.text()
-        print(word)
+        print(f"{FILE}: {word}")
         if not word and not isMoreButton:  # 没有关键字又不是moreButton，是空关键字搜索，不允许
             self.searchFrame.searchLineEdit.setPlaceholderText("不允许空搜索")
             return
@@ -639,7 +695,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             target = self.searchFrame.searchComboBox.currentText()
 
         title = f"{target}:{word}"
-        print(title)
+        print(f"{FILE}: {title}")
         if target == '标签':
             mode = {
                 'word': word,
@@ -664,7 +720,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             try:
                 illust_id = int(word)
             except ValueError:
-                print(f"int 不应该传入{word}")
+                print(f"{FILE}: int 不应该传入{word}")
                 return
             mode = {
                 'illust_id': illust_id
@@ -827,15 +883,18 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
     def _logout(self):
         from Pixiv_Widget.Pixiv_Login import app_logout
-        def del_p():
+        def del_p(info):
             self.p.deleteLater()
             sip.delete(self.p)
             del self.p
+            if info['LOGOUT']:
+                self.close()
+                main(self)
 
         if hasattr(self, 'p'):
             self.p.show()
             return True
-        self.p = app_logout(self, main=main)
+        self.p = app_logout(self)
         self.p.closed.connect(del_p)
         self.p.show()
         return True
@@ -850,7 +909,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 os.remove(_file)
 
         # 关闭线程池
-        base_thread.close_thread()
+        # base_thread.close_thread()
 
     #@profile
     def show_big_pic(self, info):
@@ -859,6 +918,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
         illust = info['illust']
+        illust_order = info['illust_order']
 
         illust_id = illust['id']
         tags = illust['tags']
@@ -892,8 +952,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         sip.delete(self.scrollAreaWidgetContents_3)
         ###
         ### 重建scrollArea里的QWidget
+        _info={'illust_id': illust['id'], 'illust_order': illust_order}
         self.scrollAreaWidgetContents_3 = Scroll_Widget()
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+        self.scrollAreaWidgetContents_3.right_area_is_clicked.connect(self.show_next_big_pic)
+        self.scrollAreaWidgetContents_3.left_area_is_clicked.connect(self.show_next_big_pic)
+
+        try:self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
+        except (TypeError, AttributeError): pass
+
+        self.show_related_frame_slot = lambda x: self.create_related_illust_frame(x, info=_info)
+        self.bigPicScrollArea.verticalScrollBar().valueChanged.connect(self.show_related_frame_slot)
         self.bigPicScrollArea.setWidget(self.scrollAreaWidgetContents_3)
 
 
@@ -903,7 +972,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         # del self.bigFrames
         # self.bigFrames = {}
 
-        info = {"illust": illust}
+        info = {"illust": illust, "illust_order": illust_order}
         self.infoFrame.create_illust_detail_panel(info=info)
 
         n = 1
@@ -912,14 +981,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
             self.create_big_pic_panel(url=illust['image_urls'][self.big_pic_size],
                                       original_url=illust['meta_single_page']['original_image_url'],
-                                      file_name=file_name, title=f"{illust['title']}", tags=tags, illust_id=illust_id)
+                                      file_name=file_name, title=f"{illust['title']}", tags=tags, illust_id=illust_id, pic_no=n, illust_order=illust_order)
 
         else:
             for j in illust['meta_pages']:
                 file_name = f"{illust_id}_{n}"
                 self.create_big_pic_panel(url=j['image_urls'][self.big_pic_size],
                                           original_url=j['image_urls']['original'], file_name=file_name,
-                                          title=f"{illust['title']}_{n}p", tags=tags, illust_id=illust_id)
+                                          title=f"{illust['title']}", tags=tags, illust_id=illust_id, pic_no=n, illust_order=illust_order)
                 n += 1
         # 为了滑到最底时有空白
         w = self.scrollAreaWidgetContents_3.width()
@@ -940,20 +1009,37 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.comment_widget.show()
         self.infoFrame.raise_()
 
+        self.scrollAreaWidgetContents_3.create_relate_illust_signal.connect(lambda: self.create_related_illust_frame(10, _info))
+        #self.create_related_illust_frame(self.bigPicScrollArea.verticalScrollBar().value(), _info)
+
+    def create_related_illust_frame(self, x, info):
+        m = self.bigPicScrollArea.verticalScrollBar().maximum()
+        if m - x > 0:
+            return
+            
+        self.bigPicScrollArea.verticalScrollBar().valueChanged.disconnect(self.show_related_frame_slot)
+        self.scrollAreaWidgetContents_3.create_relate_illust_signal.disconnect()
         # 创建作品相关区
-        info = {'illust_id': illust['id']}
         self.illust_related_frame = Illust_Relate(self.scrollAreaWidgetContents_3, info=info)
         smallFrame_w = self.SmallFrame.width()
         # illust_related_frame_w = self.illust_related_frame.width()
         self.illust_related_frame.move(
-            (smallFrame_w - 360 - 644) // 2, self.scrollAreaWidgetContents_3.height())  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
-        self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height() + 744 + 24) # 为相关图放大后可以完全显示而加上24（计算好的结果）
+            (self.scrollAreaWidgetContents_3.width() - self.illust_related_frame.width()) // 2, 
+            self.scrollAreaWidgetContents_3.height()
+        )  # 644是illust_related_frame的宽度(本是620， 增加24是为了相关图放大后可以完全显示)， 360 评论区宽度， smallFrame-360 是 self.scrollAreaWidgetContents_3的宽度
+        self.scrollAreaWidgetContents_3.resize(
+            self.scrollAreaWidgetContents_3.width(), 
+            self.scrollAreaWidgetContents_3.height() + self.illust_related_frame.height()
+            )
+        fn = lambda: self.scrollAreaWidgetContents_3.resize(
+                self.scrollAreaWidgetContents_3.width(), 
+                self.scrollAreaWidgetContents_3.height() + self.illust_related_frame.height()
+                )
+        self.illust_related_frame.pic_info_gotten.connect(fn)
         self.illust_related_frame.one_label_is_clicked.connect(self.show_big_pic)
-        #self.illust_related_frame.setStyleSheet('background-color: rgb(231, 195, 188)')
         self.illust_related_frame.pic_info_gotten.connect(self.scrollAreaWidgetContents_3.adjust_size)
         self.illust_related_frame.show()
         ###
-
 
     #@profile
     def load_user_head(self, info):
@@ -966,14 +1052,14 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             file = f"{self.temp_path}/{file_name}"
         else:
             file = self.timeout_pic
-        print(file)
+        print(f"{FILE}: {file}")
         try:
             picture = QPixmap(file).scaled(label.width(), label.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             if picture.isNull():
                 try:
                     os.remove(file)
-                except:
-                    pass
+                except Exception as e:
+                    print(f"{FILE}: {e}")
                 self.baseThread[file_name] = base_thread(self, self.api.cache_pic, url=url, path=self.temp_path,
                                                          file_name=file_name,
                                                          info={'file_name': file_name, 'url': url, 'row': 1062})
@@ -986,7 +1072,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             pass
 
     def simulateSearch(self, word):
-        print(word)
+        print(f"{FILE}: {word}")
         currentText = self.searchFrame.searchComboBox.currentText()
         self.searchFrame.searchLineEdit.setText(word['tag'])
         self.searchFrame.searchComboBox.setCurrentText('画师')
@@ -994,7 +1080,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.searchFrame.searchComboBox.setCurrentText(currentText)
 
     #@profile
-    def create_big_pic_panel(self, url, original_url, file_name, title, tags, illust_id):
+    def create_big_pic_panel(self, url, original_url, file_name, title, tags, illust_id, pic_no, illust_order):
         from Pixiv_Widget.Big_Pic_Frame import big_pic_frame
 
         info = {
@@ -1003,13 +1089,17 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'title': title,
             'original_pic_url': original_url,
             'tags': tags,
-            'illust_id': illust_id
+            'illust_id': {illust_id},
+            'pic_no': pic_no,    # 该作品第pic_no张图
+            'illust_order': illust_order
         }
 
         self.bigFrames[file_name] = big_pic_frame(self.scrollAreaWidgetContents_3, info=info)
         self.bigFrames[file_name].image_load_completly.connect(self.scrollAreaWidgetContents_3.adjust_size)
+        self.bigFrames[file_name].click.connect(lambda x: self.show_next_big_pic(x['direct']))
 
         self.bigFrames[file_name].double_click.connect(self.show_original_pic)
+        self.bigFrames[file_name].download_single_pic_signal.connect(self.saveOriginalPic)
 
         self.bigFrames[file_name].show()
         smallFrame_w = self.SmallFrame.width()
@@ -1020,11 +1110,20 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.big_pic += 1
 
     def show_original_pic(self, info):
-        def try_pop(url):
+        def delete_time_start(url):
+            if not hasattr(self, 'delete_timer'):
+                self.delete_timer = QTimer()
+                self.delete_timer.timeout.connect(lambda: pop_url(url))
+            self.delete_timer.start(2000)
+
+        def pop_url(url):
             try:
+                self.sub_windows[url].deleteLater()
+                sip.delete(self.sub_windows[url])
                 self.sub_windows.pop(url)
             except:
                 pass
+            self.delete_timer.stop()
 
         url = info['original_pic_url']
         title = info['title']
@@ -1038,7 +1137,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
             'title': title,
         }
         self.sub_windows[url] = original_pic(parent=self, info=info)
-        self.sub_windows[url].myclosed.connect(lambda: try_pop(url))
+        self.sub_windows[url].myclosed.connect(lambda: delete_time_start(url))
         self.sub_windows[url].setWindowTitle(title)
 
     def saveOriginalPic(self, illust):
@@ -1048,28 +1147,29 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         title = illust['title']
         titlePath = re.sub(r'[?/\*<>:|]', '_', title)
         file_name = re.sub(r'[?/\*<>:|]', '_', title)
-        n = 1
+        pic_no = illust.get('pic_no', '1')  # 当pic_no存在则表明此次调用是Big_Pic_Frame.download_single_pic调用
         if illust['meta_single_page']:
-            self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"] = base_thread(self, self.api.get_image_size,
                                                                        url=illust['meta_single_page'][
                                                                            'original_image_url'],
-                                                                       info={'n': n, 'illust_id': illust_id,
+                                                                       info={'n': pic_no, 'illust_id': illust_id,
                                                                              'url': illust['meta_single_page'][
                                                                                  'original_image_url'], 'title': title})
-            self.getImageSizeThreads[f"{illust_id}_{n}"].finish.connect(self.download_or_not)
-            self.getImageSizeThreads[f"{illust_id}_{n}"].wait()
-            self.getImageSizeThreads[f"{illust_id}_{n}"].start()
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].finish.connect(self.download_or_not)
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].wait()
+            self.getImageSizeThreads[f"{illust_id}_{pic_no}"].start()
 
-            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
+            file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{pic_no}.jpg"
             info = {
                 'image_size': None, 
                 'save_file': file, 
-                'download_timer_id': f"{illust_id}_{n}", 
-                "n": n,
+                'download_timer_id': f"{illust_id}_{pic_no}",
+                "n": pic_no,
                 'url': illust['meta_single_page']['original_image_url']
                 }
             self.create_download_progress(info=info)
 
+        n = 1
         for j in illust['meta_pages']:
             self.getImageSizeThreads[f"{illust_id}_{n}"] = base_thread(self, self.api.get_image_size,
                                                                        url=j['image_urls']['original'],
@@ -1108,7 +1208,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         if not result['isSuccess']:
             # 网络错误重新下载
             self.getImageSizeThreads[f"{illust_id}_{n}"].start()
-            print(result)
+            print(f"{FILE}: {result}")
             return 
 
         response = result['response']
@@ -1126,13 +1226,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         file = f"{self.save_path}/{titlePath}_{illust_id}/{file_name}_{n}.jpg"
         path = f"{self.save_path}/{titlePath}_{illust_id}"
         if not self.remove_imperfect_image(file, image_size):
-            print('You have the same.')
+            print(f'{FILE}: You have the same.')
             dontDownload = 1
         elif not self.remove_imperfect_image(tempFile, image_size):
             try:
                 shutil.copyfile(tempFile, file)
             except Exception as e:
-                print(e, 'e' * 90)
+                print(f"{FILE}: {e}")
             else:
                 dontDownload = 1
 
@@ -1163,7 +1263,7 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
                 try:
                     os.remove(file)
                 except Exception as e:
-                    print(e)
+                    print(f"{FILE}: {e}")
                     return False
                 return True
             return False
@@ -1252,6 +1352,45 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         else:
             self.infoFrame.moreButton.clicked.connect(lambda: self._search(self.next_url_s[title], title))
 
+    def show_next_big_pic(self, direct):
+        for i in self.scrollAreaWidgetContents_3.children():
+            try:
+                illust_order = i.info['illust_order']
+            except (AttributeError, KeyError) as e:
+                error = str(e)
+            else:
+                break
+        else:
+            print(f"{FILE}: <show_next_big_pic>{error}")
+            return
+
+        if direct == 'next':
+            illust_order += 1
+        elif direct == 'last':
+            illust_order -= 1
+            if illust_order < 0:
+                print(f"{FILE}: <show_next_big_pic>It's first illust now!")
+                return
+
+        index = self.tabWidget.currentIndex()
+        title = self.tabWidget.tabText(index)
+        try:
+            flag = self.tab[title].flag
+        except:
+            flag = ''
+
+        if flag == '用户作品':
+            print(f"{FILE}: 此时不支持下一张")
+            return
+
+        try:
+            illust = self.illusts_box[title][illust_order]
+        except IndexError as e:
+            print(f"{FILE}: <show_next_big_pic> {e}: illust_order={illust_order}, self.illusts_box[title].lenth={len(self.illusts_box[title])}")
+            if not self.get_illust_info_now:
+                self.show_pic(self.method, self.next_url_s[title], title, flag=flag, next_illust_button=True)
+        else:
+            self.show_big_pic({'illust': illust, 'illust_order': illust_order})
 
     def resizeEvent(self, event=None):
         height = self.height()  # 原始809
@@ -1280,6 +1419,13 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         self.table.resize(smallFrame_w, height - infoFrame_h)
 
         self.bigPicScrollArea.resize(smallFrame_w-340, smallFrame_h)
+
+        self.next_big_pic_button.resize(100, self.next_big_pic_button.parent().height())
+        next_big_pic_button_x = self.next_big_pic_button.parent().width() - self.next_big_pic_button.width() - self.next_big_pic_button.parent().verticalScrollBar().width()
+        self.next_big_pic_button.move(next_big_pic_button_x, 0)
+        self.last_big_pic_button.resize(100, self.last_big_pic_button.parent().height())
+        self.last_big_pic_button.move(0, 0)
+
         self.scrollAreaWidgetContents_3.resize(smallFrame_w - 360, self.scrollAreaWidgetContents_3.height())
         for i in self.scrollAreaWidgetContents_3.children():
             bigFrame_x = (self.scrollAreaWidgetContents_3.width() - i.width()) // 2
@@ -1351,9 +1497,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
         info_h = self.infoFrame.height()
         self.infoFrame.setGeometry(QRect(info_x, height - info_h, smallFrame_w, info_h))
 
+    def paintEvent(self, qevent):
+        if not self.tabWidget.isVisible() and self.searchFrame.height() == 120:
+            self.searchFrame.hide_search_frame()
+
     def keyPressEvent(self, qevent):
         if qevent.key() == 16777216: # Esc
             self.searchFrame.hide_search_frame()
+            self.setFocus()
+
         elif qevent.key() == 16777220:    # Enter
             self._search(isMoreButton=False)
             self.searchFrame.show_search_frame()
@@ -1363,6 +1515,15 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         elif qevent.key() == Qt.Key_S:
             self.set_style()
+
+        elif qevent.key() == Qt.Key_Space:
+            self.searchFrame.show_search_frame()
+
+        elif qevent.key() == Qt.Key_Left:
+            self.show_next_big_pic('last')
+
+        elif qevent.key() == Qt.Key_Right:
+            self.show_next_big_pic('next')
 
     def set_style(self):
         try:
@@ -1389,8 +1550,19 @@ class main_pixiv(QMainWindow, pixiv_main_window.Ui_MainWindow):
 
         self.setting_window.show()
 
-    def set_user_setting(self, _):
+    def set_user_setting(self, setting_):
         from utils.Project_Setting import setting
+
+        # 在最大化时关闭设置窗口会引发崩溃，
+        # 因此需要判断
+        if self.isMaximized():
+            self.setWindowState(Qt.WindowNoState)
+
+        per_row_pic_num = setting_['per_row_pic_num']
+        h = self.height()
+        self.resize(240*per_row_pic_num+135, h)
+        self.move_self_to_center()
+
         self.get_setting()
         self.ajust_cate_widget_size()
 
@@ -1414,7 +1586,7 @@ def main(AppUi=None):
         AppUi.deleteLater()
         sip.delete(AppUi)
 
-    login = app_login(login_success)
+    login = app_login()
     login.login_signal.connect(login_success)
     login.show()
     # login.setWindowState(Qt.WindowMinimized)

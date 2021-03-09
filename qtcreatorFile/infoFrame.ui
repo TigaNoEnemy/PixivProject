@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Frame</class>
+ <class>infoFrame</class>
  <widget class="QFrame" name="infoFrame">
   <property name="geometry">
    <rect>
@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(29, 23, 31);</string>
-  </property>
   <widget class="Show_Head_Label" name="user_pic_label">
    <property name="geometry">
     <rect>
@@ -25,31 +22,21 @@
      <height>61</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
-   </property>
    <property name="text">
     <string/>
    </property>
   </widget>
-  <widget class="my_label" name="authText">
+  <widget class="Username_Label" name="authText">
    <property name="geometry">
     <rect>
      <x>80</x>
      <y>49</y>
-     <width>141</width>
-     <height>21</height>
+     <width>171</width>
+     <height>31</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
     <string/>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="moreButton">
@@ -60,9 +47,6 @@ color: rgb(255, 255, 255);</string>
      <width>80</width>
      <height>31</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
     <string>更多</string>
@@ -77,9 +61,6 @@ color: rgb(255, 255, 255);</string>
      <height>31</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
-   </property>
    <property name="text">
     <string>保存原图</string>
    </property>
@@ -93,14 +74,11 @@ color: rgb(255, 255, 255);</string>
      <height>31</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
-   </property>
    <property name="text">
     <string>返回</string>
    </property>
   </widget>
-  <widget class="QLabel" name="titleText">
+  <widget class="Auto_Text_Label" name="titleText">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -109,15 +87,11 @@ color: rgb(255, 255, 255);</string>
      <height>31</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);</string>
-   </property>
    <property name="text">
     <string/>
    </property>
    <property name="wordWrap">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="text_scroll" name="text_scroll">
@@ -129,11 +103,6 @@ color: rgb(255, 255, 255);</string>
      <height>81</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);
-border: none</string>
-   </property>
   </widget>
  </widget>
  <customwidgets>
@@ -143,14 +112,19 @@ border: none</string>
    <header>Pixiv_Widget.My_Widget.h</header>
   </customwidget>
   <customwidget>
-   <class>my_label</class>
+   <class>text_scroll</class>
+   <extends>QTextEdit</extends>
+   <header>Pixiv_Widget.Text_Scroll.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Username_Label</class>
    <extends>QLabel</extends>
    <header>Pixiv_Widget.My_Label.h</header>
   </customwidget>
   <customwidget>
-   <class>text_scroll</class>
-   <extends>QTextEdit</extends>
-   <header>Pixiv_Widget.Text_Scroll.h</header>
+   <class>Auto_Text_Label</class>
+   <extends>QLabel</extends>
+   <header>Pixiv_Widget.My_Label.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

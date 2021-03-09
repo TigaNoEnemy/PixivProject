@@ -27,7 +27,8 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         # info 需要 illust_id
         super(Illust_Relate, self).__init__(parent, *args, **kwargs)
         self.setupUi(self)
-        self.resize(620+24, 744+24)
+        #self.resize(620+24, 744+24)
+        self.resize(620+24, 124)
         self.info = info
         self.api = my_api()
 
@@ -100,6 +101,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
         else:
             self.is_loading = False
             illusts = info['illusts']
+            illust_order = self.info['illust_order']
             
             if not len(illusts):
                 label = QLabel(self)
@@ -122,7 +124,7 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                     pic_num = len(self.relate_labels)
 
                     #['url', 'temp_path', 'user_id', 'api']
-                    info = {'url': url, 'title': title, 'illust_id': file_name, 'illust': i}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
+                    info = {'url': url, 'title': title, 'illust_id': file_name, 'illust': i, 'illust_order': illust_order}    # illust 是为了点击时传递给Main_Pixiv.main_pixiv.show_big_pic
 
                     self.relate_labels[file_name] = Illust_Relate_Pic_Label(self, info=info)
                     self.relate_labels[file_name].resize(124, 124)
@@ -134,6 +136,9 @@ class Illust_Relate(QFrame, Ui_illust_relate):
                     self.relate_labels[file_name].set_original_geometry(label_x, label_y, 124, 124)
                     self.relate_labels[file_name].click.connect(self.label_is_clicked)
                     self.relate_labels[file_name].show()
+                    
+                    lines = (len(self.relate_labels) - 1) // 5 + 1
+                    self.resize(self.width(), lines*124+24)
 
             self.pic_info_gotten.emit()
 
@@ -152,7 +157,13 @@ if __name__ == '__main__':
     info = cfg.get_token()
     ppp = setting()
     api = my_api()
-    api.hosts = api.require_appapi_hosts('public-api.secure.pixiv.net')
+    print('翻墙')
+    api.pximg = api.require_appapi_hosts("i.pximg.net")
+    api.hosts = api.require_appapi_hosts("public-api.secure.pixiv.net")
+    api.default_head = api.require_appapi_hosts("s.pximg.net")
+    print('翻墙成功')
+    print('登录')
+
     api.auth(refresh_token=info['token'])
 
     _info = {'api': api, 'temp_path': ppp.temp_path, 'illust_id': 63639917, 'has_r18': False, 'no_h': './RES/no_h'}
@@ -163,7 +174,8 @@ if __name__ == '__main__':
     i = Illust_Relate(parent=m, info=_info)
     from prettyprinter import cpprint
     i.one_label_is_clicked.connect(lambda x: cpprint(x))
-    i.setGeometry(QRect(0, 0, 620 + 24, 744 + 24))
+    i.pic_info_gotten.connect(lambda: m.resize(i.width(), i.height()))
+    #i.setGeometry(QRect(0, 0, 620 + 24, 744 + 24))
     #i.setStyleSheet('background-color: rgb(154, 240, 155)')
     i.show()
     m.resize(i.width(), i.height())

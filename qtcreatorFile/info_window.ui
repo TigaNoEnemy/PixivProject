@@ -23,9 +23,6 @@
       <height>101</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">font: 20pt &quot;Noto Sans CJK SC&quot;;</string>
-    </property>
     <property name="text">
      <string>哒哒哒哒～</string>
     </property>

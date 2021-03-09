@@ -11,6 +11,8 @@ from utils.Single_Instance import single_instance
 import cgitb
 cgitb.enable(format='text', logdir='log_file')
 
+FILE = '\033[31mProject_Setting\033[0m'
+
 @single_instance
 class setting(ConfigParser):
     _instance = None
@@ -126,7 +128,7 @@ timeout_pic = ./RES/timeout_pic
 # font = 12pt "Noto Sans CJK SC";
 
 # 软件图标
-app_icon = ./RES/pixiv.ico
+app_icon = ./RES/pixiv.png
 
 # 加载大图时显示的动图(已废弃)
 # loading_big_gif = ./RES/loading_large.gif
@@ -156,7 +158,7 @@ timeout = 5'''.replace('\n', self.wrap_split)
             os.mkdir(self.save_path)
         if not os.path.exists('log_file'):
             os.mkdir('log_file')
-        print('Complete: check_file')
+        print(f'{FILE}: Completely check_file')
         return {'isSucess': True}
 
 def print_setting(cfg):

@@ -61,7 +61,8 @@ QFrame QLabel#textLabel{
 
 /*评论时间Label*/
 QFrame QLabel#time_label{
-	color: rgb(209, 209, 209);
+	color: rgb(150, 150, 150);
+	font: 8pt "MicroSoft YaHei";
 }
 
 /*评论用户名Label*/
@@ -75,7 +76,7 @@ QFrame QLabel#user_name_label{
 QFrame QLabel#usernameLabel{
 	background-color: rgba(255, 255, 255, 0);
 	color: rgb(255, 255, 255);
-	font: 12pt "MicroSoft YaHei";
+	/*font: 12pt "MicroSoft YaHei";*/
 }
 
 /*小图浏览"だいすき"按钮*/
@@ -424,8 +425,9 @@ QCommandLinkButton QIcon{
 /*展示评论的QTextBrowser*/
 QFrame QTextBrowser#comment_text{
 	color: rgb(255, 255, 255);
-	background-color: rgb(48, 51, 41);
+	background-color: rgb(73, 75, 69);
 	border: none;
+	font: 14pt "MicroSoft YaHei";
 }
 
 
@@ -532,3 +534,18 @@ QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical{
 	color: rgb(255, 255, 255);
 	font:12pt "MicroSoft YaHei";
 }
+
+/*注销窗口label*/
+#logout_label{
+	font: 20pt "Noto Sans CJK SC";
+	color: rgb(255, 255, 255);
+}
+
+/*浏览大图的两侧按钮*/
+#next_big_pic_button, #last_big_pic_button{
+	background-color: rgba(0, 0, 0, 0);
+	border: none;
+	font: 20pt bold;
+	color: rgb(255, 255, 255);
+}
+

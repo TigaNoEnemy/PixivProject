@@ -6,6 +6,7 @@ import shutil
 from pixivpy3.utils import PixivError, JsonDict
 import requests
 import json
+from urllib.parse import urlparse
 
 import sys
 sys.path.append('.')
@@ -16,14 +17,15 @@ cgitb.enable(format='text', logdir='log_file')
 
 basestring = str
 
-TIMEOUT = 5
+TIMEOUT = 10
+FILE = '\033[37mMy_Api\033[0m'
 
 @single_instance
 class my_api(ByPassSniApi):
     """docstring for PixivApi"""
     _instance = None
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
     # def _requests_call(self, method, url, timeout, headers={}, params=None, data=None, stream=False):
@@ -50,6 +52,11 @@ class my_api(ByPassSniApi):
     def download(self, url, prefix='', path=os.path.curdir, name=None, replace=False, fname=None,
                  referer='https://app-api.pixiv.net/'):
         """Download image to file (use 6.0 app-api)"""
+        host_ip = {
+            'i.pximg.net': self.pximg,
+            's.pximg.net': self.default_head,
+            }
+
         if fname is None and name is None:
             name = os.path.basename(url)
         elif isinstance(fname, basestring):
@@ -61,7 +68,11 @@ class my_api(ByPassSniApi):
 
             if os.path.exists(img_path) and not replace:
                 return False
-        response = self.requests_call('GET', url, headers={'Referer': referer, 'host': 'i.pximg.net'}, stream=True)
+
+        url_result = urlparse(url)
+        host = url_result.netloc
+        url = url.replace(f"https://{host}", host_ip[host])
+        response = self.requests_call('GET', url, headers={'Referer': referer, 'Host': host}, stream=True)
         if name:
             with open(img_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
@@ -124,8 +135,7 @@ class my_api(ByPassSniApi):
     # 自定义
     def cache_pic(self, url, path, file_name, replace=False, timeout=TIMEOUT):
         # 缓存图片
-        url = url.replace('https://i.pximg.net', self.pximg)
-        print(url)
+        print(f"{FILE}: 缓存：{url}")
         isSuccess = self.download(url=url, path=path, name=str(file_name), replace=replace)#, timeout=timeout)
         return {'isSuccess': isSuccess}
 
@@ -135,27 +145,38 @@ class my_api(ByPassSniApi):
         url = url.replace('https://i.pximg.net', self.pximg)
 
         #断点续传， range指定下载范围
+        #had_size = 0
         if Range:
             headers['Range'] = Range
+            #had_size = int(Range.replace('bytes=', '').replace('-', ''))
 
         self.requests_kwargs.update({"timeout": timeout})
-        if hasattr(self, 'pximg'):
-            url = url.replace('https://i.pximg.net', self.pximg)
-            headers['host'] = 'i.pximg.net'
-        print(f"image_size: {url}")
+        headers['host'] = 'i.pximg.net'
+        url = url.replace('https://i.pximg.net', self.pximg)
+
+        print(f"{FILE}: image_size: {url}")
+        print(f"{FILE}: {headers}")
         try:
             response = self.requests_call('GET', url, headers=headers, stream=True)
-        except pixivpy3.utils.PixivError:
+        except pixivpy3.utils.PixivError as e:
+            print(f'{FILE}: {e}')
             return {'isSuccess': False}
 
         self.requests_kwargs.pop('timeout', None)
-        image_size1 = dict(response.headers).get('Content-Length', -1)
-        image_size2 = dict(response.headers).get('content-length', -1)
-        image_size3 = dict(response.headers).get('Content-length', -1)
-        image_size4 = dict(response.headers).get('content-Length', -1)
+        dict_headers = dict(response.headers)
+        print(f"{FILE}: {dict_headers}")
+        print(f"{FILE}: Content-Range: {dict_headers.get('Content-Range', None)}")
+        image_size0 = dict_headers.get('Content-Range', 'bytes 196608-4982434/-1')
+        image_size = int(image_size0.split('/')[-1])
+        image_size1 = dict_headers.get('Content-Length', -1)
+        image_size2 = dict_headers.get('content-length', -1)
+        image_size3 = dict_headers.get('Content-length', -1)
+        image_size4 = dict_headers.get('content-Length', -1)
 
-        image_size = max(map(int, [image_size1, image_size2, image_size3, image_size4]))
-    
+        #image_size = max(map(int, [image_size1, image_size2, image_size3, image_size4]))
+        # if image_size != -1:
+        #     image_size += had_size
+        print(f"{FILE}: <{url}>\033[41m{image_size}\033[0m")
         return {'image_size': int(image_size), 'isSuccess': True, 'response': response}
 
     def download_has_size_pic(self, response, output_file):
@@ -180,6 +201,19 @@ class my_api(ByPassSniApi):
 
 
 if __name__ == '__main__':
-    a = my_api()
-    r = a.require_appapi_hosts("public-api.secure.pixiv.net")
-    print(r)
+    from utils.Process_Token import login_info_parser
+
+    cfg = login_info_parser()
+    info = cfg.get_token()
+
+    l = my_api()
+    l.pximg = l.require_appapi_hosts("i.pximg.net")
+    l.hosts = l.require_appapi_hosts("public-api.secure.pixiv.net")
+    l.default_head = l.require_appapi_hosts("s.pximg.net")
+    #print(l.default_head)
+    res = l.auth(refresh_token=info['token'])
+    print(res)
+    print('down')
+    l.cache_pic('https://i.pximg.net/c/600x1200_90_webp/img-master/img/2016/04/07/07/36/15/56232434_p0_master1200.jpg', path='.', file_name='test')
+
+    print('complete')

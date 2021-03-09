@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.15.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -51,12 +51,13 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.login_user_pic_label = QtWidgets.QLabel(self.frame)
-        self.login_user_pic_label.setGeometry(QtCore.QRect(2, 2, 50, 50))
+        self.login_user_pic_label.setGeometry(QtCore.QRect(35, 2, 50, 50))
         self.login_user_pic_label.setText("")
         self.login_user_pic_label.setObjectName("login_user_pic_label")
-        self.usernameLabel = QtWidgets.QLabel(self.frame)
-        self.usernameLabel.setGeometry(QtCore.QRect(0, 50, 121, 41))
+        self.usernameLabel = Username_Label(self.frame)
+        self.usernameLabel.setGeometry(QtCore.QRect(0, 50, 120, 41))
         self.usernameLabel.setText("")
+        self.usernameLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.usernameLabel.setWordWrap(True)
         self.usernameLabel.setObjectName("usernameLabel")
         self.function_frame = QtWidgets.QFrame(self.centralWidget)
@@ -179,3 +180,4 @@ class Ui_MainWindow(object):
         self.dayMaleButton.setText(_translate("MainWindow", "男性"))
         self.RankButton.setText(_translate("MainWindow", "每日"))
         self.weekButton.setText(_translate("MainWindow", "每周"))
+from Pixiv_Widget.My_Label import Username_Label

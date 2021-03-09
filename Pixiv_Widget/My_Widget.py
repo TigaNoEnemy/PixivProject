@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtCore import QTimer, Qt, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QPixmap
 from PyQt5 import sip
 
@@ -77,6 +77,10 @@ class my_widget(QWidget):
         super(my_widget, self).close()
 
 class Scroll_Widget(QWidget):
+    left_area_is_clicked = pyqtSignal(str)
+    right_area_is_clicked = pyqtSignal(str)
+    create_relate_illust_signal = pyqtSignal()
+
     """调整大图位置"""
     def adjust_size(self):
         height = 0
@@ -92,6 +96,27 @@ class Scroll_Widget(QWidget):
             height += 5
 
         self.resize(self.width(), height)
+
+    """
+    点击大图右边切换下一张，
+    点击大图左边切换上一张
+    """
+    def mouseReleaseEvent(self, qevent):
+        if qevent.button() == 1:
+            w = self.width()
+            h = self.height()
+            x = qevent.x()
+            y = qevent.y()
+            if x in range(0, w//2) and y in range(0, h):
+                self.left_area_is_clicked.emit("last")
+            elif x in range(w//2, w) and y in range(0, h):
+                self.right_area_is_clicked.emit("next")
+
+    def resizeEvent(self, qevent):
+        h = self.height()
+        p_h = self.parent().height()
+        if p_h - h >= 10:
+            self.create_relate_illust_signal.emit()
 
 class Show_Head_Label(QLabel):
     load_times = 0      # 记录加载图片的次数
@@ -275,6 +300,23 @@ class Illust_Relate_Pic_Label(Largable_Label, Show_Head_Label):
 class Show_User_Illust_Label(Illust_Relate_Pic_Label):
     """为搜索作者时显示的作品图片而做"""
     pass
+
+class Big_Pic_Button(QPushButton):
+    """docstring for big_pic_button"""
+    scroll_signal = pyqtSignal(QEvent)
+    direct_signal = pyqtSignal(str)
+
+    def __init__(self, parent, direct):
+        super().__init__(parent)
+        self.direct = direct
+        self.clicked.connect(self.direct_action)
+
+    def wheelEvent(self, qevent):
+        self.scroll_signal.emit(qevent)
+        qevent.ignore()
+
+    def direct_action(self):
+        self.direct_signal.emit(self.direct)
         
         
 if __name__ == '__main__':
